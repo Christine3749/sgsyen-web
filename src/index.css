@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", "Heiti SC", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", "Georgia", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "STSong", "AR PL New Sung", "SimSun", serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom Chinese-Latin Spacing Guidelines (中西文混排与版式微调) */
+.mixed-spacing-adjacent {
+  margin-left: 0.25em;
+  margin-right: 0.25em;
+}
+
+/* Ensure smooth text rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Custom transitions and editorial focus states */
+::selection {
+  background-color: rgba(165, 130, 97, 0.2);
+  color: #1D1D1B;
+}
+
+/* Custom scrollbars for editorial layout */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FDFCF9;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(29, 29, 27, 0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(29, 29, 27, 0.3);
+}
+

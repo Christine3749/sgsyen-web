@@ -1,0 +1,6 @@
+{
+  "name": "Gemini API Cost Explainer",
+  "description": "An interactive editorial-style analysis and token cost calculator exploring Gemini API pricing structures, context density, and infrastructure costs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

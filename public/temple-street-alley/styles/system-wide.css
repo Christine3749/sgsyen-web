@@ -1,0 +1,31 @@
+@import url('/temple-street-alley/styles/system.css');
+
+/* Global style overrides specifically for Sgsyen Slides Presentation Mode */
+#sgsyen-slides-presentation-mode .temple-slide-container {
+  width: var(--slide-width);
+  height: var(--slide-height);
+  padding: var(--gutter);
+  background-color: var(--ash);
+  color: var(--ink);
+  font-family: var(--sans-zh), sans-serif;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+#sgsyen-slides-presentation-mode .temple-slide-container.dark-theme {
+  background-color: var(--ink);
+  color: var(--ash);
+}
+
+#sgsyen-slides-presentation-mode .accent-vermilion {
+  color: var(--vermilion);
+}
+
+#sgsyen-slides-presentation-mode .accent-gold {
+  color: var(--gold);
+}
+
+#sgsyen-slides-presentation-mode .accent-smoke {
+  color: var(--smoke);
+}

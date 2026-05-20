@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap');
+
+:root {
+  /* Colors */
+  --ink: #0E1A2B;
+  --paper: #FFFFFF;
+  --ash: #F8F6F0;
+  --vermilion: #B8351F;
+  --gold: #A07A35;
+  --smoke: #3A4250;
+
+  /* Fonts */
+  --serif-zh: "Noto Serif SC", serif;
+  --sans-zh: "Noto Sans SC", sans-serif;
+  --serif-en: "Source Serif 4", serif;
+  --sans-en: "Inter", sans-serif;
+
+  /* Dimensions */
+  --slide-width: 1200px;
+  --slide-height: 675px;
+  --gutter: 72px;
+}
+
+/* Helpers for layout and precise sizing */
+.temple-slides-font-serif {
+  font-family: var(--serif-zh), var(--serif-en), Georgia, serif;
+}
+
+.temple-slides-font-sans {
+  font-family: var(--sans-zh), var(--sans-en), Inter, sans-serif;
+}
+
+.temple-slides-font-serif-en {
+  font-family: var(--serif-en), Georgia, serif;
+}
+
+.temple-slides-font-sans-en {
+  font-family: var(--sans-en), sans-serif;
+}
