@@ -860,11 +860,16 @@
         </button>
         <span class="divider"></span>
         <button class="btn reset" type="button" aria-label="Reset to first slide" title="Reset (R)">Reset<span class="kbd">R</span></button>
+        <span class="divider"></span>
+        <button class="btn fullscreen" type="button" aria-label="Toggle fullscreen" title="Fullscreen (F)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4M4 4v4M12 12h-4M12 12v-4M4 12h4M4 12v-4M12 4h-4M12 4v4"/></svg>
+        </button>
       `;
 
       overlay.querySelector('.prev').addEventListener('click', () => this._advance(-1, 'click'));
       overlay.querySelector('.next').addEventListener('click', () => this._advance(1, 'click'));
       overlay.querySelector('.reset').addEventListener('click', () => this._go(0, 'click'));
+      overlay.querySelector('.fullscreen').addEventListener('click', () => this._toggleFullscreen());
 
       // Thumbnail rail + context menu. Thumbnails are populated in
       // _renderRail() after _collectSlides().
@@ -1295,6 +1300,8 @@
         this._go(this._slides.length - 1, 'keyboard');
       } else if (key === 'r' || key === 'R') {
         this._go(0, 'keyboard');
+      } else if (key === 'f' || key === 'F') {
+        this._toggleFullscreen();
       } else if (/^[0-9]$/.test(key)) {
         // 1..9 jump to that slide; 0 jumps to 10.
         const n = key === '0' ? 9 : parseInt(key, 10) - 1;
@@ -1331,6 +1338,18 @@
       }
       if (i < 0 || i >= this._slides.length) { this._flashOverlay(); return; }
       this._go(i, reason);
+    }
+
+    _toggleFullscreen() {
+      const el = document.documentElement;
+      const isFull = document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+      if (!isFull) {
+        const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if (req) req.call(el).catch(() => {});
+      } else {
+        const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+        if (exit) exit.call(document).catch(() => {});
+      }
     }
 
     // ── Thumbnail rail ────────────────────────────────────────────────────
