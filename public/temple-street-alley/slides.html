@@ -1,0 +1,1901 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>庙街小巷 · 横版演讲</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E1A2B; --ink-2:#1B2A40;
+  --paper:#FFFFFF; --paper-2:#F4F4F1; --paper-3:#FAF4E6;
+  --vermilion:#B8351F; --vermilion-d:#8A2715;
+  --gold:#A07A35; --gold-d:#7C5D24;
+  --smoke:#3A4250; --smoke-2:#6B7280;
+  --rule:#D8D2C2; --rule-d:#2A3447;
+
+  --teal:#0E5C5C; --teal-d:#0A4242;
+
+  --serif-zh:"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  --sans-zh:"Noto Sans SC","PingFang SC","Source Han Sans SC",sans-serif;
+  --serif-en:"Source Serif 4","Source Serif Pro","Times New Roman",serif;
+  --sans-en:"Inter","Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono",monospace;
+}
+html,body{margin:0;padding:0;background:#1a1a1a;font-family:var(--serif-zh);color:var(--ink);}
+deck-stage:not(:defined){visibility:hidden;}
+
+/* ============ 16:9 横版幻灯片 ============ */
+section.slide{
+  width:1920px;height:1080px;
+  background:var(--paper);color:var(--ink);
+  position:relative;overflow:hidden;
+  font-family:var(--serif-zh);
+}
+
+/* —— 页眉/页脚 (竹版书的细黑调) —— */
+.runhead{
+  position:absolute;top:56px;left:120px;right:120px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--sans-zh);font-size:17px;letter-spacing:.32em;
+  color:var(--smoke-2);font-weight:600;z-index:3;white-space:nowrap;
+  text-transform:uppercase;
+}
+.runhead .right{display:flex;align-items:center;gap:12px;}
+.runhead .dot{width:5px;height:5px;border-radius:50%;background:var(--vermilion);display:inline-block;}
+.runhead .en{font-family:var(--sans-en);letter-spacing:.32em;}
+.dark .runhead{color:#8B96A8;}
+.runfoot{
+  position:absolute;bottom:56px;left:120px;right:120px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--sans-en);font-size:13px;letter-spacing:.32em;color:var(--smoke-2);z-index:3;white-space:nowrap;
+  font-weight:600;text-transform:uppercase;
+}
+.runfoot > span{white-space:nowrap;}
+.runfoot .folio{
+  font-family:var(--serif-en);font-weight:600;
+  color:var(--ink);font-size:15px;letter-spacing:.16em;
+  font-feature-settings:"lnum","tnum";
+  text-transform:none;
+}
+.runfoot .folio .total{display:none;}
+.dark .runfoot{color:#8B96A8;}
+.dark .runfoot .folio{color:var(--paper);}
+
+/* —— 通用版心 —— */
+.body-area{
+  position:absolute;left:120px;right:120px;top:120px;bottom:110px;
+  display:flex;flex-direction:column;
+}
+
+/* —— 标记/标题 (书的尺度) —— */
+.eyebrow{
+  font-family:var(--sans-zh);font-size:15px;letter-spacing:.36em;
+  color:var(--vermilion);font-weight:700;text-transform:uppercase;
+}
+.eyebrow.en{font-family:var(--sans-en);}
+.dark .eyebrow{color:var(--gold);}
+.chapter-tag{
+  display:inline-flex;align-items:baseline;gap:14px;
+  font-family:var(--sans-en);font-size:15px;letter-spacing:.36em;
+  color:var(--smoke-2);text-transform:uppercase;font-weight:600;
+  white-space:nowrap;
+}
+.chapter-tag > span{white-space:nowrap;}
+.chapter-tag .num-big{font-family:var(--serif-en);font-size:26px;color:var(--vermilion);font-weight:600;letter-spacing:0;}
+.chapter-tag .zh{font-family:var(--sans-zh);letter-spacing:.16em;color:var(--ink);font-weight:700;font-size:17px;}
+.dark .chapter-tag{color:#8B96A8;}
+.dark .chapter-tag .num-big{color:var(--gold);}
+.dark .chapter-tag .zh{color:var(--paper);}
+
+h2.chapter-title{font-family:var(--serif-zh);font-weight:800;font-size:88px;color:var(--ink);margin:0;line-height:1;letter-spacing:.02em;}
+h3.section-title{font-family:var(--serif-zh);font-weight:700;font-size:48px;color:var(--ink);margin:0;line-height:1.18;}
+h4.sub-title{font-family:var(--serif-zh);font-weight:700;font-size:28px;color:var(--ink);margin:0;line-height:1.3;}
+p.body-text{font-family:var(--serif-zh);font-size:20px;line-height:1.85;color:var(--ink);margin:0;}
+.body-muted{color:var(--smoke);}
+blockquote.pull{
+  border-left:4px solid var(--vermilion);padding:4px 0 4px 22px;margin:0;
+  font-family:var(--serif-zh);font-style:italic;font-size:24px;line-height:1.55;color:var(--ink-2);
+}
+
+/* —— 列表 / 分隔 —— */
+.rule{height:1px;background:var(--rule);}
+.rule-thick{height:2px;background:var(--ink);}
+.dark .rule{background:var(--rule-d);}
+.dark .rule-thick{background:var(--paper);}
+.tick{display:inline-block;width:28px;height:1px;background:var(--vermilion);vertical-align:middle;margin:0 12px;}
+.tag{display:inline-block;font-family:var(--sans-zh);font-size:14px;padding:4px 11px;border:1px solid var(--ink);color:var(--ink);margin:3px 5px 3px 0;letter-spacing:.06em;}
+.tag.solid{background:var(--ink);color:var(--paper);}
+.tag.v{border-color:var(--vermilion);color:var(--vermilion);}
+.tag.g{border-color:var(--gold);color:var(--gold);}
+.tag.light{border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.9);}
+
+/* —— 摄影 / 纹理 —— */
+.dot-tex{
+  position:absolute;inset:0;
+  background-image:radial-gradient(circle, rgba(0,0,0,.18) 1px, transparent 1px);
+  background-size:4px 4px;mix-blend-mode:multiply;opacity:.55;pointer-events:none;
+}
+.vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,.45) 100%);
+  pointer-events:none;
+}
+.photo-warm{
+  background-image:
+    radial-gradient(ellipse at 30% 70%, rgba(184,90,60,.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 30%, rgba(212,178,122,.55) 0%, transparent 60%),
+    linear-gradient(135deg,#F5EFE3 0%,#EFE2CB 35%,#E5C9A0 65%,#C9956D 100%);
+}
+.photo-river{
+  background-image:
+    radial-gradient(ellipse at 60% 50%, rgba(212,178,122,.45) 0%, transparent 50%),
+    linear-gradient(180deg,#F4EEDF 0%,#EADDC2 55%,#D4B383 100%);
+}
+.photo-deep{
+  background-image:
+    radial-gradient(ellipse at 70% 30%, rgba(127,184,176,.45) 0%, transparent 55%),
+    radial-gradient(ellipse at 25% 75%, rgba(10,40,40,.7) 0%, transparent 60%),
+    linear-gradient(135deg,#0A4242 0%,#0E5C5C 45%,#1A6B66 75%,#0A2E2E 100%);
+}
+
+/* —— 国际四地占位渐变 —— */
+.city-barcelona{
+  background-image:
+    radial-gradient(ellipse at 30% 30%, rgba(245,179,80,.55) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 70%, rgba(184,75,40,.45) 0%, transparent 60%),
+    linear-gradient(135deg,#F8E4B8 0%,#E6A862 40%,#C46934 80%,#7A2E14 100%);
+}
+.city-singapore{
+  background-image:
+    radial-gradient(ellipse at 25% 25%, rgba(180,210,200,.45) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 75%, rgba(40,80,75,.55) 0%, transparent 60%),
+    linear-gradient(135deg,#D6E3DE 0%,#7CA89C 35%,#3D6760 70%,#1B3833 100%);
+}
+.city-miami{
+  background-image:
+    radial-gradient(ellipse at 30% 70%, rgba(245,205,140,.55) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 30%, rgba(72,170,180,.55) 0%, transparent 60%),
+    linear-gradient(135deg,#D6F0EE 0%,#7BC8C8 35%,#3A8AA0 70%,#1F4A60 100%);
+}
+.city-amsterdam{
+  background-image:
+    radial-gradient(ellipse at 35% 25%, rgba(190,200,180,.45) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 75%, rgba(70,90,80,.55) 0%, transparent 60%),
+    linear-gradient(135deg,#D4D8CC 0%,#8FA28C 35%,#465A4E 70%,#1E2A22 100%);
+}
+
+/* —— stat —— */
+.stat .v{font-family:var(--serif-en);font-size:64px;font-weight:600;color:var(--vermilion);line-height:1;font-feature-settings:"lnum","tnum";}
+.stat .l{font-family:var(--sans-zh);font-size:22px;color:var(--smoke);margin-top:12px;letter-spacing:.04em;}
+.dark .stat .v{color:var(--gold);}
+.dark .stat .l{color:#A8B0BD;}
+
+/* —— card —— */
+.role-card{border:1px solid var(--rule);background:var(--paper);overflow:hidden;display:flex;flex-direction:column;}
+.role-card .header{padding:22px 28px;display:flex;align-items:center;gap:18px;}
+.role-card .header .badge{
+  width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.2);color:var(--paper);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif-zh);font-size:32px;font-weight:700;flex-shrink:0;
+}
+.role-card .header .name{font-family:var(--serif-zh);font-size:30px;font-weight:700;color:var(--paper);line-height:1.2;}
+.role-card .header .en{font-family:var(--sans-en);font-size:18px;letter-spacing:.22em;color:rgba(255,255,255,.75);margin-top:4px;}
+.role-card .body{padding:20px 28px 24px;flex:1;}
+.role-card .task{font-family:var(--serif-zh);font-size:22px;line-height:1.75;padding-left:22px;position:relative;color:var(--ink);margin-bottom:6px;}
+.role-card .task::before{content:"";position:absolute;left:0;top:14px;width:7px;height:7px;background:var(--ink);}
+.role-card.accent .header{background:var(--vermilion);}
+.role-card.accent .task::before{background:var(--vermilion);}
+.role-card.primary .header{background:var(--ink);}
+
+/* —— cap (能力卡) —— */
+.cap{background:var(--paper-2);padding:24px 24px;display:flex;flex-direction:column;}
+.cap[data-tier="v"]{border-top:4px solid var(--vermilion);}
+.cap[data-tier="g"]{border-top:4px solid var(--gold);}
+.cap .cap-no{font-family:var(--serif-en);font-size:32px;font-weight:600;line-height:1;margin-bottom:16px;font-feature-settings:"lnum","tnum";}
+.cap[data-tier="v"] .cap-no{color:var(--vermilion);}
+.cap[data-tier="g"] .cap-no{color:var(--gold);}
+.cap .cap-t{font-family:var(--serif-zh);font-size:30px;font-weight:700;margin-bottom:12px;color:var(--ink);letter-spacing:.02em;}
+.cap .cap-d{font-family:var(--serif-zh);font-size:18px;line-height:1.72;color:var(--smoke);}
+
+/* —— 城市标杆卡 —— */
+.city-card{position:relative;overflow:hidden;}
+.city-card .corner-no{
+  position:absolute;left:32px;top:24px;z-index:3;
+  font-family:var(--serif-en);font-size:24px;font-weight:600;
+  color:rgba(255,255,255,.9);letter-spacing:.04em;
+}
+.city-card .city-meta{
+  position:absolute;left:32px;right:32px;bottom:32px;z-index:3;color:#FFFFFF;
+}
+.city-card .city-meta .en{
+  font-family:var(--sans-en);font-size:14px;letter-spacing:.32em;
+  color:rgba(255,255,255,.85);font-weight:600;margin-bottom:8px;
+}
+.city-card .city-meta .name{font-family:var(--serif-zh);font-size:32px;font-weight:700;line-height:1.25;}
+.city-card .city-meta .tag{
+  display:inline-block;margin-top:10px;
+  font-family:var(--sans-zh);font-size:16px;padding:5px 12px;
+  border:1px solid rgba(255,255,255,.5);color:#FFFFFF;letter-spacing:.04em;
+}
+
+/* —— 大数字 —— */
+.bignum{font-family:var(--serif-en);font-weight:600;font-feature-settings:"lnum","tnum";color:var(--vermilion);line-height:.9;}
+
+/* —— image slot —— */
+image-slot{display:block;}
+
+/* —— bullet 列表 —— */
+.bullets{margin:0;padding:0;list-style:none;}
+.bullets li{
+  font-family:var(--serif-zh);font-size:22px;line-height:1.75;
+  padding-left:26px;position:relative;color:var(--ink);margin-bottom:10px;
+}
+.bullets li::before{content:"";position:absolute;left:0;top:13px;width:8px;height:8px;background:var(--vermilion);}
+.bullets.dark li{color:#E6DDC8;}
+.bullets.dark li::before{background:var(--gold);}
+
+/* —— key-line 关键金句 —— */
+.keyline{font-family:var(--serif-zh);font-size:34px;font-weight:700;line-height:1.45;color:var(--ink);}
+.keyline em{font-style:normal;color:var(--vermilion);font-weight:800;}
+.keyline strong{font-weight:800;background:rgba(184,53,31,.12);padding:0 6px;color:var(--vermilion);}
+
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ============ S1 · 封面 ============ -->
+  <section class="slide" data-screen-label="01 封面" style="padding:0;background:var(--paper-3);">
+    <!-- 顶部摄影区 (上下渐变到米色) -->
+    <div style="position:absolute;top:0;left:0;right:0;height:82%;" class="photo-deep">
+      <div class="dot-tex"></div>
+      <div class="vignette"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(250,244,230,0) 0%, rgba(250,244,230,0) 70%, rgba(250,244,230,.65) 90%, var(--paper-3) 100%);"></div>
+    </div>
+
+    <!-- 顶部出版社条 -->
+    <div style="position:absolute;top:48px;left:96px;right:96px;display:flex;justify-content:space-between;align-items:center;font-family:var(--sans-en);font-size:18px;letter-spacing:.36em;color:#FFFFFF;font-weight:700;z-index:3;">
+      <span>TOPV · 海甸 SERIES</span>
+      <span>2026 / VOL. 01</span>
+    </div>
+
+    <!-- 顶部小标 (浅金色, 摄影区内) -->
+    <div style="position:absolute;top:96px;left:96px;font-family:var(--sans-zh);font-size:22px;letter-spacing:.4em;color:#FFCC9C;font-weight:600;z-index:3;">
+      商 · 业 · 技 · 术 · 演 · 讲
+    </div>
+
+    <!-- 巨型章节号水印 (摄影区右上) -->
+    <div style="position:absolute;right:96px;top:80px;font-family:var(--serif-en);font-size:340px;line-height:1;font-weight:200;color:rgba(255,255,255,.20);letter-spacing:-.04em;user-select:none;z-index:2;">
+      01
+    </div>
+
+    <!-- 主标题区 (位于摄影区内 · 白字) -->
+    <div style="position:absolute;left:120px;right:120px;top:38%;z-index:4;">
+      <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.36em;color:#FFCC9C;font-weight:700;margin-bottom:18px;">
+        AI-DRIVEN COMMERCIAL OPERATION · CASE BOOK
+      </div>
+      <h1 style="font-family:var(--serif-zh);font-weight:900;font-size:200px;line-height:.92;letter-spacing:.04em;margin:0;color:#FFFFFF;">
+        庙街小巷
+      </h1>
+      <div style="font-family:var(--serif-zh);font-size:38px;font-weight:600;margin-top:24px;letter-spacing:.04em;color:rgba(255,255,255,.92);">
+        以 AI 驱动的烟火菜市场
+      </div>
+      <div style="width:88px;height:4px;background:var(--vermilion);margin-top:24px;"></div>
+      <div style="font-family:var(--serif-zh);font-style:italic;font-size:22px;color:#D8E0DC;margin-top:16px;line-height:1.6;">
+        AI 时代 × 新质生产力 · 让烟火气长出新流量。
+      </div>
+    </div>
+
+    <!-- 底部信息条 -->
+    <div style="position:absolute;bottom:72px;left:96px;right:96px;display:flex;justify-content:space-between;align-items:flex-end;z-index:3;">
+      <div>
+        <div style="font-family:var(--sans-zh);font-size:18px;letter-spacing:.32em;color:var(--smoke-2);margin-bottom:10px;">项目地</div>
+        <div style="font-family:var(--serif-zh);font-size:26px;font-weight:600;color:var(--ink);">海口 · 海甸溪北岸</div>
+        <div style="font-family:var(--sans-en);font-size:16px;letter-spacing:.24em;color:var(--smoke-2);margin-top:8px;">HAIDIAN RIVER · HAIKOU</div>
+      </div>
+      <div style="width:96px;height:96px;border:2px solid var(--vermilion);display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(6deg);color:var(--vermilion);font-family:var(--serif-zh);background:rgba(255,255,255,.6);">
+        <div style="font-size:20px;font-weight:700;">机密</div>
+        <div style="font-size:11px;letter-spacing:.2em;margin-top:4px;">CONFIDENTIAL</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============ S2 · 双重碰撞 (杂志跨页式) ============ -->
+  <section class="slide" data-screen-label="02 双重碰撞" style="background:var(--paper-3);">
+    <div class="runhead">
+      <span>序章</span>
+      <span class="right"><span class="dot"></span><span class="en">PROLOGUE</span></span>
+    </div>
+
+    <!-- 大字水印 -->
+    <div style="position:absolute;left:96px;top:120px;font-family:var(--serif-en);font-size:380px;line-height:1;font-weight:200;color:rgba(184,53,31,.06);letter-spacing:-.04em;user-select:none;z-index:0;">02</div>
+
+    <div class="body-area" style="display:grid;grid-template-columns:1.15fr 1fr;gap:64px;align-items:stretch;">
+
+      <!-- 左：排版 -->
+      <div style="display:flex;flex-direction:column;position:relative;z-index:2;">
+        <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:14px;">
+          PROLOGUE
+          <span class="tick"></span>
+          序章命题
+        </div>
+        <h2 style="font-family:var(--serif-zh);font-weight:800;font-size:72px;color:var(--ink);margin:0 0 14px;line-height:1.05;letter-spacing:.02em;">
+          双重碰撞。
+        </h2>
+        <p style="font-family:var(--serif-zh);font-size:21px;line-height:1.85;color:var(--smoke);margin:0 0 26px;text-align:justify;">
+          AI 时代改写每条产业的成本结构，新质生产力重写土地、数据与产业的价值定义。这两件事，第一次在同一年、同一座岛、同一个项目里同时落地——<b style="color:var(--ink);">十年一遇</b>。
+        </p>
+
+        <!-- 核心公式条 -->
+        <div style="background:var(--ink);color:var(--paper);padding:18px 24px;display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:28px;">
+          <div style="font-family:var(--serif-zh);font-size:22px;font-weight:700;">AI 时代</div>
+          <div style="color:var(--gold);font-size:26px;font-weight:300;">+</div>
+          <div style="font-family:var(--serif-zh);font-size:22px;font-weight:700;">新质生产力</div>
+          <div style="color:var(--gold);font-size:26px;font-weight:300;">=</div>
+          <div style="font-family:var(--serif-zh);font-size:22px;font-weight:700;color:var(--gold);">海甸溪机会</div>
+        </div>
+
+        <!-- 引文 -->
+        <blockquote style="border-left:4px solid var(--vermilion);padding:4px 0 4px 20px;margin:0 0 22px;font-family:var(--serif-zh);font-style:italic;font-size:22px;line-height:1.6;color:var(--ink-2);">
+          不是把烟火气包装成网红，<br />
+          是让烟火气长出<b style="font-style:normal;color:var(--vermilion);">新流量</b>。
+        </blockquote>
+
+        <div class="rule" style="margin-bottom:14px;"></div>
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:12px;">双重红利 · 四件最重要的事</div>
+
+        <!-- 4 items -->
+        <div style="display:flex;flex-direction:column;flex:1;">
+          <div style="display:grid;grid-template-columns:42px 180px 1fr;align-items:baseline;gap:14px;padding:10px 0;border-bottom:1px solid var(--rule);">
+            <div style="font-family:var(--serif-en);font-size:22px;font-weight:600;color:var(--vermilion);line-height:1;">01</div>
+            <div style="font-family:var(--serif-zh);font-size:18px;font-weight:700;color:var(--ink);">技术红利落到摊位</div>
+            <div style="font-family:var(--serif-zh);font-size:15px;line-height:1.65;color:var(--smoke);">10 人团队 → 一个人 + 工具链 · 成本压到 1/5</div>
+          </div>
+          <div style="display:grid;grid-template-columns:42px 180px 1fr;align-items:baseline;gap:14px;padding:10px 0;border-bottom:1px solid var(--rule);">
+            <div style="font-family:var(--serif-en);font-size:22px;font-weight:600;color:var(--vermilion);line-height:1;">02</div>
+            <div style="font-family:var(--serif-zh);font-size:18px;font-weight:700;color:var(--ink);">政策红利长在脚下</div>
+            <div style="font-family:var(--serif-zh);font-size:15px;line-height:1.65;color:var(--smoke);">2025.12.18 封关 · 15% 所得税 · 跨境数据</div>
+          </div>
+          <div style="display:grid;grid-template-columns:42px 180px 1fr;align-items:baseline;gap:14px;padding:10px 0;border-bottom:1px solid var(--rule);">
+            <div style="font-family:var(--serif-en);font-size:22px;font-weight:600;color:var(--vermilion);line-height:1;">03</div>
+            <div style="font-family:var(--serif-zh);font-size:18px;font-weight:700;color:var(--ink);">数据本地变成资产</div>
+            <div style="font-family:var(--serif-zh);font-size:15px;line-height:1.65;color:var(--smoke);">城市消费图谱本地留存 · 可交付智慧城市</div>
+          </div>
+          <div style="display:grid;grid-template-columns:42px 180px 1fr;align-items:baseline;gap:14px;padding:10px 0;">
+            <div style="font-family:var(--serif-en);font-size:22px;font-weight:600;color:var(--vermilion);line-height:1;">04</div>
+            <div style="font-family:var(--serif-zh);font-size:18px;font-weight:700;color:var(--ink);">在地文化成为壁垒</div>
+            <div style="font-family:var(--serif-zh);font-size:15px;line-height:1.65;color:var(--smoke);">琼剧 · 黎歌苗舞 · 渔港 · 别人复制不了的语料</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右：摄影占位 + 图注 + 边注引文 -->
+      <div style="display:flex;flex-direction:column;gap:18px;position:relative;z-index:2;">
+        <!-- 摄影框 -->
+        <div style="position:relative;flex:1;overflow:hidden;" class="photo-warm">
+          <div class="dot-tex"></div>
+          <div class="vignette"></div>
+          <image-slot id="cover-haidian-dawn" placeholder="海甸溪黎明 / 菜市场晨拍" style="position:absolute;inset:0;background:transparent;"></image-slot>
+          <!-- 摄影内英文标签 -->
+          <div style="position:absolute;bottom:16px;left:20px;font-family:var(--sans-en);font-size:12px;letter-spacing:.36em;color:rgba(255,255,255,.85);font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,.4);">HAIDIAN · DAWN MARKET</div>
+        </div>
+        <!-- 图注 -->
+        <div style="display:flex;gap:14px;font-family:var(--sans-zh);font-size:14px;line-height:1.65;color:var(--smoke);">
+          <span style="font-family:var(--serif-en);font-weight:700;color:var(--vermilion);white-space:nowrap;font-feature-settings:'lnum','tnum';">图 02.1</span>
+          <span>海甸溪北岸黎明  ·  AI 全域运营的真实素材源——每一锅汤、每一笼蒸气、每一句吆喝，都是可喂给 Agent 的内容。</span>
+        </div>
+
+        <!-- 三组关键数据 -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div style="background:var(--paper-2);padding:14px 16px;border-top:2px solid var(--ink);">
+            <div style="font-family:var(--serif-en);font-size:32px;font-weight:600;color:var(--vermilion);line-height:1;font-feature-settings:'lnum','tnum';">5 万亿</div>
+            <div style="font-family:var(--sans-zh);font-size:13px;color:var(--smoke);margin-top:6px;line-height:1.5;">中国生鲜零售年规模</div>
+          </div>
+          <div style="background:var(--paper-2);padding:14px 16px;border-top:2px solid var(--ink);">
+            <div style="font-family:var(--serif-en);font-size:32px;font-weight:600;color:var(--vermilion);line-height:1;font-feature-settings:'lnum','tnum';">&lt; 5%</div>
+            <div style="font-family:var(--sans-zh);font-size:13px;color:var(--smoke);margin-top:6px;line-height:1.5;">数字化渗透率</div>
+          </div>
+          <div style="background:var(--paper-2);padding:14px 16px;border-top:2px solid var(--ink);">
+            <div style="font-family:var(--serif-en);font-size:32px;font-weight:600;color:var(--vermilion);line-height:1;font-feature-settings:'lnum','tnum';">2025.12.18</div>
+            <div style="font-family:var(--sans-zh);font-size:13px;color:var(--smoke);margin-top:6px;line-height:1.5;">自贸港封关日</div>
+          </div>
+        </div>
+        <div style="font-family:var(--sans-zh);font-size:11px;font-style:italic;color:var(--smoke-2);line-height:1.5;">
+          数据来源：商务部《农产品流通数字化报告》2025 / 国务院《海南自贸港封关方案》
+        </div>
+      </div>
+
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">02<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S3 · 三大时代窗口 ============ -->
+  <section class="slide" data-screen-label="03 时代窗口" style="background:var(--paper-3);">
+    <div class="runhead">
+      <span>序章 · 三窗叠加</span>
+      <span class="right"><span class="dot"></span><span class="en">TIMING</span></span>
+    </div>
+
+    <!-- 大字水印 -->
+    <div style="position:absolute;right:96px;top:160px;font-family:var(--serif-en);font-size:420px;line-height:1;font-weight:200;color:rgba(184,53,31,.08);letter-spacing:-.04em;user-select:none;">03</div>
+
+    <div class="body-area">
+      <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:18px;">
+        TIMING
+        <span class="tick"></span>
+        三窗叠加
+      </div>
+      <h2 style="font-family:var(--serif-zh);font-weight:800;font-size:72px;color:var(--ink);margin:0 0 16px;line-height:1.1;letter-spacing:.02em;">
+        十年才有一次的<span style="color:var(--vermilion);">三窗叠加</span>。
+      </h2>
+      <p style="font-family:var(--serif-zh);font-size:24px;line-height:1.75;color:var(--smoke);margin:0 0 40px;max-width:1500px;">
+        政策窗口、市场窗口、技术窗口——任何一扇打开都值得入场；
+        三扇在同一年打开，是<b style="color:var(--ink);">必须入场</b>。
+      </p>
+
+      <div class="rule-thick" style="margin-bottom:24px;"></div>
+
+      <!-- 三窗编号 -->
+      <div style="display:flex;flex-direction:column;flex:1;">
+        <!-- 政策 -->
+        <div style="display:grid;grid-template-columns:80px 260px 1fr 200px;align-items:center;gap:24px;padding:24px 0;border-bottom:1px solid var(--rule);">
+          <div style="font-family:var(--serif-en);font-size:36px;font-weight:600;color:var(--vermilion);line-height:1;">01</div>
+          <div>
+            <div style="font-family:var(--sans-zh);font-size:13px;letter-spacing:.32em;color:var(--smoke-2);font-weight:700;margin-bottom:6px;">POLICY WINDOW</div>
+            <div style="font-family:var(--serif-zh);font-size:30px;font-weight:700;color:var(--ink);">政策窗口</div>
+            <div style="font-family:var(--serif-en);font-size:22px;color:var(--vermilion);font-weight:600;margin-top:6px;font-feature-settings:'lnum','tnum';">2025.12.18</div>
+          </div>
+          <div style="font-family:var(--serif-zh);font-size:20px;line-height:1.75;color:var(--smoke);">
+            自贸港正式封关——离岛免税升级、跨境数据流动、全岛单独关税区。<b style="color:var(--ink);">国家级试验场</b>。
+          </div>
+          <div>
+            <span class="tag v" style="font-size:14px;">国家战略</span>
+            <span class="tag v" style="font-size:14px;">税收优惠</span>
+          </div>
+        </div>
+
+        <!-- 市场 -->
+        <div style="display:grid;grid-template-columns:80px 260px 1fr 200px;align-items:center;gap:24px;padding:24px 0;border-bottom:1px solid var(--rule);">
+          <div style="font-family:var(--serif-en);font-size:36px;font-weight:600;color:var(--vermilion);line-height:1;">02</div>
+          <div>
+            <div style="font-family:var(--sans-zh);font-size:13px;letter-spacing:.32em;color:var(--smoke-2);font-weight:700;margin-bottom:6px;">MARKET WINDOW</div>
+            <div style="font-family:var(--serif-zh);font-size:30px;font-weight:700;color:var(--ink);">市场窗口</div>
+            <div style="font-family:var(--serif-en);font-size:22px;color:var(--vermilion);font-weight:600;margin-top:6px;font-feature-settings:'lnum','tnum';">5 万亿 · &lt; 5%</div>
+          </div>
+          <div style="font-family:var(--serif-zh);font-size:20px;line-height:1.75;color:var(--smoke);">
+            生鲜零售年规模 5 万亿，数字化渗透率不到 5%。<b style="color:var(--ink);">年轻人重新爱上菜市场——烟火气是新奢侈</b>。
+          </div>
+          <div>
+            <span class="tag v" style="font-size:14px;">在地消费</span>
+            <span class="tag v" style="font-size:14px;">Z 世代</span>
+          </div>
+        </div>
+
+        <!-- 技术 -->
+        <div style="display:grid;grid-template-columns:80px 260px 1fr 200px;align-items:center;gap:24px;padding:24px 0;">
+          <div style="font-family:var(--serif-en);font-size:36px;font-weight:600;color:var(--vermilion);line-height:1;">03</div>
+          <div>
+            <div style="font-family:var(--sans-zh);font-size:13px;letter-spacing:.32em;color:var(--smoke-2);font-weight:700;margin-bottom:6px;">TECH WINDOW</div>
+            <div style="font-family:var(--serif-zh);font-size:30px;font-weight:700;color:var(--ink);">技术窗口</div>
+            <div style="font-family:var(--serif-en);font-size:22px;color:var(--vermilion);font-weight:600;margin-top:6px;font-feature-settings:'lnum','tnum';">1 / 5</div>
+          </div>
+          <div style="font-family:var(--serif-zh);font-size:20px;line-height:1.75;color:var(--smoke);">
+            Agent 工具链成熟，运营成本压到 1/5。<b style="color:var(--ink);">过去 10 人团队的活，一个人 + AI 即可完成</b>。
+          </div>
+          <div>
+            <span class="tag v" style="font-size:14px;">Agent</span>
+            <span class="tag v" style="font-size:14px;">工作流</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">03<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S4 · 四大标杆总览 ============ -->
+  <section class="slide" data-screen-label="04 国际四标杆" style="background:var(--paper-3);">
+    <div class="runhead">
+      <span>看世界 · 四大标杆</span>
+      <span class="right"><span class="dot"></span><span class="en">INTERNATIONAL BENCHMARKS</span></span>
+    </div>
+
+    <!-- 大字水印 -->
+    <div style="position:absolute;right:96px;top:160px;font-family:var(--serif-en);font-size:420px;line-height:1;font-weight:200;color:rgba(184,53,31,.08);letter-spacing:-.04em;user-select:none;">04</div>
+
+    <div class="body-area">
+      <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:18px;">
+        BENCHMARKS
+        <span class="tick"></span>
+        全球四种前沿空间形态
+      </div>
+      <h2 style="font-family:var(--serif-zh);font-weight:800;font-size:64px;color:var(--ink);margin:0 0 16px;line-height:1.1;letter-spacing:.02em;">
+        "菜市场"不是低毛利死局，<br />
+        而是<span style="color:var(--vermilion);">高频流量入口</span>。
+      </h2>
+      <p style="font-family:var(--serif-zh);font-size:22px;line-height:1.75;color:var(--smoke);margin:0 0 36px;max-width:1500px;">
+        四个城市，四种路径，共同证明：通过菜市场吸引保底高频流量，
+        再通过文旅 / 服务 / 办公 / 孵化的高溢价业态变现。
+      </p>
+
+      <div class="rule-thick" style="margin-bottom:24px;"></div>
+
+      <!-- 2x2 编辑式卡 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:24px 36px;flex:1;">
+
+        <!-- 01 巴塞罗那 -->
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start;">
+          <div style="position:relative;height:160px;overflow:hidden;" class="city-barcelona">
+            <div class="dot-tex"></div>
+            <image-slot id="city-barcelona-thumb" placeholder="巴塞罗那照片" style="position:absolute;inset:0;background:transparent;"></image-slot>
+            <div style="position:absolute;left:12px;top:10px;font-family:var(--serif-en);font-size:32px;color:#FFFFFF;font-weight:600;line-height:1;text-shadow:0 2px 6px rgba(0,0,0,.4);">01</div>
+          </div>
+          <div>
+            <div style="font-family:var(--sans-en);font-size:13px;letter-spacing:.32em;color:var(--smoke-2);font-weight:700;margin-bottom:8px;">SPAIN · BARCELONA</div>
+            <div style="font-family:var(--serif-zh);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.3;">超级市集 · 文旅折叠</div>
+            <p style="font-family:var(--serif-zh);font-size:18px;line-height:1.7;color:var(--smoke);margin:0 0 12px;">
+              白日刚需 + 夜间文旅，全时段高坪效。
+            </p>
+            <span class="tag v" style="font-size:13px;">文旅驱动</span>
+            <span class="tag v" style="font-size:13px;">本地刚需</span>
+          </div>
+        </div>
+
+        <!-- 02 新加坡 -->
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start;">
+          <div style="position:relative;height:160px;overflow:hidden;" class="city-singapore">
+            <div class="dot-tex"></div>
+            <image-slot id="city-singapore-thumb" placeholder="新加坡照片" style="position:absolute;inset:0;background:transparent;"></image-slot>
+            <div style="position:absolute;left:12px;top:10px;font-family:var(--serif-en);font-size:32px;color:#FFFFFF;font-weight:600;line-height:1;text-shadow:0 2px 6px rgba(0,0,0,.4);">02</div>
+          </div>
+          <div>
+            <div style="font-family:var(--sans-en);font-size:13px;letter-spacing:.32em;color:var(--smoke-2);font-weight:700;margin-bottom:8px;">SINGAPORE</div>
+            <div style="font-family:var(--serif-zh);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.3;">垂直社区 · 精细化</div>
+            <p style="font-family:var(--serif-zh);font-size:18px;line-height:1.7;color:var(--smoke);margin:0 0 12px;">
+              会员制高频复购 + 供应链金融隐形利差。
+            </p>
+            <span class="tag v" style="font-size:13px;">社区刚需</span>
+            <span class="tag v" style="font-size:13px;">供应链金融</span>
+          </div>
+        </div>
+
+        <!-- 03 迈阿密 -->
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start;">
+          <div style="position:relative;height:160px;overflow:hidden;" class="city-miami">
+            <div class="dot-tex"></div>
+            <image-slot id="city-miami-thumb" placeholder="迈阿密照片" style="position:absolute;inset:0;background:transparent;"></image-slot>
+            <div style="position:absolute;left:12px;top:10px;font-family:var(--serif-en);font-size:32px;color:#FFFFFF;font-weight:600;line-height:1;text-shadow:0 2px 6px rgba(0,0,0,.4);">03</div>
+          </div>
+          <div>
+            <div style="font-family:var(--sans-en);font-size:13px;letter-spacing:.32em;color:var(--smoke-2);font-weight:700;margin-bottom:8px;">USA · MIAMI</div>
+            <div style="font-family:var(--serif-zh);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.3;">滨水数字游民部落</div>
+            <p style="font-family:var(--serif-zh);font-size:18px;line-height:1.7;color:var(--smoke);margin:0 0 12px;">
+              亲水景观溢价 + 长线置换初创股权。
+            </p>
+            <span class="tag v" style="font-size:13px;">滨水经济</span>
+            <span class="tag v" style="font-size:13px;">创新孵化</span>
+          </div>
+        </div>
+
+        <!-- 04 阿姆斯特丹 -->
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start;">
+          <div style="position:relative;height:160px;overflow:hidden;" class="city-amsterdam">
+            <div class="dot-tex"></div>
+            <image-slot id="city-amsterdam-thumb" placeholder="阿姆斯特丹照片" style="position:absolute;inset:0;background:transparent;"></image-slot>
+            <div style="position:absolute;left:12px;top:10px;font-family:var(--serif-en);font-size:32px;color:#FFFFFF;font-weight:600;line-height:1;text-shadow:0 2px 6px rgba(0,0,0,.4);">04</div>
+          </div>
+          <div>
+            <div style="font-family:var(--sans-en);font-size:13px;letter-spacing:.32em;color:var(--smoke-2);font-weight:700;margin-bottom:8px;">NETHERLANDS · AMSTERDAM</div>
+            <div style="font-family:var(--serif-zh);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.3;">水岸创客 · ESG 金融</div>
+            <p style="font-family:var(--serif-zh);font-size:18px;line-height:1.7;color:var(--smoke);margin:0 0 12px;">
+              情绪价值溢价 + 引入 ESG 绿色金融基金。
+            </p>
+            <span class="tag v" style="font-size:13px;">绿色循环</span>
+            <span class="tag v" style="font-size:13px;">新消费孵化</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">04<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S5 · 巴塞罗那 ============ -->
+  <section class="slide" data-screen-label="05 巴塞罗那超级市集">
+    <div class="runhead">
+      <span>看世界 · 01</span>
+      <span class="right"><span class="dot"></span><span class="en">SPAIN · BARCELONA</span></span>
+    </div>
+
+    <!-- 左照片 -->
+    <div style="position:absolute;left:0;top:0;width:55%;height:100%;" class="city-barcelona">
+      <div class="dot-tex"></div>
+      <image-slot id="city-barcelona-detail" placeholder="拖入巴塞罗那 Boqueria / Sant Antoni 市集照片" style="position:absolute;inset:0;background:transparent;"></image-slot>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg, transparent 40%, rgba(0,0,0,.35) 100%);pointer-events:none;"></div>
+      <div style="position:absolute;left:48px;bottom:64px;color:#FFFFFF;z-index:2;">
+        <div style="font-family:var(--sans-en);font-size:14px;letter-spacing:.36em;color:rgba(255,255,255,.85);font-weight:700;margin-bottom:8px;">CASE STUDY · 01</div>
+        <div style="font-family:var(--serif-en);font-size:140px;font-weight:300;line-height:.9;color:#FFFFFF;letter-spacing:-.02em;">01</div>
+        <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.4em;color:rgba(255,255,255,.85);margin-top:14px;">SPAIN · BARCELONA</div>
+      </div>
+    </div>
+
+    <!-- 右文字 -->
+    <div style="position:absolute;left:55%;top:0;bottom:0;right:0;padding:96px;display:flex;flex-direction:column;justify-content:center;">
+      <div style="font-family:var(--sans-en);font-size:16px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:14px;">SUPER MARKET · 超级市集</div>
+      <h3 class="section-title" style="font-size:54px;margin-bottom:20px;">
+        西班牙超级市集<br />
+        <span style="color:var(--vermilion);font-size:36px;font-weight:600;">文旅与市井的折叠</span>
+      </h3>
+      <p style="font-family:var(--serif-zh);font-size:20px;line-height:1.75;color:var(--smoke);margin:0 0 28px;">
+        对传统菜市场进行美学升级 + 功能重组，<br />
+        实现空间在<b style="color:var(--ink);">全时段</b>的高效运转。
+      </p>
+
+      <div class="rule" style="margin-bottom:24px;"></div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;row-gap:22px;column-gap:24px;align-items:start;">
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.32em;color:var(--vermilion);font-weight:700;padding-top:4px;">核 心 导 向</div>
+        <div style="font-family:var(--serif-zh);font-size:22px;line-height:1.7;color:var(--ink);">旅游业驱动 + 本地刚需流量</div>
+
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.32em;color:var(--smoke-2);font-weight:700;padding-top:4px;">空 间 布 局</div>
+        <div style="font-family:var(--serif-zh);font-size:20px;line-height:1.7;color:var(--ink);">
+          地面：白天高颜值生鲜市集 / 下午晚间无缝切换为特色餐饮 · 小酒馆；<br />
+          高层：文旅与餐饮品牌孵化基地。
+        </div>
+
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.32em;color:var(--gold);font-weight:700;padding-top:4px;">利 润 锚 点</div>
+        <div style="font-family:var(--serif-zh);font-size:20px;line-height:1.7;color:var(--ink);">
+          白日刚需 + 夜间文旅，全时段高坪效；<br />
+          文旅溢价 + 品牌孵化增值收益。
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">05<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S6 · 新加坡 ============ -->
+  <section class="slide" data-screen-label="06 新加坡垂直社区">
+    <div class="runhead">
+      <span>看世界 · 02</span>
+      <span class="right"><span class="dot"></span><span class="en">SINGAPORE</span></span>
+    </div>
+
+    <div style="position:absolute;left:0;top:0;width:55%;height:100%;" class="city-singapore">
+      <div class="dot-tex"></div>
+      <image-slot id="city-singapore-detail" placeholder="拖入新加坡邻里中心 / Wet Market 照片" style="position:absolute;inset:0;background:transparent;"></image-slot>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg, transparent 40%, rgba(0,0,0,.35) 100%);pointer-events:none;"></div>
+      <div style="position:absolute;left:48px;bottom:64px;color:#FFFFFF;z-index:2;">
+        <div style="font-family:var(--sans-en);font-size:14px;letter-spacing:.36em;color:rgba(255,255,255,.85);font-weight:700;margin-bottom:8px;">CASE STUDY · 02</div>
+        <div style="font-family:var(--serif-en);font-size:140px;font-weight:300;line-height:.9;color:#FFFFFF;letter-spacing:-.02em;">02</div>
+        <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.4em;color:rgba(255,255,255,.85);margin-top:14px;">SINGAPORE</div>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:55%;top:0;bottom:0;right:0;padding:96px;display:flex;flex-direction:column;justify-content:center;">
+      <div style="font-family:var(--sans-en);font-size:16px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:14px;">VERTICAL HUB · 垂直社区枢纽</div>
+      <h3 class="section-title" style="font-size:54px;margin-bottom:20px;">
+        新加坡垂直社区<br />
+        <span style="color:var(--vermilion);font-size:36px;font-weight:600;">高频复购 + 标准化</span>
+      </h3>
+      <p style="font-family:var(--serif-zh);font-size:20px;line-height:1.75;color:var(--smoke);margin:0 0 28px;">
+        侧重<b style="color:var(--ink);">高频次复购</b>与标准化管理，<br />
+        是具备<b style="color:var(--ink);">强复制性</b>的高密度综合体。
+      </p>
+
+      <div class="rule" style="margin-bottom:24px;"></div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;row-gap:22px;column-gap:24px;align-items:start;">
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.32em;color:var(--vermilion);font-weight:700;padding-top:4px;">核 心 导 向</div>
+        <div style="font-family:var(--serif-zh);font-size:22px;line-height:1.7;color:var(--ink);">社区刚需 + 专业服务保障 + 供应链金融</div>
+
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.32em;color:var(--smoke-2);font-weight:700;padding-top:4px;">空 间 布 局</div>
+        <div style="font-family:var(--serif-zh);font-size:20px;line-height:1.7;color:var(--ink);">
+          底层：数字化生鲜中心 + 极速前置仓；<br />
+          中高层：家政 / 洗衣 / 维修 + 微型金融服务网点。
+        </div>
+
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.32em;color:var(--gold);font-weight:700;padding-top:4px;">利 润 锚 点</div>
+        <div style="font-family:var(--serif-zh);font-size:20px;line-height:1.7;color:var(--ink);">
+          会员制绑定高频复购流水；<br />
+          便民 / 商户分成 + <b style="color:var(--vermilion);">供应链流水贷</b>隐形利差。
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">06<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S7 · 迈阿密 ============ -->
+  <section class="slide" data-screen-label="07 迈阿密滨水部落">
+    <div class="runhead">
+      <span>看世界 · 03</span>
+      <span class="right"><span class="dot"></span><span class="en">USA · MIAMI</span></span>
+    </div>
+
+    <div style="position:absolute;left:0;top:0;width:55%;height:100%;" class="city-miami">
+      <div class="dot-tex"></div>
+      <image-slot id="city-miami-detail" placeholder="拖入迈阿密滨水 / Wynwood 街区照片" style="position:absolute;inset:0;background:transparent;"></image-slot>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg, transparent 40%, rgba(0,0,0,.35) 100%);pointer-events:none;"></div>
+      <div style="position:absolute;left:48px;bottom:64px;color:#FFFFFF;z-index:2;">
+        <div style="font-family:var(--sans-en);font-size:14px;letter-spacing:.36em;color:rgba(255,255,255,.85);font-weight:700;margin-bottom:8px;">CASE STUDY · 03</div>
+        <div style="font-family:var(--serif-en);font-size:140px;font-weight:300;line-height:.9;color:#FFFFFF;letter-spacing:-.02em;">03</div>
+        <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.4em;color:rgba(255,255,255,.85);margin-top:14px;">USA · MIAMI</div>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:55%;top:0;bottom:0;right:0;padding:96px;display:flex;flex-direction:column;justify-content:center;">
+      <div style="font-family:var(--sans-en);font-size:16px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:14px;">RIVERSIDE TRIBE · 滨水数字游民部落</div>
+      <h3 class="section-title" style="font-size:54px;margin-bottom:20px;">
+        迈阿密滨水部落<br />
+        <span style="color:var(--vermilion);font-size:36px;font-weight:600;">跨界生活方式</span>
+      </h3>
+      <p style="font-family:var(--serif-zh);font-size:20px;line-height:1.75;color:var(--smoke);margin:0 0 28px;">
+        充分利用<b style="color:var(--ink);">亲水地理特征</b>，<br />
+        把生活刚需与产业聚集做跨界结合。
+      </p>
+
+      <div class="rule" style="margin-bottom:24px;"></div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;row-gap:22px;column-gap:24px;align-items:start;">
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.32em;color:var(--vermilion);font-weight:700;padding-top:4px;">核 心 导 向</div>
+        <div style="font-family:var(--serif-zh);font-size:22px;line-height:1.7;color:var(--ink);">滨水水岸经济 + 创新孵化 + 长期资本</div>
+
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.32em;color:var(--smoke-2);font-weight:700;padding-top:4px;">空 间 布 局</div>
+        <div style="font-family:var(--serif-zh);font-size:20px;line-height:1.7;color:var(--ink);">
+          沿河岸：精品农贸 + 轻食餐饮 + 露天咖啡 · 打卡地；<br />
+          上层：数字游民 / 自由职业者联合办公孵化基地。
+        </div>
+
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.32em;color:var(--gold);font-weight:700;padding-top:4px;">利 润 锚 点</div>
+        <div style="font-family:var(--serif-zh);font-size:20px;line-height:1.7;color:var(--ink);">
+          稀缺滨水景观→餐饮零售租金溢价；<br />
+          联合办公租金 + <b style="color:var(--vermilion);">置换早期股权</b>长线资本收益。
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">07<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S8 · 阿姆斯特丹 ============ -->
+  <section class="slide" data-screen-label="08 阿姆斯特丹创客市集">
+    <div class="runhead">
+      <span>看世界 · 04</span>
+      <span class="right"><span class="dot"></span><span class="en">NETHERLANDS · AMSTERDAM</span></span>
+    </div>
+
+    <div style="position:absolute;left:0;top:0;width:55%;height:100%;" class="city-amsterdam">
+      <div class="dot-tex"></div>
+      <image-slot id="city-amsterdam-detail" placeholder="拖入阿姆斯特丹 De Foodhallen / 运河市集照片" style="position:absolute;inset:0;background:transparent;"></image-slot>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg, transparent 40%, rgba(0,0,0,.35) 100%);pointer-events:none;"></div>
+      <div style="position:absolute;left:48px;bottom:64px;color:#FFFFFF;z-index:2;">
+        <div style="font-family:var(--sans-en);font-size:14px;letter-spacing:.36em;color:rgba(255,255,255,.85);font-weight:700;margin-bottom:8px;">CASE STUDY · 04</div>
+        <div style="font-family:var(--serif-en);font-size:140px;font-weight:300;line-height:.9;color:#FFFFFF;letter-spacing:-.02em;">04</div>
+        <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.4em;color:rgba(255,255,255,.85);margin-top:14px;">AMSTERDAM</div>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:55%;top:0;bottom:0;right:0;padding:96px;display:flex;flex-direction:column;justify-content:center;">
+      <div style="font-family:var(--sans-en);font-size:16px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:14px;">CREATOR MARKET · 水岸创客市集</div>
+      <h3 class="section-title" style="font-size:54px;margin-bottom:20px;">
+        阿姆斯特丹创客市集<br />
+        <span style="color:var(--vermilion);font-size:36px;font-weight:600;">绿色循环 · ESG 金融</span>
+      </h3>
+      <p style="font-family:var(--serif-zh);font-size:20px;line-height:1.75;color:var(--smoke);margin:0 0 28px;">
+        把前沿设计、现代科技与传统市井融合，<br />
+        提供<b style="color:var(--ink);">高情绪价值</b> + 获取<b style="color:var(--ink);">资本红利</b>。
+      </p>
+
+      <div class="rule" style="margin-bottom:24px;"></div>
+
+      <div style="display:grid;grid-template-columns:140px 1fr;row-gap:22px;column-gap:24px;align-items:start;">
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.32em;color:var(--vermilion);font-weight:700;padding-top:4px;">核 心 导 向</div>
+        <div style="font-family:var(--serif-zh);font-size:22px;line-height:1.7;color:var(--ink);">环保设计溢价 + 新消费品牌孵化 + ESG 绿色金融</div>
+
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.32em;color:var(--smoke-2);font-weight:700;padding-top:4px;">空 间 布 局</div>
+        <div style="font-family:var(--serif-zh);font-size:20px;line-height:1.7;color:var(--ink);">
+          室内：高质感市集 + 鲜花 / 精酿 / 垂直农业；<br />
+          上层：新消费 / 环保文创团队孵化器。
+        </div>
+
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.32em;color:var(--gold);font-weight:700;padding-top:4px;">利 润 锚 点</div>
+        <div style="font-family:var(--serif-zh);font-size:20px;line-height:1.7;color:var(--ink);">
+          设计 + 环保→高情绪价值溢价；多业态轮转拉营收；<br />
+          契合 ESG → <b style="color:var(--vermilion);">引入绿色金融基金</b>，提升估值降融资成本。
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">08<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S9 · 四模式提炼 ============ -->
+  <section class="slide" data-screen-label="09 四模式共同路径">
+    <div class="runhead">
+      <span>看世界 · 提炼</span>
+      <span class="right"><span class="dot"></span><span class="en">SYNTHESIS</span></span>
+    </div>
+
+    <div class="body-area">
+      <div class="chapter-tag" style="margin-bottom:18px;">
+        <span>§</span><span class="num-big">II.5</span><span class="zh">复制与利润核心 · 提炼</span>
+      </div>
+      <h3 class="section-title" style="margin-bottom:14px;font-size:60px;">
+        共同的盈利路径<span style="color:var(--vermilion);">只有一条</span>。
+      </h3>
+      <p class="body-text body-muted" style="margin-bottom:36px;max-width:1500px;">
+        不局限于"传统卖菜"的低毛利死局——
+        用"菜市场"这一天然刚需业态吸引高频次保底流量，
+        再用高溢价业态实现流量变现。
+      </p>
+
+      <!-- 漏斗图 -->
+      <div style="flex:1;display:grid;grid-template-columns:1fr 80px 1fr;gap:0;align-items:stretch;">
+        <!-- 左：高频入口 -->
+        <div style="background:var(--paper-2);padding:40px;display:flex;flex-direction:column;justify-content:center;border-top:6px solid var(--gold);">
+          <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.36em;color:var(--gold);font-weight:700;margin-bottom:14px;">THE HOOK · 入口</div>
+          <div style="font-family:var(--serif-zh);font-size:42px;font-weight:800;color:var(--ink);line-height:1.15;letter-spacing:.02em;margin-bottom:16px;">
+            菜市场<br />天然刚需
+          </div>
+          <ul class="bullets" style="font-size:20px;">
+            <li>高频次保底流量</li>
+            <li>家庭老百姓 · 日日上门</li>
+            <li>烟火气 · 内容素材富矿</li>
+          </ul>
+        </div>
+
+        <!-- 中：箭头 -->
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div style="font-family:var(--serif-en);font-size:80px;color:var(--vermilion);line-height:1;font-weight:300;">→</div>
+          <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.36em;color:var(--smoke-2);font-weight:700;margin-top:12px;writing-mode:horizontal-tb;">流量变现</div>
+        </div>
+
+        <!-- 右：高溢价 -->
+        <div style="background:var(--ink);color:var(--paper);padding:40px;display:flex;flex-direction:column;justify-content:center;border-top:6px solid var(--vermilion);">
+          <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.36em;color:var(--gold);font-weight:700;margin-bottom:14px;">THE YIELD · 变现</div>
+          <div style="font-family:var(--serif-zh);font-size:42px;font-weight:800;color:var(--paper);line-height:1.15;letter-spacing:.02em;margin-bottom:16px;">
+            四类高溢价业态
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-family:var(--serif-zh);font-size:18px;line-height:1.5;">
+            <div style="border-left:3px solid var(--vermilion);padding-left:12px;"><b style="color:var(--gold);">文 旅</b><br /><span style="color:#C8BFA9;font-size:15px;">夜经济 · 餐饮 · 品牌</span></div>
+            <div style="border-left:3px solid var(--vermilion);padding-left:12px;"><b style="color:var(--gold);">服 务</b><br /><span style="color:#C8BFA9;font-size:15px;">家政 · 维修 · 微金融</span></div>
+            <div style="border-left:3px solid var(--vermilion);padding-left:12px;"><b style="color:var(--gold);">办 公</b><br /><span style="color:#C8BFA9;font-size:15px;">联办 · 数字游民 · 孵化</span></div>
+            <div style="border-left:3px solid var(--vermilion);padding-left:12px;"><b style="color:var(--gold);">文 创</b><br /><span style="color:#C8BFA9;font-size:15px;">新消费 · ESG · 绿色金融</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部结论 -->
+      <div style="margin-top:28px;padding:20px 28px;background:var(--vermilion);color:var(--paper);display:flex;align-items:center;gap:24px;">
+        <div style="font-family:var(--serif-en);font-size:40px;font-weight:300;color:rgba(255,255,255,.6);line-height:1;">"</div>
+        <div style="font-family:var(--serif-zh);font-size:22px;line-height:1.6;flex:1;">
+          可<b>单一路径深化</b>，也可<b>抽取标准化的物业管理与金融套利模块</b>——
+          实现轻资产的可复制化输出。这一点，<b style="color:var(--gold);">海甸溪是天然的试验场</b>。
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">09<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S10 · 海南 · 本地机构优势 ============ -->
+  <section class="slide" data-screen-label="10 海南优势">
+    <div class="runhead">
+      <span>落海南 · 不可替代性</span>
+      <span class="right"><span class="dot"></span><span class="en">WHY HAINAN</span></span>
+    </div>
+
+    <div class="body-area">
+      <div class="chapter-tag" style="margin-bottom:18px;">
+        <span>§</span><span class="num-big">III.0</span><span class="zh">海南 · 海甸溪 · 不可替代性</span>
+      </div>
+      <h3 class="section-title" style="font-size:60px;margin-bottom:14px;">
+        把四个国际样板，放进<span style="color:var(--vermilion);">中国唯一</span>的窗口。
+      </h3>
+      <p class="body-text body-muted" style="margin-bottom:36px;max-width:1500px;">
+        2025.12.18 自贸港封关之后，海南是国家给的<b style="color:var(--ink);">国家级试验场</b>——
+        税收、数据、跨境流动、产业孵化，每一项政策都是为这件事量身定做的。
+      </p>
+
+      <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:36px;flex:1;">
+        <!-- 左：海南地图 + 区位 -->
+        <div style="background:var(--paper-2);padding:36px 40px;display:flex;flex-direction:column;border-top:4px solid var(--ink);">
+          <div style="font-family:var(--sans-en);font-size:16px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:12px;">GEO · 区位价值</div>
+          <h4 class="sub-title" style="margin-bottom:18px;font-size:32px;">海甸溪北岸 · 海口的客厅</h4>
+
+          <!-- 简化的海南岛 SVG -->
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative;">
+            <svg viewBox="0 0 400 300" style="width:100%;max-width:440px;">
+              <defs>
+                <pattern id="hainan-dots" width="6" height="6" patternUnits="userSpaceOnUse">
+                  <circle cx="1" cy="1" r=".8" fill="#0E1A2B" opacity=".15" />
+                </pattern>
+              </defs>
+              <!-- 简化海南岛轮廓 -->
+              <path d="M70 80 Q60 60 90 50 Q140 38 200 42 Q260 38 310 55 Q345 70 350 110 Q352 160 330 200 Q300 240 240 250 Q170 258 110 235 Q70 215 55 175 Q50 130 70 80 Z"
+                fill="url(#hainan-dots)" stroke="#0E1A2B" stroke-width="1.5" />
+              <!-- 海口标记 -->
+              <circle cx="200" cy="60" r="10" fill="#B8351F" />
+              <circle cx="200" cy="60" r="18" fill="none" stroke="#B8351F" stroke-width="1.5" opacity=".5" />
+              <text x="200" y="42" text-anchor="middle" font-family="var(--sans-zh)" font-size="14" font-weight="700" fill="#0E1A2B">海口 · 海甸溪</text>
+              <!-- 三亚 -->
+              <circle cx="180" cy="240" r="5" fill="#0E1A2B" opacity=".4" />
+              <text x="180" y="260" text-anchor="middle" font-family="var(--sans-zh)" font-size="11" fill="#3A4250">三亚</text>
+              <!-- 文昌 / 儋州 -->
+              <circle cx="270" cy="100" r="4" fill="#0E1A2B" opacity=".4" />
+              <text x="280" y="100" font-family="var(--sans-zh)" font-size="11" fill="#3A4250">文昌</text>
+              <circle cx="105" cy="130" r="4" fill="#0E1A2B" opacity=".4" />
+              <text x="90" y="125" text-anchor="end" font-family="var(--sans-zh)" font-size="11" fill="#3A4250">儋州</text>
+              <!-- 标尺 -->
+              <line x1="50" y1="280" x2="120" y2="280" stroke="#0E1A2B" stroke-width="1" />
+              <text x="85" y="295" text-anchor="middle" font-family="var(--sans-en)" font-size="9" fill="#3A4250">50 KM</text>
+            </svg>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px;">
+            <div><div style="font-family:var(--serif-en);font-size:34px;color:var(--vermilion);font-weight:600;line-height:1;">15 min</div><div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:6px;">至海口美兰国际机场</div></div>
+            <div><div style="font-family:var(--serif-en);font-size:34px;color:var(--vermilion);font-weight:600;line-height:1;">1 km</div><div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:6px;">距白沙门公园</div></div>
+            <div><div style="font-family:var(--serif-en);font-size:34px;color:var(--vermilion);font-weight:600;line-height:1;">700 m</div><div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:6px;">滨海亲水岸线</div></div>
+          </div>
+        </div>
+
+        <!-- 右：四个优势 -->
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:grid;grid-template-columns:64px 1fr;gap:18px;padding:18px 4px;border-bottom:1px solid var(--rule);">
+            <div style="font-family:var(--serif-en);font-size:36px;font-weight:600;color:var(--vermilion);line-height:1;">01</div>
+            <div>
+              <div style="font-family:var(--serif-zh);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;">自贸港政策红利</div>
+              <p style="font-family:var(--serif-zh);font-size:18px;line-height:1.65;color:var(--smoke);margin:0;">企业所得税 15%、离岛免税升级、跨境数据流动——为 AI 项目天然减负。</p>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:64px 1fr;gap:18px;padding:18px 4px;border-bottom:1px solid var(--rule);">
+            <div style="font-family:var(--serif-en);font-size:36px;font-weight:600;color:var(--vermilion);line-height:1;">02</div>
+            <div>
+              <div style="font-family:var(--serif-zh);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;">数据本地留存</div>
+              <p style="font-family:var(--serif-zh);font-size:18px;line-height:1.65;color:var(--smoke);margin:0;">城市消费数据沉淀在海口、不进中心化平台——可交付政府智慧城市平台。</p>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:64px 1fr;gap:18px;padding:18px 4px;border-bottom:1px solid var(--rule);">
+            <div style="font-family:var(--serif-en);font-size:36px;font-weight:600;color:var(--vermilion);line-height:1;">03</div>
+            <div>
+              <div style="font-family:var(--serif-zh);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;">本地机构通路</div>
+              <p style="font-family:var(--serif-zh);font-size:18px;line-height:1.65;color:var(--smoke);margin:0;">市政府 / 国资 / 文旅集团 直通——夜经济样板、自贸港数字示范区双重抓手。</p>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:64px 1fr;gap:18px;padding:18px 4px;">
+            <div style="font-family:var(--serif-en);font-size:36px;font-weight:600;color:var(--vermilion);line-height:1;">04</div>
+            <div>
+              <div style="font-family:var(--serif-zh);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:6px;">在地文化富矿</div>
+              <p style="font-family:var(--serif-zh);font-size:18px;line-height:1.65;color:var(--smoke);margin:0;">琼剧 · 黎歌苗舞 · 渔港文化 · 黎锦非遗——AI 时代最稀缺的"内容素材"。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">10<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S11 · AI Agent 落地商铺 ============ -->
+  <section class="slide" data-screen-label="11 Agent 落地商铺">
+    <div class="runhead">
+      <span>AI Agent 落地</span>
+      <span class="right"><span class="dot"></span><span class="en">THREE-LAYER AGENT</span></span>
+    </div>
+
+    <div class="body-area">
+      <div class="chapter-tag" style="margin-bottom:14px;">
+        <span>§</span><span class="num-big">IV.1</span><span class="zh">Agent 怎么落到商铺</span>
+      </div>
+      <h3 class="section-title" style="font-size:54px;margin-bottom:12px;">
+        Agent 不是聊天机器人。<br />
+        是每个商户身后那个<span style="color:var(--vermilion);">看不见的店小二</span>。
+      </h3>
+      <p class="body-text body-muted" style="margin-bottom:28px;max-width:1500px;font-size:22px;">
+        三层结构：从浅到深，从"包装故事"到"驱动决策"。
+        L1 产出的故事素材→喂给 L2 的内容工厂→沉淀的交易数据→喂给 L3 的管理大脑。
+        闭环。
+      </p>
+
+      <!-- 三层卡 -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px;flex:1;">
+        <div style="border:1px solid var(--rule);border-top:6px solid var(--ink);background:var(--paper);padding:24px 28px;display:flex;flex-direction:column;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
+            <div style="font-family:var(--serif-en);font-size:48px;color:var(--vermilion);font-weight:600;line-height:1;">L1</div>
+            <div style="font-family:var(--sans-en);font-size:13px;letter-spacing:.28em;color:var(--smoke-2);font-weight:700;">STORY AGENT</div>
+          </div>
+          <div style="font-family:var(--serif-zh);font-size:24px;font-weight:700;margin-bottom:12px;line-height:1.35;">IP 层 · 让摊主成为故事主角</div>
+          <p style="font-family:var(--serif-zh);font-size:17px;line-height:1.7;color:var(--smoke);margin:0 0 14px;">
+            不是把摊主包装成网红。Agent 帮他梳理"为什么我做这个、做了多久、最骄傲的一锅汤"——故事是真的，叙事是 AI 写的。
+          </p>
+          <div class="rule" style="margin-bottom:12px;"></div>
+          <div style="font-family:var(--sans-zh);font-size:13px;letter-spacing:.24em;color:var(--ink);font-weight:700;margin-bottom:8px;">典型动作</div>
+          <ul style="margin:0;padding:0;list-style:none;font-family:var(--serif-zh);font-size:16px;line-height:1.6;color:var(--ink);">
+            <li style="padding-left:14px;position:relative;margin-bottom:6px;">
+              <span style="position:absolute;left:0;top:9px;width:6px;height:6px;background:var(--vermilion);"></span>
+              人物速写 · 3 分钟访谈→3 篇文案
+            </li>
+            <li style="padding-left:14px;position:relative;margin-bottom:6px;">
+              <span style="position:absolute;left:0;top:9px;width:6px;height:6px;background:var(--vermilion);"></span>
+              视觉风格库 · 三平台三套封面
+            </li>
+            <li style="padding-left:14px;position:relative;margin-bottom:6px;">
+              <span style="position:absolute;left:0;top:9px;width:6px;height:6px;background:var(--vermilion);"></span>
+              方言留存 · AI 字幕翻译
+            </li>
+          </ul>
+          <div style="margin-top:auto;padding-top:14px;">
+            <span class="tag v" style="font-size:14px;">Claude</span>
+            <span class="tag v" style="font-size:14px;">Midjourney</span>
+            <span class="tag v" style="font-size:14px;">即梦</span>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--rule);border-top:6px solid var(--ink);background:var(--paper);padding:24px 28px;display:flex;flex-direction:column;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
+            <div style="font-family:var(--serif-en);font-size:48px;color:var(--vermilion);font-weight:600;line-height:1;">L2</div>
+            <div style="font-family:var(--sans-en);font-size:13px;letter-spacing:.28em;color:var(--smoke-2);font-weight:700;">CONTENT & COMMERCE</div>
+          </div>
+          <div style="font-family:var(--serif-zh);font-size:24px;font-weight:700;margin-bottom:12px;line-height:1.35;">运营层 · 内容与交易自动跑</div>
+          <p style="font-family:var(--serif-zh);font-size:17px;line-height:1.7;color:var(--smoke);margin:0 0 14px;">
+            日更短视频、直播脚本、私域 SOP、看着买视频议价——过去 5 人团队的事，AI 工作流一次走完，摊主只按"发"。
+          </p>
+          <div class="rule" style="margin-bottom:12px;"></div>
+          <div style="font-family:var(--sans-zh);font-size:13px;letter-spacing:.24em;color:var(--ink);font-weight:700;margin-bottom:8px;">典型动作</div>
+          <ul style="margin:0;padding:0;list-style:none;font-family:var(--serif-zh);font-size:16px;line-height:1.6;color:var(--ink);">
+            <li style="padding-left:14px;position:relative;margin-bottom:6px;">
+              <span style="position:absolute;left:0;top:9px;width:6px;height:6px;background:var(--vermilion);"></span>
+              日更工厂 · 1 段素材→9 条衍生
+            </li>
+            <li style="padding-left:14px;position:relative;margin-bottom:6px;">
+              <span style="position:absolute;left:0;top:9px;width:6px;height:6px;background:var(--vermilion);"></span>
+              私域机器人 · 7 日复购提醒
+            </li>
+            <li style="padding-left:14px;position:relative;margin-bottom:6px;">
+              <span style="position:absolute;left:0;top:9px;width:6px;height:6px;background:var(--vermilion);"></span>
+              看着买 · 视频议价 + 区块链存证
+            </li>
+          </ul>
+          <div style="margin-top:auto;padding-top:14px;">
+            <span class="tag v" style="font-size:14px;">Codex</span>
+            <span class="tag v" style="font-size:14px;">Dify</span>
+            <span class="tag v" style="font-size:14px;">Sora / 可灵</span>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--rule);border-top:6px solid var(--ink);background:var(--paper);padding:24px 28px;display:flex;flex-direction:column;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
+            <div style="font-family:var(--serif-en);font-size:48px;color:var(--vermilion);font-weight:600;line-height:1;">L3</div>
+            <div style="font-family:var(--sans-en);font-size:13px;letter-spacing:.28em;color:var(--smoke-2);font-weight:700;">INSIGHT AGENT</div>
+          </div>
+          <div style="font-family:var(--serif-zh);font-size:24px;font-weight:700;margin-bottom:12px;line-height:1.35;">管理层 · 让数据说话</div>
+          <p style="font-family:var(--serif-zh);font-size:17px;line-height:1.7;color:var(--smoke);margin:0 0 14px;">
+            哪个摊位该换位置、哪个品类要加强、哪条街动线有问题——不靠拍脑袋，靠 Agent 跑出的城市消费热力图。给商户看，也给政府交。
+          </p>
+          <div class="rule" style="margin-bottom:12px;"></div>
+          <div style="font-family:var(--sans-zh);font-size:13px;letter-spacing:.24em;color:var(--ink);font-weight:700;margin-bottom:8px;">典型动作</div>
+          <ul style="margin:0;padding:0;list-style:none;font-family:var(--serif-zh);font-size:16px;line-height:1.6;color:var(--ink);">
+            <li style="padding-left:14px;position:relative;margin-bottom:6px;">
+              <span style="position:absolute;left:0;top:9px;width:6px;height:6px;background:var(--vermilion);"></span>
+              人流热力 · 30 分钟动线优化
+            </li>
+            <li style="padding-left:14px;position:relative;margin-bottom:6px;">
+              <span style="position:absolute;left:0;top:9px;width:6px;height:6px;background:var(--vermilion);"></span>
+              品类雷达 · 周报上下架建议
+            </li>
+            <li style="padding-left:14px;position:relative;margin-bottom:6px;">
+              <span style="position:absolute;left:0;top:9px;width:6px;height:6px;background:var(--vermilion);"></span>
+              政府交付 · 城市消费数据图谱
+            </li>
+          </ul>
+          <div style="margin-top:auto;padding-top:14px;">
+            <span class="tag v" style="font-size:14px;">数据大模型</span>
+            <span class="tag v" style="font-size:14px;">区块链存证</span>
+            <span class="tag v" style="font-size:14px;">PowerBI</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 闭环条 -->
+      <div style="margin-top:22px;display:flex;align-items:center;gap:18px;padding:16px 24px;background:var(--ink);color:var(--paper);">
+        <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.36em;color:var(--gold);font-weight:700;">闭　环</div>
+        <div style="flex:1;display:flex;align-items:center;gap:14px;font-family:var(--serif-zh);font-size:18px;flex-wrap:wrap;">
+          <span>L1 故事素材</span><span style="color:var(--vermilion);">→</span>
+          <span>L2 内容工厂</span><span style="color:var(--vermilion);">→</span>
+          <span>L2 交易数据</span><span style="color:var(--vermilion);">→</span>
+          <span>L3 管理大脑</span><span style="color:var(--vermilion);">→</span>
+          <span style="color:var(--gold);">反哺 L1（哪些故事在传播，加大投入）</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">11<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S12 · 案例 海鲜阿伯一天 ============ -->
+  <section class="slide" data-screen-label="12 海鲜阿伯案例">
+    <div class="runhead">
+      <span>案例研究 · 海鲜阿伯</span>
+      <span class="right"><span class="dot"></span><span class="en">CASE 4.3</span></span>
+    </div>
+
+    <div class="body-area">
+      <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:48px;height:100%;">
+        <!-- 左：人物 + 数字 -->
+        <div style="display:flex;flex-direction:column;">
+          <div class="chapter-tag" style="margin-bottom:14px;">
+            <span>§</span><span class="num-big">IV.2</span><span class="zh">案例 · 海鲜阿伯</span>
+          </div>
+          <h3 class="section-title" style="font-size:54px;margin-bottom:18px;">
+            老陈的<br />一天。
+          </h3>
+
+          <!-- 摄影框 -->
+          <div style="background-image:radial-gradient(ellipse at 40% 60%,rgba(184,90,60,.4) 0%,transparent 55%),linear-gradient(135deg,#F5EFE3,#E8D2A8 60%,#C99A6A 100%);height:280px;position:relative;overflow:hidden;margin-bottom:20px;">
+            <image-slot id="case-fisherman" placeholder="海鲜摊主真实照片 / 渔港晨拍" style="position:absolute;inset:0;background:transparent;"></image-slot>
+            <div class="dot-tex"></div>
+            <div class="vignette"></div>
+            <div style="position:absolute;bottom:14px;left:18px;font-family:var(--sans-en);font-size:11px;letter-spacing:.28em;color:rgba(255,255,255,.85);font-weight:600;">HAIDIAN · FISHERMAN OLD CHEN</div>
+          </div>
+
+          <div style="margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div style="border-top:3px solid var(--vermilion);padding:14px 12px;background:var(--paper-2);">
+              <div style="font-family:var(--serif-en);font-size:42px;color:var(--vermilion);font-weight:600;line-height:1;font-feature-settings:'lnum','tnum';">+143</div>
+              <div style="font-family:var(--sans-zh);font-size:13px;color:var(--smoke);margin-top:6px;">当日新增粉丝</div>
+            </div>
+            <div style="border-top:3px solid var(--vermilion);padding:14px 12px;background:var(--paper-2);">
+              <div style="font-family:var(--serif-en);font-size:42px;color:var(--vermilion);font-weight:600;line-height:1;font-feature-settings:'lnum','tnum';">¥2,176</div>
+              <div style="font-family:var(--sans-zh);font-size:13px;color:var(--smoke);margin-top:6px;">当日 GMV</div>
+            </div>
+            <div style="border-top:3px solid var(--gold);padding:14px 12px;background:var(--paper-2);">
+              <div style="font-family:var(--serif-en);font-size:42px;color:var(--gold);font-weight:600;line-height:1;font-feature-settings:'lnum','tnum';">+38%</div>
+              <div style="font-family:var(--sans-zh);font-size:13px;color:var(--smoke);margin-top:6px;">月营收增量</div>
+            </div>
+            <div style="border-top:3px solid var(--gold);padding:14px 12px;background:var(--paper-2);">
+              <div style="font-family:var(--serif-en);font-size:42px;color:var(--gold);font-weight:600;line-height:1;font-feature-settings:'lnum','tnum';">0</div>
+              <div style="font-family:var(--sans-zh);font-size:13px;color:var(--smoke);margin-top:6px;">老陈付给 AI 的钱</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右：时间轴 -->
+        <div style="position:relative;padding-left:6px;">
+          <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:8px;">CASE 4.3 · 真 实 推 演 · TPV-MS-04-03</div>
+          <div class="rule-thick" style="margin-bottom:22px;"></div>
+
+          <!-- 时间轴 -->
+          <div style="position:relative;">
+            <div style="position:absolute;left:80px;top:8px;bottom:8px;width:2px;background:var(--ink);"></div>
+            <!-- 行 -->
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:24px;margin-bottom:18px;">
+              <div style="font-family:var(--serif-en);font-size:28px;font-weight:700;color:var(--vermilion);line-height:1;text-align:right;padding-right:34px;position:relative;">
+                07:00
+                <span style="position:absolute;right:-7px;top:6px;width:16px;height:16px;background:var(--vermilion);border:3px solid var(--paper);border-radius:50%;"></span>
+              </div>
+              <div style="padding-top:4px;font-family:var(--serif-zh);font-size:20px;line-height:1.6;color:var(--ink);">老陈赶海回来。手机架支起来，1 分钟实拍：<b>一桶活蹦的虾</b>。</div>
+            </div>
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:24px;margin-bottom:18px;">
+              <div style="font-family:var(--serif-en);font-size:28px;font-weight:700;color:var(--vermilion);line-height:1;text-align:right;padding-right:34px;position:relative;">
+                07:30
+                <span style="position:absolute;right:-7px;top:6px;width:16px;height:16px;background:var(--vermilion);border:3px solid var(--paper);border-radius:50%;"></span>
+              </div>
+              <div style="padding-top:4px;font-family:var(--serif-zh);font-size:20px;line-height:1.6;color:var(--ink);">Agent 把素材切成 <b>抖音 3 条 / 小红书 3 条 / 视频号 3 条</b>。</div>
+            </div>
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:24px;margin-bottom:18px;">
+              <div style="font-family:var(--serif-en);font-size:28px;font-weight:700;color:var(--vermilion);line-height:1;text-align:right;padding-right:34px;position:relative;">
+                08:30
+                <span style="position:absolute;right:-7px;top:6px;width:16px;height:16px;background:var(--vermilion);border:3px solid var(--paper);border-radius:50%;"></span>
+              </div>
+              <div style="padding-top:4px;font-family:var(--serif-zh);font-size:20px;line-height:1.6;color:var(--ink);">"看着买"开播。海口大学生扫码下单 <b>12 单 × ¥38</b>。</div>
+            </div>
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:24px;margin-bottom:18px;">
+              <div style="font-family:var(--serif-en);font-size:28px;font-weight:700;color:var(--vermilion);line-height:1;text-align:right;padding-right:34px;position:relative;">
+                12:00
+                <span style="position:absolute;right:-7px;top:6px;width:16px;height:16px;background:var(--vermilion);border:3px solid var(--paper);border-radius:50%;"></span>
+              </div>
+              <div style="padding-top:4px;font-family:var(--serif-zh);font-size:20px;line-height:1.6;color:var(--ink);">私域机器人推中午"虾粥工坊"联名福利。<b>3 单转线下</b>。</div>
+            </div>
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:24px;margin-bottom:18px;">
+              <div style="font-family:var(--serif-en);font-size:28px;font-weight:700;color:var(--gold);line-height:1;text-align:right;padding-right:34px;position:relative;">
+                18:00
+                <span style="position:absolute;right:-7px;top:6px;width:16px;height:16px;background:var(--gold);border:3px solid var(--paper);border-radius:50%;"></span>
+              </div>
+              <div style="padding-top:4px;font-family:var(--serif-zh);font-size:20px;line-height:1.6;color:var(--ink);">L3 看板提醒：今天虾复购热度 <b style="color:var(--vermilion);">↑ 28%</b>，建议明天加量。</div>
+            </div>
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:24px;">
+              <div style="font-family:var(--serif-en);font-size:28px;font-weight:700;color:var(--ink);line-height:1;text-align:right;padding-right:34px;position:relative;">
+                22:00
+                <span style="position:absolute;right:-7px;top:6px;width:16px;height:16px;background:var(--ink);border:3px solid var(--paper);border-radius:50%;"></span>
+              </div>
+              <div style="padding-top:4px;font-family:var(--serif-zh);font-size:20px;line-height:1.6;color:var(--ink);">老陈睡前看后台：粉丝 +143 · GMV ¥2,176 · <b style="color:var(--vermilion);">AI 没收钱</b>。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">12<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S13 · 流量变现 四条收入流 ============ -->
+  <section class="slide" data-screen-label="13 流量变现">
+    <div class="runhead">
+      <span>流量变现 · 四条收入流</span>
+      <span class="right"><span class="dot"></span><span class="en">MONETIZATION</span></span>
+    </div>
+
+    <div class="body-area">
+      <div class="chapter-tag" style="margin-bottom:16px;">
+        <span>§</span><span class="num-big">IV.3</span><span class="zh">流量变现 · 四条收入流</span>
+      </div>
+      <h3 class="section-title" style="font-size:56px;margin-bottom:12px;">
+        四条收入流，<br />
+        <span style="color:var(--vermilion);">三方利益共同体</span>。
+      </h3>
+      <p class="body-text body-muted" style="margin-bottom:32px;max-width:1500px;">
+        不是单一租金模型——把"摊主、平台、政府"三方都纳入分润结构，
+        让每个角色都有可量化的回报。
+      </p>
+
+      <!-- 4 收入流 -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;flex:1;">
+        <div style="border:1px solid var(--rule);background:var(--paper);padding:24px;display:flex;flex-direction:column;">
+          <div style="font-family:var(--sans-en);font-size:14px;letter-spacing:.32em;color:var(--vermilion);font-weight:700;margin-bottom:10px;">STREAM · 01</div>
+          <div style="font-family:var(--serif-en);font-size:64px;color:var(--vermilion);font-weight:600;line-height:.95;font-feature-settings:'lnum','tnum';">40<span style="font-size:32px;">%</span></div>
+          <h4 style="font-family:var(--serif-zh);font-size:26px;font-weight:700;margin:14px 0 10px;color:var(--ink);">空间运营</h4>
+          <p style="font-family:var(--serif-zh);font-size:17px;line-height:1.65;color:var(--smoke);margin:0 0 14px;">
+            摊位租金 + 流水抽成 + 联名活动费——传统现金流的底盘。
+          </p>
+          <ul class="bullets" style="font-size:15px;">
+            <li>固定租金（保底）</li>
+            <li>GMV 抽成 3–8%</li>
+            <li>夜市/餐饮高坪效</li>
+          </ul>
+        </div>
+
+        <div style="border:1px solid var(--rule);background:var(--paper);padding:24px;display:flex;flex-direction:column;">
+          <div style="font-family:var(--sans-en);font-size:14px;letter-spacing:.32em;color:var(--vermilion);font-weight:700;margin-bottom:10px;">STREAM · 02</div>
+          <div style="font-family:var(--serif-en);font-size:64px;color:var(--vermilion);font-weight:600;line-height:.95;font-feature-settings:'lnum','tnum';">25<span style="font-size:32px;">%</span></div>
+          <h4 style="font-family:var(--serif-zh);font-size:26px;font-weight:700;margin:14px 0 10px;color:var(--ink);">AI 服务</h4>
+          <p style="font-family:var(--serif-zh);font-size:17px;line-height:1.65;color:var(--smoke);margin:0 0 14px;">
+            给商户的 Agent SaaS · 给政府的城市数据交付——AI 时代的新增量。
+          </p>
+          <ul class="bullets" style="font-size:15px;">
+            <li>Agent 月费 ¥199 / 摊主</li>
+            <li>城市数据图谱授权</li>
+            <li>非遗 IP 内容服务</li>
+          </ul>
+        </div>
+
+        <div style="border:1px solid var(--rule);background:var(--paper);padding:24px;display:flex;flex-direction:column;">
+          <div style="font-family:var(--sans-en);font-size:14px;letter-spacing:.32em;color:var(--vermilion);font-weight:700;margin-bottom:10px;">STREAM · 03</div>
+          <div style="font-family:var(--serif-en);font-size:64px;color:var(--vermilion);font-weight:600;line-height:.95;font-feature-settings:'lnum','tnum';">20<span style="font-size:32px;">%</span></div>
+          <h4 style="font-family:var(--serif-zh);font-size:26px;font-weight:700;margin:14px 0 10px;color:var(--ink);">内容 IP</h4>
+          <p style="font-family:var(--serif-zh);font-size:17px;line-height:1.65;color:var(--smoke);margin:0 0 14px;">
+            庙街小巷主账号矩阵 · 摊主 IP 孵化分成 · 文旅广告——内容资产长期复利。
+          </p>
+          <ul class="bullets" style="font-size:15px;">
+            <li>账号矩阵广告分润</li>
+            <li>头部摊主 IP 分成</li>
+            <li>政企内容定制项目</li>
+          </ul>
+        </div>
+
+        <div style="border:1px solid var(--gold);background:var(--ink);color:var(--paper);padding:24px;display:flex;flex-direction:column;">
+          <div style="font-family:var(--sans-en);font-size:14px;letter-spacing:.32em;color:var(--gold);font-weight:700;margin-bottom:10px;">STREAM · 04</div>
+          <div style="font-family:var(--serif-en);font-size:64px;color:var(--gold);font-weight:600;line-height:.95;font-feature-settings:'lnum','tnum';">15<span style="font-size:32px;">%</span></div>
+          <h4 style="font-family:var(--serif-zh);font-size:26px;font-weight:700;margin:14px 0 10px;color:var(--paper);">金融衍生</h4>
+          <p style="font-family:var(--serif-zh);font-size:17px;line-height:1.65;color:#C8BFA9;margin:0 0 14px;">
+            供应链流水贷 · 摊主孵化置换股权——新加坡 + 迈阿密的混合玩法。
+          </p>
+          <ul class="bullets dark" style="font-size:15px;">
+            <li>供应链微金融利差</li>
+            <li>孵化置换早期股权</li>
+            <li>ESG 绿色金融基金</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 三方共同体 -->
+      <div style="margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;">
+        <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--paper-2);border-left:4px solid var(--vermilion);">
+          <div style="font-family:var(--sans-zh);font-size:13px;letter-spacing:.32em;color:var(--vermilion);font-weight:700;">摊　主</div>
+          <div style="font-family:var(--serif-zh);font-size:18px;color:var(--ink);">月均营收 ↑ 38% · AI 工具免费用</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--paper-2);border-left:4px solid var(--vermilion);">
+          <div style="font-family:var(--sans-zh);font-size:13px;letter-spacing:.32em;color:var(--vermilion);font-weight:700;">平　台</div>
+          <div style="font-family:var(--serif-zh);font-size:18px;color:var(--ink);">四条收入流叠加 · 60%+ 毛利</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--paper-2);border-left:4px solid var(--vermilion);">
+          <div style="font-family:var(--sans-zh);font-size:13px;letter-spacing:.32em;color:var(--vermilion);font-weight:700;">政　府</div>
+          <div style="font-family:var(--serif-zh);font-size:18px;color:var(--ink);">夜经济标杆 + 城市数据资产</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">13<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S14 · 金融杠杆 4·4·2 ============ -->
+  <section class="slide" data-screen-label="14 金融杠杆">
+    <div class="runhead">
+      <span>金融杠杆 · 黄金 4·4·2</span>
+      <span class="right"><span class="dot"></span><span class="en">CAPITAL STRUCTURE</span></span>
+    </div>
+
+    <div class="body-area">
+      <div class="chapter-tag" style="margin-bottom:14px;">
+        <span>§</span><span class="num-big">IV.4</span><span class="zh">资本结构 · 黄金 4·4·2</span>
+      </div>
+      <h3 class="section-title" style="font-size:56px;margin-bottom:12px;">
+        不是自掏腰包，是<span style="color:var(--vermilion);">让钱进来</span>。
+      </h3>
+      <p class="body-text body-muted" style="margin-bottom:28px;max-width:1500px;">
+        自有资金占 40% 起盘，政策性资金 + 银行经营贷 40% 杠杆，社会资本 / 产业基金 20% 共担——
+        这套结构在自贸港政策窗口下，效率最高、风险最分散。
+      </p>
+
+      <!-- 4·4·2 模型 -->
+      <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:36px;flex:1;">
+        <!-- 左：4·4·2 条形 -->
+        <div style="display:flex;flex-direction:column;">
+          <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:12px;">CAPITAL MIX · 资本组合</div>
+          <div class="rule-thick" style="margin-bottom:24px;"></div>
+
+          <div style="display:flex;flex-direction:column;gap:18px;flex:1;">
+            <!-- 4 自有 -->
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+                <div style="font-family:var(--serif-zh);font-size:24px;font-weight:700;">自有资金 · 主导方</div>
+                <div style="font-family:var(--serif-en);font-size:38px;color:var(--vermilion);font-weight:700;line-height:1;">40<span style="font-size:22px;">%</span></div>
+              </div>
+              <div style="height:36px;background:var(--paper-2);position:relative;">
+                <div style="width:40%;height:100%;background:var(--vermilion);"></div>
+              </div>
+              <div style="font-family:var(--serif-zh);font-size:16px;color:var(--smoke);margin-top:6px;">起盘资本 · 把控决策 · 信用底座</div>
+            </div>
+
+            <!-- 4 政策 + 银行 -->
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+                <div style="font-family:var(--serif-zh);font-size:24px;font-weight:700;">政策性资金 + 银行经营贷</div>
+                <div style="font-family:var(--serif-en);font-size:38px;color:var(--gold);font-weight:700;line-height:1;">40<span style="font-size:22px;">%</span></div>
+              </div>
+              <div style="height:36px;background:var(--paper-2);position:relative;">
+                <div style="width:40%;height:100%;background:var(--gold);"></div>
+              </div>
+              <div style="font-family:var(--serif-zh);font-size:16px;color:var(--smoke);margin-top:6px;">自贸港产业基金 · 文旅专项 · 数字经济贴息</div>
+            </div>
+
+            <!-- 2 社会资本 -->
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+                <div style="font-family:var(--serif-zh);font-size:24px;font-weight:700;">社会资本 / 产业基金</div>
+                <div style="font-family:var(--serif-en);font-size:38px;color:var(--ink);font-weight:700;line-height:1;">20<span style="font-size:22px;">%</span></div>
+              </div>
+              <div style="height:36px;background:var(--paper-2);position:relative;">
+                <div style="width:20%;height:100%;background:var(--ink);"></div>
+              </div>
+              <div style="font-family:var(--serif-zh);font-size:16px;color:var(--smoke);margin-top:6px;">天使 / 战略投资 · ESG 绿色基金</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右：三级跳 -->
+        <div style="background:var(--ink);color:var(--paper);padding:36px 40px;display:flex;flex-direction:column;">
+          <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.36em;color:var(--gold);font-weight:700;margin-bottom:12px;">EXIT PATH · 资方三级跳</div>
+          <div style="height:3px;background:var(--gold);margin-bottom:24px;"></div>
+
+          <div style="display:flex;flex-direction:column;gap:22px;flex:1;">
+            <div style="display:grid;grid-template-columns:64px 1fr;gap:18px;">
+              <div style="font-family:var(--serif-en);font-size:42px;color:var(--gold);font-weight:700;line-height:1;">01</div>
+              <div>
+                <div style="font-family:var(--serif-zh);font-size:22px;font-weight:700;margin-bottom:4px;">D-150  ·  起盘期</div>
+                <div style="font-family:var(--serif-zh);font-size:16px;color:#C8BFA9;line-height:1.6;">单点跑通模型，验证 38% 营收增量与 60% 毛利率。<b style="color:var(--gold);">天使轮</b>。</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:64px 1fr;gap:18px;">
+              <div style="font-family:var(--serif-en);font-size:42px;color:var(--gold);font-weight:700;line-height:1;">02</div>
+              <div>
+                <div style="font-family:var(--serif-zh);font-size:22px;font-weight:700;margin-bottom:4px;">Y-2  ·  复制期</div>
+                <div style="font-family:var(--serif-zh);font-size:16px;color:#C8BFA9;line-height:1.6;">三亚 / 儋州 / 文昌 复制 SOP，输出轻资产 + 数据分润。<b style="color:var(--gold);">A 轮 / 战略</b>。</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:64px 1fr;gap:18px;">
+              <div style="font-family:var(--serif-en);font-size:42px;color:var(--gold);font-weight:700;line-height:1;">03</div>
+              <div>
+                <div style="font-family:var(--serif-zh);font-size:22px;font-weight:700;margin-bottom:4px;">Y-5  ·  退出期</div>
+                <div style="font-family:var(--serif-zh);font-size:16px;color:#C8BFA9;line-height:1.6;">城市运营 SaaS + 数据资产，<b style="color:var(--gold);">大湾区上市 / 战略并购</b>。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">14<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S15 · 技术优势 ============ -->
+  <section class="slide" data-screen-label="15 技术优势">
+    <div class="runhead">
+      <span>技术优势 · 工具矩阵</span>
+      <span class="right"><span class="dot"></span><span class="en">TECH MOAT</span></span>
+    </div>
+
+    <div class="body-area">
+      <div class="chapter-tag" style="margin-bottom:14px;">
+        <span>§</span><span class="num-big">IV.5</span><span class="zh">技术优势 · 工具矩阵 + 已跑通 SOP</span>
+      </div>
+      <h3 class="section-title" style="font-size:54px;margin-bottom:12px;">
+        别人有<span style="color:var(--smoke);">一两个工具</span>，<br />
+        我们有<span style="color:var(--vermilion);">完整的工作流</span>。
+      </h3>
+      <p class="body-text body-muted" style="margin-bottom:24px;max-width:1500px;font-size:22px;">
+        技术壁垒不在单点 API，而在工具链编排——
+        谁先把 10+ 种 AI 工具拼成端到端的工作流，谁就在窗口期内占住第一名。
+      </p>
+
+      <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:32px;flex:1;">
+        <!-- 左：工具矩阵 -->
+        <div>
+          <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:10px;">AI TOOLCHAIN · 武 器 库</div>
+          <div class="rule-thick" style="margin-bottom:18px;"></div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px 22px;">
+            <!-- 8 tools -->
+            <div style="display:flex;align-items:baseline;gap:14px;padding-bottom:10px;border-bottom:1px dotted var(--rule);">
+              <div style="font-family:var(--serif-en);font-size:18px;color:var(--vermilion);font-weight:600;min-width:28px;">01</div>
+              <div style="flex:1;">
+                <div style="font-family:var(--sans-en);font-size:18px;font-weight:700;color:var(--ink);">Claude</div>
+                <div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:2px;">文案策划战略 · 商业推演</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:14px;padding-bottom:10px;border-bottom:1px dotted var(--rule);">
+              <div style="font-family:var(--serif-en);font-size:18px;color:var(--vermilion);font-weight:600;min-width:28px;">02</div>
+              <div style="flex:1;">
+                <div style="font-family:var(--sans-en);font-size:18px;font-weight:700;color:var(--ink);">Codex</div>
+                <div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:2px;">网站 / 小程序开发</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:14px;padding-bottom:10px;border-bottom:1px dotted var(--rule);">
+              <div style="font-family:var(--serif-en);font-size:18px;color:var(--vermilion);font-weight:600;min-width:28px;">03</div>
+              <div style="flex:1;">
+                <div style="font-family:var(--sans-en);font-size:18px;font-weight:700;color:var(--ink);">Cloud Code</div>
+                <div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:2px;">后端系统搭建</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:14px;padding-bottom:10px;border-bottom:1px dotted var(--rule);">
+              <div style="font-family:var(--serif-en);font-size:18px;color:var(--vermilion);font-weight:600;min-width:28px;">04</div>
+              <div style="flex:1;">
+                <div style="font-family:var(--sans-en);font-size:18px;font-weight:700;color:var(--ink);">Sora / Kling</div>
+                <div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:2px;">视频内容生成</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:14px;padding-bottom:10px;border-bottom:1px dotted var(--rule);">
+              <div style="font-family:var(--serif-en);font-size:18px;color:var(--vermilion);font-weight:600;min-width:28px;">05</div>
+              <div style="flex:1;">
+                <div style="font-family:var(--sans-en);font-size:18px;font-weight:700;color:var(--ink);">Midjourney</div>
+                <div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:2px;">视觉设计素材</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:14px;padding-bottom:10px;border-bottom:1px dotted var(--rule);">
+              <div style="font-family:var(--serif-en);font-size:18px;color:var(--vermilion);font-weight:600;min-width:28px;">06</div>
+              <div style="flex:1;">
+                <div style="font-family:var(--sans-en);font-size:18px;font-weight:700;color:var(--ink);">Dify</div>
+                <div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:2px;">AI 客服工作流</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:14px;padding-bottom:10px;border-bottom:1px dotted var(--rule);">
+              <div style="font-family:var(--serif-en);font-size:18px;color:var(--vermilion);font-weight:600;min-width:28px;">07</div>
+              <div style="flex:1;">
+                <div style="font-family:var(--sans-en);font-size:18px;font-weight:700;color:var(--ink);">即梦 / 可灵</div>
+                <div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:2px;">本土化短视频</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:14px;padding-bottom:10px;border-bottom:1px dotted var(--rule);">
+              <div style="font-family:var(--serif-en);font-size:18px;color:var(--vermilion);font-weight:600;min-width:28px;">08</div>
+              <div style="flex:1;">
+                <div style="font-family:var(--sans-en);font-size:18px;font-weight:700;color:var(--ink);">数据大模型</div>
+                <div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:2px;">运营决策分析</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:14px;padding-bottom:10px;border-bottom:1px dotted var(--rule);">
+              <div style="font-family:var(--serif-en);font-size:18px;color:var(--vermilion);font-weight:600;min-width:28px;">09</div>
+              <div style="flex:1;">
+                <div style="font-family:var(--sans-en);font-size:18px;font-weight:700;color:var(--ink);">区块链存证</div>
+                <div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:2px;">看着买 · 称重存证</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:14px;padding-bottom:10px;border-bottom:1px dotted var(--rule);">
+              <div style="font-family:var(--serif-en);font-size:18px;color:var(--vermilion);font-weight:600;min-width:28px;">10</div>
+              <div style="flex:1;">
+                <div style="font-family:var(--sans-en);font-size:18px;font-weight:700;color:var(--ink);">PowerBI</div>
+                <div style="font-family:var(--sans-zh);font-size:14px;color:var(--smoke);margin-top:2px;">政府数据交付看板</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右：三条技术壁垒 -->
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div style="background:var(--paper-2);padding:24px 26px;border-top:4px solid var(--vermilion);">
+            <div style="font-family:var(--sans-en);font-size:14px;letter-spacing:.32em;color:var(--vermilion);font-weight:700;margin-bottom:8px;">MOAT · 01</div>
+            <h4 style="font-family:var(--serif-zh);font-size:26px;font-weight:700;margin:0 0 8px;">工作流编排</h4>
+            <p style="font-family:var(--serif-zh);font-size:17px;line-height:1.7;color:var(--smoke);margin:0;">不是把工具买来就行——把它们串成一条端到端的工作流，1 段实拍 → 9 条爆款 → 私域沉淀，全自动。</p>
+          </div>
+          <div style="background:var(--paper-2);padding:24px 26px;border-top:4px solid var(--gold);">
+            <div style="font-family:var(--sans-en);font-size:14px;letter-spacing:.32em;color:var(--gold);font-weight:700;margin-bottom:8px;">MOAT · 02</div>
+            <h4 style="font-family:var(--serif-zh);font-size:26px;font-weight:700;margin:0 0 8px;">在地数据资产</h4>
+            <p style="font-family:var(--serif-zh);font-size:17px;line-height:1.7;color:var(--smoke);margin:0;">本地留存 + 区块链存证——别人复制不了的"海口烟火气"语料库与消费数据图谱。</p>
+          </div>
+          <div style="background:var(--ink);color:var(--paper);padding:24px 26px;border-top:4px solid var(--gold);">
+            <div style="font-family:var(--sans-en);font-size:14px;letter-spacing:.32em;color:var(--gold);font-weight:700;margin-bottom:8px;">MOAT · 03</div>
+            <h4 style="font-family:var(--serif-zh);font-size:26px;font-weight:700;margin:0 0 8px;color:var(--paper);">SOP 可输出</h4>
+            <p style="font-family:var(--serif-zh);font-size:17px;line-height:1.7;color:#C8BFA9;margin:0;">海口跑通 → 三亚 / 儋州 / 文昌复制 → 大湾区授权 —— 一份"AI 城市运营手册"，可标准化输出。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">15<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S16 · 撑天 · 点火 · 种地 ============ -->
+  <section class="slide" data-screen-label="16 撑天点火种地">
+    <div class="runhead">
+      <span>谁来做 · 团队哲学</span>
+      <span class="right"><span class="dot"></span><span class="en">WHO DOES IT</span></span>
+    </div>
+
+    <div class="body-area">
+      <div class="chapter-tag" style="margin-bottom:18px;">
+        <span>§</span><span class="num-big">V.1</span><span class="zh">团队哲学</span>
+      </div>
+      <h3 class="section-title" style="font-size:80px;margin-bottom:18px;">
+        上有人<span style="color:var(--gold);">撑天</span>，
+        下有人<span style="color:var(--vermilion);">种地</span>，<br />
+        中间有人<span style="color:var(--vermilion);">点火</span>。
+      </h3>
+      <p class="body-text body-muted" style="font-size:24px;line-height:1.8;max-width:1500px;margin-bottom:48px;">
+        过去项目缺的那一块，是中间这个位置——
+        <b style="color:var(--ink);">现在，这个位置有人了</b>。
+      </p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;flex:1;">
+        <div style="border-top:4px solid var(--gold);padding:28px 24px;">
+          <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.36em;color:var(--gold);font-weight:700;margin-bottom:14px;">THE SKY</div>
+          <div style="font-family:var(--serif-zh);font-size:56px;font-weight:800;color:var(--ink);margin-bottom:18px;letter-spacing:.04em;">撑　天</div>
+          <p style="font-family:var(--serif-zh);font-size:22px;line-height:1.75;color:var(--smoke);margin:0;">
+            政府关系 · 资金 · 战略决策<br />
+            <span style="color:var(--smoke-2);font-size:18px;">由项目发起人与资方共同支撑</span>
+          </p>
+        </div>
+        <div style="border-top:4px solid var(--vermilion);background:var(--paper-2);padding:28px 28px;">
+          <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.36em;color:var(--vermilion);font-weight:700;margin-bottom:14px;">THE SPARK</div>
+          <div style="font-family:var(--serif-zh);font-size:56px;font-weight:800;color:var(--ink);margin-bottom:18px;letter-spacing:.04em;">点　火</div>
+          <p style="font-family:var(--serif-zh);font-size:22px;line-height:1.75;color:var(--smoke);margin:0;">
+            全域运营 · AI 工具 · 内容矩阵<br />
+            <span style="color:var(--vermilion);font-size:18px;font-weight:700;">本项目的关键引擎位</span>
+          </p>
+        </div>
+        <div style="border-top:4px solid var(--ink);padding:28px 24px;">
+          <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.36em;color:var(--ink);font-weight:700;margin-bottom:14px;">THE GROUND</div>
+          <div style="font-family:var(--serif-zh);font-size:56px;font-weight:800;color:var(--ink);margin-bottom:18px;letter-spacing:.04em;">种　地</div>
+          <p style="font-family:var(--serif-zh);font-size:22px;line-height:1.75;color:var(--smoke);margin:0;">
+            线下执行 · 商家招商 · 在地资源<br />
+            <span style="color:var(--smoke-2);font-size:18px;">由资方与本地合伙人共同落地</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">16<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S17 · 双引擎 + 双合伙人 ============ -->
+  <section class="slide" data-screen-label="17 双引擎双合伙人">
+    <div class="runhead">
+      <span>谁来做 · 四角拼图</span>
+      <span class="right"><span class="dot"></span><span class="en">DOUBLE ENGINE</span></span>
+    </div>
+
+    <div class="body-area">
+      <div class="chapter-tag" style="margin-bottom:12px;">
+        <span>§</span><span class="num-big">V.2</span><span class="zh">四角拼图 · 双引擎 + 双合伙人</span>
+      </div>
+      <h3 class="section-title" style="font-size:50px;margin-bottom:8px;">
+        四个人，四件事，<span style="color:var(--vermilion);">边界清楚</span>。
+      </h3>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1;margin-top:24px;">
+        <!-- 主 -->
+        <div class="role-card primary">
+          <div class="header"><div class="badge">主</div><div><div class="name">项目发起人 · 主导方</div><div class="en">FOUNDER · SPONSOR</div></div></div>
+          <div class="body">
+            <div class="task">政府关系与项目审批</div>
+            <div class="task">资金调配与重大决策</div>
+            <div class="task">高层合作资源引入</div>
+            <div class="task">项目整体战略把控</div>
+            <div style="margin-top:14px;">
+              <span class="tag" style="font-size:14px;">大型文旅操盘</span>
+              <span class="tag" style="font-size:14px;">政府关系</span>
+              <span class="tag" style="font-size:14px;">资方背景</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 运 -->
+        <div class="role-card accent">
+          <div class="header"><div class="badge">运</div><div><div class="name">全域运营总负责</div><div class="en">CHIEF OPERATION OFFICER</div></div></div>
+          <div class="body">
+            <div class="task">线上全域运营体系搭建</div>
+            <div class="task">AI 技术落地与工具应用</div>
+            <div class="task">内容 IP 体系策划运营</div>
+            <div class="task">数据分析与运营决策</div>
+            <div style="margin-top:14px;">
+              <span class="tag v" style="font-size:14px;">20 年运营</span>
+              <span class="tag v" style="font-size:14px;">AI 工具矩阵</span>
+              <span class="tag v" style="font-size:14px;">0→1 冷启动</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 资 -->
+        <div style="background:var(--paper-2);padding:24px 28px;display:flex;gap:20px;border-left:6px solid var(--gold);">
+          <div style="width:56px;height:56px;background:var(--smoke);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:var(--serif-zh);font-size:24px;font-weight:700;flex-shrink:0;">资</div>
+          <div>
+            <div style="font-family:var(--serif-zh);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:2px;">资方合伙人</div>
+            <div style="font-family:var(--sans-en);font-size:13px;letter-spacing:.24em;color:var(--smoke-2);margin-bottom:14px;">CAPITAL & OFFLINE PARTNER</div>
+            <div style="font-family:var(--serif-zh);font-size:18px;line-height:1.8;color:var(--ink);">
+              · 资金 · 线下运营 · 审美设计<br />
+              · 视觉审美与空间设计专业支持
+            </div>
+          </div>
+        </div>
+
+        <!-- 地 -->
+        <div style="background:var(--paper-2);padding:24px 28px;display:flex;gap:20px;border-left:6px solid var(--vermilion);">
+          <div style="width:56px;height:56px;background:var(--smoke);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:var(--serif-zh);font-size:24px;font-weight:700;flex-shrink:0;">地</div>
+          <div>
+            <div style="font-family:var(--serif-zh);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:2px;">本地资源合伙人</div>
+            <div style="font-family:var(--sans-en);font-size:13px;letter-spacing:.24em;color:var(--smoke-2);margin-bottom:14px;">LOCAL RESOURCE PARTNER</div>
+            <div style="font-family:var(--serif-zh);font-size:18px;line-height:1.8;color:var(--ink);">
+              · 政府关系协同 · 本地商家资源深耕<br />
+              · 供应商资源对接，在地化支撑
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">17<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S18 · 能力矩阵 ============ -->
+  <section class="slide" data-screen-label="18 能力矩阵">
+    <div class="runhead">
+      <span>谁来做 · 能力矩阵</span>
+      <span class="right"><span class="dot"></span><span class="en">8 CAPABILITIES</span></span>
+    </div>
+
+    <div class="body-area">
+      <div class="chapter-tag" style="margin-bottom:14px;">
+        <span>§</span><span class="num-big">V.3</span><span class="zh">全域运营 · 核心能力矩阵</span>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px;">
+        <h3 class="section-title" style="font-size:50px;margin:0;">
+          八项能力，<span style="color:var(--vermilion);">一个人</span>带一支队伍。
+        </h3>
+        <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.28em;color:var(--smoke-2);text-align:right;">8 CAPABILITIES · 1 PERSON-LED TEAM</div>
+      </div>
+      <div class="rule-thick" style="margin-bottom:24px;"></div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:18px;flex:1;">
+        <div class="cap" data-tier="v">
+          <div class="cap-no">01</div><div class="cap-t">战略规划</div>
+          <div class="cap-d">用户动线分析、竞争格局研判、运营节奏设计</div>
+        </div>
+        <div class="cap" data-tier="v">
+          <div class="cap-no">02</div><div class="cap-t">系统搭建</div>
+          <div class="cap-d">网站 / 小程序 / 收银 / 摄像头 数字基础设施</div>
+        </div>
+        <div class="cap" data-tier="v">
+          <div class="cap-no">03</div><div class="cap-t">内容生产</div>
+          <div class="cap-d">AI 辅助批量内容，短视频 / 图文 / 直播脚本</div>
+        </div>
+        <div class="cap" data-tier="v">
+          <div class="cap-no">04</div><div class="cap-t">私域运营</div>
+          <div class="cap-d">社群搭建、用户分层、复购转化</div>
+        </div>
+        <div class="cap" data-tier="g">
+          <div class="cap-no">05</div><div class="cap-t">IP 孵化</div>
+          <div class="cap-d">品牌调性、账号矩阵、商家 IP 打造</div>
+        </div>
+        <div class="cap" data-tier="g">
+          <div class="cap-no">06</div><div class="cap-t">数据分析</div>
+          <div class="cap-d">用户行为洞察，反哺线下业态决策</div>
+        </div>
+        <div class="cap" data-tier="g">
+          <div class="cap-no">07</div><div class="cap-t">AI 工具</div>
+          <div class="cap-d">Codex / Cloud Code / Claude 等 10+ 工具深度应用</div>
+        </div>
+        <div class="cap" data-tier="g">
+          <div class="cap-no">08</div><div class="cap-t">商业感知</div>
+          <div class="cap-d">战略敏感度强，擅长发现别人看不见的机会</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot"><span>庙街小巷 · BUSINESS BOOK</span><span class="folio">18<span class="total">／ 19</span></span></div>
+  </section>
+
+
+  <!-- ============ S19 · 收尾 · 封底寄语 ============ -->
+  <section class="slide dark" data-screen-label="19 收尾寄语" style="background:var(--ink);color:var(--paper);padding:0;">
+
+    <!-- 全幅深色摄影 -->
+    <div style="position:absolute;inset:0;" class="photo-deep">
+      <div class="dot-tex"></div>
+      <div class="vignette"></div>
+      <!-- 暗色叠加, 让文字凸显 -->
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(10,46,46,.78) 0%, rgba(14,26,43,.92) 70%, rgba(14,26,43,.96) 100%);"></div>
+    </div>
+
+    <div class="runhead">
+      <span>收尾 · 封底寄语</span>
+      <span class="right"><span class="dot"></span><span class="en">ENDGAME</span></span>
+    </div>
+
+    <!-- 大字水印 "19" 在右上 -->
+    <div style="position:absolute;right:120px;top:120px;font-family:var(--serif-en);font-size:340px;line-height:1;font-weight:200;color:rgba(160,122,53,.10);letter-spacing:-.04em;user-select:none;z-index:1;">19</div>
+
+    <div style="position:absolute;left:120px;right:120px;top:140px;bottom:120px;display:flex;flex-direction:column;z-index:2;">
+
+      <!-- 顶部 eyebrow -->
+      <div style="font-family:var(--sans-en);font-size:18px;letter-spacing:.4em;color:var(--gold);font-weight:700;margin-bottom:14px;">
+        BACK COVER
+        <span style="display:inline-block;width:32px;height:1px;background:var(--gold);vertical-align:middle;margin:0 14px;"></span>
+        收尾寄语
+      </div>
+      <div style="width:88px;height:3px;background:var(--vermilion);margin-bottom:36px;"></div>
+
+      <!-- 主文 · 诗化结尾 (像封底的那段话) -->
+      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:96px;flex:1;align-items:start;">
+
+        <!-- 左：宣言 -->
+        <div>
+          <div style="font-family:var(--serif-zh);font-size:44px;line-height:1.65;color:var(--paper);font-weight:500;letter-spacing:.02em;">
+            每一座城市，<br />
+            都有一条街道藏着真正的生活。<br />
+            <span style="color:#A8B0BD;font-size:34px;line-height:1.7;display:inline-block;margin-top:14px;">不是最贵的那条，不是最新的那条——<br />
+            是那条让你<span style="color:var(--gold);font-weight:700;">走进去就不想走</span>的。</span>
+          </div>
+
+          <div style="margin-top:42px;font-family:var(--serif-zh);font-size:30px;font-weight:700;color:var(--paper);line-height:1.5;">
+            海口，还没有这条街。<br />
+            <span style="color:var(--gold);">我们来做这件事。</span>
+          </div>
+        </div>
+
+        <!-- 右：三阶段 + ASK 一气呵成 -->
+        <div style="display:flex;flex-direction:column;gap:0;border-left:1px solid rgba(244,239,230,.18);padding-left:48px;">
+
+          <div style="font-family:var(--sans-zh);font-size:14px;letter-spacing:.36em;color:var(--gold);font-weight:700;margin-bottom:18px;">三阶段 · 150 天</div>
+
+          <!-- 3 阶段 inline -->
+          <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:36px;">
+            <div style="display:grid;grid-template-columns:90px 1fr;gap:18px;align-items:baseline;padding-bottom:14px;border-bottom:1px solid rgba(244,239,230,.12);">
+              <div style="font-family:var(--serif-en);font-size:20px;color:var(--gold);font-weight:700;letter-spacing:.04em;">D-30</div>
+              <div>
+                <div style="font-family:var(--serif-zh);font-size:20px;font-weight:700;color:var(--paper);margin-bottom:4px;">地基建设</div>
+                <div style="font-family:var(--serif-zh);font-size:15px;color:#A8B0BD;line-height:1.55;">调研 · 政府关系 · IP 视觉 · 4 账号上线</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:90px 1fr;gap:18px;align-items:baseline;padding-bottom:14px;border-bottom:1px solid rgba(244,239,230,.12);">
+              <div style="font-family:var(--serif-en);font-size:20px;color:var(--vermilion);font-weight:700;letter-spacing:.04em;">D-120</div>
+              <div>
+                <div style="font-family:var(--serif-zh);font-size:20px;font-weight:700;color:var(--paper);margin-bottom:4px;">内容引爆</div>
+                <div style="font-family:var(--serif-zh);font-size:15px;color:#A8B0BD;line-height:1.55;">日更 9 条 · 头部 IP 5 个 · 私域 ≥ 1 万</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:90px 1fr;gap:18px;align-items:baseline;padding-bottom:14px;">
+              <div style="font-family:var(--serif-en);font-size:20px;color:var(--gold);font-weight:700;letter-spacing:.04em;">D-150+</div>
+              <div>
+                <div style="font-family:var(--serif-zh);font-size:20px;font-weight:700;color:var(--paper);margin-bottom:4px;">流量闭环</div>
+                <div style="font-family:var(--serif-zh);font-size:15px;color:#A8B0BD;line-height:1.55;">SOP · 政府数据交付 · 输出三亚 / 儋州</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ASK -->
+          <div style="border-top:2px solid var(--gold);padding-top:22px;">
+            <div style="font-family:var(--sans-en);font-size:13px;letter-spacing:.4em;color:var(--gold);font-weight:700;margin-bottom:12px;">THE ASK · 我们的请求</div>
+            <div style="font-family:var(--serif-zh);font-size:22px;line-height:1.65;color:var(--paper);font-weight:600;">
+              一笔起盘资金，<br />
+              一张政府桌子，<br />
+              一片<span style="color:var(--gold);">海甸溪</span>。
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 底部签名 / 项目信息 -->
+      <div style="border-top:1px solid rgba(244,239,230,.18);padding-top:22px;display:grid;grid-template-columns:repeat(4,1fr);gap:32px;align-items:flex-end;">
+        <div>
+          <div style="font-family:var(--sans-zh);font-size:11px;letter-spacing:.32em;color:#8B96A8;margin-bottom:6px;font-weight:600;">项 目 地</div>
+          <div style="font-family:var(--serif-zh);font-size:16px;font-weight:600;color:var(--paper);">海口 · 海甸溪北岸</div>
+        </div>
+        <div>
+          <div style="font-family:var(--sans-zh);font-size:11px;letter-spacing:.32em;color:#8B96A8;margin-bottom:6px;font-weight:600;">关 键 时 点</div>
+          <div style="font-family:var(--serif-zh);font-size:16px;font-weight:600;color:var(--paper);">2025.12.18 自贸港封关</div>
+        </div>
+        <div>
+          <div style="font-family:var(--sans-zh);font-size:11px;letter-spacing:.32em;color:#8B96A8;margin-bottom:6px;font-weight:600;">项 目 主 体</div>
+          <div style="font-family:var(--serif-zh);font-size:16px;font-weight:600;color:var(--paper);">TOPV · 海甸事业部</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:var(--sans-en);font-size:12px;letter-spacing:.36em;color:#8B96A8;font-weight:600;">CONFIDENTIAL · 2026</div>
+          <div style="font-family:var(--serif-zh);font-style:italic;font-size:14px;color:var(--gold);margin-top:6px;">"把烟火气接进 AI 时代。"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="runfoot" style="color:#8B96A8;">
+      <span>庙街小巷 · BUSINESS BOOK</span>
+      <span class="folio" style="color:var(--paper);">19<span class="total" style="color:#8B96A8;">／ 19</span></span>
+    </div>
+  </section>
+
+</deck-stage>
+
+<script type="application/json" id="speaker-notes">
+[
+"开场。这不是一个文旅项目的招商，是一份'AI 时代怎么重做菜市场'的演讲稿。今天我会用 19 张幻灯片，把这件事讲清楚——为什么是现在、世界上谁已经做成了、我们要怎么落到海甸溪。",
+"先说为什么是现在。两股力量第一次在同一年、同一座岛、同一个项目里碰到一起：一股是 AI 时代——大模型和 Agent 把每条产业的成本结构改写了一遍；另一股是新质生产力——国家层面把土地、数据、税收都重新定义。两股力量的交汇点，就在海甸溪。",
+"具体看，三个窗口同时打开。政策窗口是 2025 年 12 月 18 日自贸港封关——离岛免税升级、跨境数据流动、单独关税区，国家级试验场。市场窗口是中国生鲜零售 5 万亿、数字化渗透率不到 5%，年轻人重新爱上菜市场。技术窗口是 Agent 工具链成熟，过去 10 个运营的活，一个人 + AI 就能干完。",
+"现在请大家看世界。这不是我们拍脑袋想出来的项目，全球已经有四个城市跑通了'用菜市场做高频入口，再用高溢价业态变现'这条路径。接下来四张幻灯片，每个城市一个故事。",
+"第一个，巴塞罗那。把传统菜市场美学升级、空间重组——白天是高颜值生鲜，下午晚上无缝切换成餐饮酒馆。利润锚点是全时段高坪效 + 文旅溢价。这是我们参考最多的模式。",
+"第二个，新加坡。高密度社区综合体——底层数字化生鲜 + 极速前置仓，中高层叠加家政、洗衣、维修，再嵌微型金融网点。靠会员制绑高频复购，靠供应链流水贷赚隐形利差。",
+"第三个，迈阿密。亲水滨水街区——河岸做精品市集 + 露天咖啡 + 打卡地，上层做联合办公孵化基地。利润是滨水溢价租金 + 长线置换初创公司股权。海甸溪的水岸属性，正好对得上这个模式。",
+"第四个，阿姆斯特丹。绿色循环 + 文创——把现代设计 + 垂直农业塞进市集，上层是新消费品牌孵化器。重点是它能引入 ESG 绿色金融基金，降低融资成本、提高估值。",
+"四个城市看完，结论只有一句：菜市场不是低毛利死局，是高频流量入口。后面接什么——文旅、服务、办公、文创——是可以选的。可以单一深化，也可以抽出标准化模块做轻资产复制。",
+"现在落回海南。这四个国际样板，要放在哪个市场跑？答案只有一个——中国唯一的窗口，海南。2025.12.18 封关后，自贸港给了我们四张底牌：政策红利、数据本地、政府通路、在地文化富矿。海甸溪是海口的客厅，离机场 15 分钟、靠白沙门公园、700 米亲水岸线。",
+"这是这本书最厚的一部分——AI Agent 怎么真正落到每一个摊位。我们把它拆成三层：L1 把摊主变成有故事的 IP，L2 把内容和交易自动化，L3 把数据沉淀成可交付的城市资产。三层是闭环的：L1 的素材喂 L2，L2 的数据喂 L3，L3 反过来告诉 L1 哪些故事值得继续投。",
+"举个具体例子。海鲜阿伯老陈——一天 6 个时间点，从赶海回来 1 分钟实拍，到 Agent 切成 9 条视频、看着买开播、私域机器人推送、L3 看板提醒明天加量。当天结果：粉丝 +143、GMV ¥2,176、AI 没收他一分钱。这就是 Agent 落到商户的真实样子。",
+"赚钱的逻辑分四条流。空间运营 40% 是底盘——租金 + 流水抽成。AI 服务 25% 是新增量——给商户的 Agent SaaS、给政府的数据交付。内容 IP 20% 是长期复利——账号矩阵 + 商家 IP 分成。金融衍生 15% 是顶端——供应链流水贷、孵化置换股权、ESG 绿色基金。摊主、平台、政府，三方都有可量化的回报。",
+"资本结构上，我们采用 4·4·2 黄金模型。自有资金 40% 起盘把控决策，政策性资金 + 银行经营贷 40% 用足自贸港红利，社会资本 20% 共担风险。三级跳路径很清晰：D-150 跑通模型天使轮，Y-2 复制 SOP A 轮 / 战略投资，Y-5 大湾区上市或战略并购退出。",
+"技术优势讲清一件事——不是单点工具，是工作流编排。10+ AI 工具我们都用：Claude 做策略、Codex 做开发、Sora/可灵做视频、Dify 做客服、数据大模型做决策。三条壁垒：工作流编排、在地数据资产、SOP 可输出。别人复制不了的，是'海口烟火气'语料库。",
+"接下来讲谁来做。团队哲学三个词：上有人撑天，下有人种地，中间有人点火。撑天是政府关系和资金，种地是线下执行，点火是 AI 全域运营。过去项目缺的就是中间这一块。现在，这个位置有人了。",
+"四个角色，四件事，边界清楚。主导方负责政府关系、资金、战略——撑天花板。运营总负责负责线上、AI、内容、数据——拉发动机。资方合伙人负责线下空间和审美。本地合伙人负责政府协同和本地资源。四角拼图，一个不能少。",
+"能力矩阵 8 项——战略规划、系统搭建、内容生产、私域运营、IP 孵化、数据分析、AI 工具、商业感知。前 4 项是日常发动机，后 4 项是长期复利。一个懂 AI 的人 + 10 种工具，能完成过去一个 10 人团队的活。这就是 AI 时代的团队配置。",
+"收尾。三阶段推进路线：D-30 地基、D-120 引爆、D-150+ 闭环。每个阶段都有明确产出物，第一阶段没落地不进第二阶段。这是写给煤老板看的纪律线。我们的 ASK 只有一句：一笔起盘资金，一张政府桌子，一片海甸溪——150 天，把烟火气接进 AI 时代。"
+]
+</script>
+
+<script src="image-slot.js"></script>
+<script src="deck-stage.js"></script>
+</body>
+</html>
