@@ -223,15 +223,15 @@ export default function SgsyenCaseStudy() {
             <div 
               id="casestudy-meta-col-deliverable" 
               className={`col-span-2 cursor-pointer hover:opacity-85 transition-opacity bg-[#A58261]/5 p-3.5 border border-dashed border-[#A58261]/25 rounded-md mt-1`}
-              onClick={() => window.open('https://www.sgsyen.com/temple-street-alley/slides.html', '_blank')}
-              title={locale === 'zh' ? '点击打开横版演示幻灯片' : 'Click to open slide deck'}
+              onClick={() => window.open('/temple-street-alley/projects/a95b99eb-e1c5-42c6-b904-6548ce94ae02/miaojie-business-book.html', '_blank')}
+              title={locale === 'zh' ? '点击阅读庙街商业技术蓝皮书' : 'Click to read Temple Street Business Bluebook'}
             >
               <div id="casestudy-meta-col-deliverable-lbl" className="text-[#A58261] text-[9px] uppercase font-bold tracking-wider mb-1">
-                {locale === 'zh' ? '核心交付物成果 (可放映)' : 'Deliverables (Playable Slide Deck)'}
+                {locale === 'zh' ? '蓝皮书' : 'Bluebook'}
               </div>
               <div id="casestudy-meta-col-deliverable-val" className="font-extrabold text-[#1D1D1B] flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-[#C4A35A] shrink-0" />
-                <span className="underline decoration-dashed hover:text-[#A58261] transition-colors">{current.meta.deliverable}</span>
+                <span className="underline decoration-dashed hover:text-[#A58261] transition-colors">{locale === 'zh' ? '庙街商业技术蓝皮书 (White Paper)' : 'Temple Street Business Bluebook (White Paper)'}</span>
               </div>
             </div>
           </div>
