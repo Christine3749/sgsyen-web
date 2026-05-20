@@ -239,7 +239,7 @@ export default function SgsyenCaseStudy() {
         </div>
 
         {/* Right column - image preview */}
-        <div id="casestudy-image-panel" className="lg:col-span-7 rounded overflow-hidden shadow-md flex bg-gradient-to-br from-stone-900 to-stone-950 min-h-[400px] border border-[#1D1D1B]/10 xl:min-h-[500px]">
+        <div id="casestudy-image-panel" className="lg:col-span-6 rounded overflow-hidden shadow-md flex bg-gradient-to-br from-stone-900 to-stone-950 min-h-[280px] border border-[#1D1D1B]/10 xl:min-h-[340px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSlide}
@@ -273,7 +273,7 @@ export default function SgsyenCaseStudy() {
                     `;
                   }
                 }}
-                className="w-full h-full object-cover select-none min-h-[400px]"
+                className="w-full h-full object-contain select-none max-w-[775px] mx-auto"
               />
               <div id="casestudy-image-shadow-overlay" className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
             </motion.div>
