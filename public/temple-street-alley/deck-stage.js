@@ -566,6 +566,7 @@
       this._onTapBack = this._onTapBack.bind(this);
       this._onTapForward = this._onTapForward.bind(this);
       this._onMessage = this._onMessage.bind(this);
+      this._onFullscreenChange = this._onFullscreenChange.bind(this);
       // Capture-phase close so a click anywhere dismisses the menu, but
       // ignore clicks that land inside the menu itself — otherwise the
       // capture handler runs before the menu's own (bubble) handler and
@@ -596,6 +597,8 @@
       window.addEventListener('mousemove', this._onMouseMove, { passive: true });
       window.addEventListener('message', this._onMessage);
       window.addEventListener('click', this._onDocClick, true);
+      document.addEventListener('fullscreenchange', this._onFullscreenChange);
+      document.addEventListener('webkitfullscreenchange', this._onFullscreenChange);
       // Initial collection + layout happens via slotchange, which fires on mount.
       this._enableRail();
       // Hold the stage hidden until webfonts are ready so the first visible
@@ -792,6 +795,8 @@
       if (this._liveObserver) this._liveObserver.disconnect();
       if (this._railObserver) this._railObserver.disconnect();
       if (this._onTweakChange) window.removeEventListener('tweakchange', this._onTweakChange);
+      document.removeEventListener('fullscreenchange', this._onFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', this._onFullscreenChange);
     }
 
     attributeChangedCallback() {
@@ -1302,6 +1307,8 @@
         this._go(0, 'keyboard');
       } else if (key === 'f' || key === 'F') {
         this._toggleFullscreen();
+      } else if (key === 'Escape') {
+        this._toggleFullscreen();
       } else if (/^[0-9]$/.test(key)) {
         // 1..9 jump to that slide; 0 jumps to 10.
         const n = key === '0' ? 9 : parseInt(key, 10) - 1;
@@ -1350,6 +1357,15 @@
         const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
         if (exit) exit.call(document).catch(() => {});
       }
+    }
+
+    _onFullscreenChange() {
+      const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+      this._presenting = isFull;
+      if (this._presenting && this._overlay) {
+        this._overlay.removeAttribute('data-visible');
+      }
+      this._syncRail();
     }
 
     // ── Thumbnail rail ────────────────────────────────────────────────────
