@@ -128,7 +128,7 @@ export default function SgsyenCaseStudy() {
         {/* Custom Slide control numbers + Launch Slide Deck action button */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <button
-            onClick={() => setIsSlidesOpen(true)}
+            onClick={() => window.open('https://www.sgsyen.com/temple-street-alley/slides.html', '_blank')}
             className="flex items-center justify-center gap-2 px-5 py-3 bg-[#1D1D1B] hover:bg-[#A58261] text-[#FAF9F5] rounded text-xs tracking-widest font-sans font-bold uppercase transition-all shadow-md cursor-pointer border border-transparent hover:border-[#FAF9F5]/20"
           >
             <Presentation className="w-4 h-4 text-[#C4A35A] animate-pulse" />
@@ -223,8 +223,8 @@ export default function SgsyenCaseStudy() {
             <div 
               id="casestudy-meta-col-deliverable" 
               className={`col-span-2 cursor-pointer hover:opacity-85 transition-opacity bg-[#A58261]/5 p-3.5 border border-dashed border-[#A58261]/25 rounded-md mt-1`}
-              onClick={() => setIsSlidesOpen(true)}
-              title={locale === 'zh' ? '点击播放放映演示幻灯片' : 'Click to preview slide deck'}
+              onClick={() => window.open('https://www.sgsyen.com/temple-street-alley/slides.html', '_blank')}
+              title={locale === 'zh' ? '点击打开横版演示幻灯片' : 'Click to open slide deck'}
             >
               <div id="casestudy-meta-col-deliverable-lbl" className="text-[#A58261] text-[9px] uppercase font-bold tracking-wider mb-1">
                 {locale === 'zh' ? '核心交付物成果 (可放映)' : 'Deliverables (Playable Slide Deck)'}
