@@ -143,7 +143,7 @@ function InnerApp() {
               </div>
               <div className="flex items-center gap-6">
                 <span className="text-[10px] font-sans uppercase font-bold tracking-widest text-[#A58261]">
-                  GCP Cloud Run 已集成
+                  疆域 GSYEN ENGINE ACTIVE
                 </span>
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 bg-emerald-600 rounded-full animate-pulse"></div>
@@ -403,7 +403,7 @@ function InnerApp() {
               </div>
               <div className="flex items-center gap-6">
                 <span className="text-[10px] font-sans uppercase font-bold tracking-widest text-[#A58261]">
-                  {t('approvedRelease')}
+                  疆域 GSYEN ENGINE ACTIVE
                 </span>
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 bg-emerald-600 rounded-full animate-pulse"></div>

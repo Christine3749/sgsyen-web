@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 24" height="24">
+  <defs>
+    <style>
+      .brand { font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9px; font-weight: 700; fill: #A58261; letter-spacing: 0.18em; }
+      .sep { font-family: 'Inter', sans-serif; font-size: 9px; fill: #A58261; opacity: 0.4; }
+      .cn { font-family: 'Noto Sans SC', 'PingFang SC', sans-serif; font-size: 8.5px; font-weight: 500; fill: #A58261; letter-spacing: 0.12em; }
+      .dot { fill: #059669; }
+      .dot-pulse { animation: pulse 2s ease-in-out infinite; }
+      @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+    </style>
+  </defs>
+  
+  <!-- 小建筑图标 -->
+  <g transform="translate(0, 4) scale(0.55)">
+    <rect width="28" height="28" rx="5" fill="#0E1A2B"/>
+    <path d="M5 16 L14 8 L23 16" stroke="#A58261" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="8" y="17" width="3" height="7" rx="1" fill="#A58261"/>
+    <rect x="12.5" y="17" width="3" height="7" rx="1" fill="#A58261"/>
+    <rect x="17" y="17" width="3" height="7" rx="1" fill="#A58261"/>
+    <rect x="4" y="24" width="20" height="2" rx="1" fill="#A58261"/>
+  </g>
+  
+  <!-- 文字 -->
+  <text x="34" y="16" class="brand">SGSYEN</text>
+  <text x="88" y="16" class="sep">·</text>
+  <text x="100" y="16" class="brand">ENGINE ACTIVE</text>
+  <text x="208" y="16" class="sep">·</text>
+  <text x="220" y="16" class="cn">技术支持</text>
+  
+  <!-- 脉冲绿点 -->
+  <circle cx="400" cy="12" r="3.5" class="dot dot-pulse"/>
+</svg>
