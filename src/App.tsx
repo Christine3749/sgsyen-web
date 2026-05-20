@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import ModelPricingTable from './components/ModelPricingTable';
 import CostCalculator from './components/CostCalculator';
@@ -19,6 +19,24 @@ function InnerApp() {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
   };
+
+  // Dynamic page title based on active app/tab
+  useEffect(() => {
+    const baseTitle = locale === 'zh' ? '雍彻智库' : '雍彻智库 · SGSYEN';
+    if (activeApp === 'sgsyen') {
+      document.title = locale === 'zh'
+        ? `SGSYEN 智库研究中心 | ${baseTitle}`
+        : `SGSYEN Research Center | ${baseTitle}`;
+    } else {
+      const tabNames = {
+        calculator: locale === 'zh' ? '算力成本估算' : 'Cost Calculator',
+        articles: locale === 'zh' ? '算力逻辑解析' : 'Compute Analysis',
+        tariffs: locale === 'zh' ? '官方资费对照' : 'Tariff Reference',
+      };
+      const geminiPrefix = locale === 'zh' ? 'Gemini 算力实验室' : 'Gemini Compute Lab';
+      document.title = `${tabNames[activeTab]} | ${geminiPrefix} | ${baseTitle}`;
+    }
+  }, [activeApp, activeTab, locale]);
 
   return (
     <div className="w-full bg-[#FDFCF9] text-[#1D1D1B] font-serif min-h-screen flex flex-col overflow-x-hidden antialiased">
