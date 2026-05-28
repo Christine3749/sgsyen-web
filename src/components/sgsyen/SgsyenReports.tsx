@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { FileText, ArrowRight, X, Download, Lock, CheckCircle2, Loader2, Calendar, Tag } from 'lucide-react';
 import { useLocale } from '../../context/LocaleContext';
 import { supabase } from '../../lib/supabase';
+import { research } from '../../lib/research';
 import { useNavigate } from 'react-router-dom';
 
 interface Report {
@@ -17,8 +18,7 @@ interface Report {
   content?: string;
 }
 
-const API = import.meta.env.VITE_API_URL || "https://sgsyen-api-ocjwdme54q-de.a.run.app";
-
+// Emergency static fallback (used only when Supabase is unreachable)
 const FALLBACK_REPORTS: Report[] = [
   {
     id: "r-01",
@@ -100,29 +100,30 @@ export default function SgsyenReports() {
 
   useEffect(() => {
     setLoading(true);
-    const controller = new AbortController();
-
-    fetch(`${API}/reports`, { signal: controller.signal })
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data: Report[]) => {
-        if (data && data.length > 0) {
-          setReports(data);
+    research
+      .from('articles')
+      .select('id,no,slug,title,title_en,subtitle,subtitle_en,author,author_en,category,summary,content,published_at,is_published,is_featured')
+      .eq('is_published', true)
+      .eq('is_featured', true)
+      .order('published_at', { ascending: false })
+      .limit(5)
+      .then(({ data, error }) => {
+        if (error || !data || data.length === 0) {
+          setReports(locale === 'zh' ? FALLBACK_REPORTS : FALLBACK_REPORTS_EN);
         } else {
-          setReports(locale === 'zh' ? FALLBACK_REPORTS : FALLBACK_REPORTS_EN);
+          setReports(data.map(a => ({
+            id: a.id,
+            slug: a.slug,
+            title: locale === 'zh' ? a.title : (a.title_en || a.title),
+            subtitle: locale === 'zh' ? a.subtitle : (a.subtitle_en || a.subtitle),
+            category: a.category,
+            summary: a.summary || (locale === 'zh' ? a.subtitle : (a.subtitle_en || a.subtitle)),
+            published_at: a.published_at,
+            content: a.content,
+          })));
         }
-      })
-      .catch((err) => {
-        if (err.name !== 'AbortError') {
-          // API 不可用时静默降级到 fallback 数据
-          setReports(locale === 'zh' ? FALLBACK_REPORTS : FALLBACK_REPORTS_EN);
-        }
-      })
-      .finally(() => setLoading(false));
-
-    return () => controller.abort();
+        setLoading(false);
+      });
   }, [locale]);
 
   const formatDate = (iso?: string) => {
@@ -136,9 +137,7 @@ export default function SgsyenReports() {
   };
 
   const handleOpenReport = (report: Report) => {
-    const list = locale === 'zh' ? FALLBACK_REPORTS : FALLBACK_REPORTS_EN;
-    const staticMatch = list.find(r => r.slug === report.slug);
-    setSelectedReport(staticMatch || report);
+    setSelectedReport(report);
   };
 
   const handleDownloadPDF = async (slug: string) => {

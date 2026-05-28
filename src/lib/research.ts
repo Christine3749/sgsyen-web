@@ -21,6 +21,9 @@ export interface Article {
   reading_time: number;
   published_at: string;
   is_published: boolean;
+  is_featured?: boolean;
+  summary?: string;
+  content?: string;
 }
 
 export interface PolicyEvent {

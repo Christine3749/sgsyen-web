@@ -286,11 +286,11 @@ export default function ResearchPage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6 select-none">
             <div>
               <span className="block text-[10px] uppercase tracking-[0.25em] mb-3 text-[#A58261] font-sans font-bold">
-                {isZh ? '深度报告 · RESEARCH BRIEFS' : 'RESEARCH BRIEFS'}
+                {isZh ? '雍彻智库 · YONGCHE INSTITUTE' : 'YONGCHE INSTITUTE'}
               </span>
               <h2 className="text-3xl lg:text-5xl font-serif font-semibold text-[#1D1D1B]"
                 style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
-                {isZh ? '全部出版物' : 'All Publications'}
+                {isZh ? '雍彻评论' : 'YONGCHE REVIEW'}
               </h2>
             </div>
             {/* Category Filter */}
