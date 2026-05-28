@@ -1,68 +1,73 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ChevronRight, Clock, Tag, TrendingUp, TrendingDown, Minus, Calendar, Globe, ArrowLeft, ChevronDown } from 'lucide-react';
+import {
+  ArrowRight, ArrowLeft, Calendar, Tag, Globe,
+  ChevronDown, Loader2, Clock,
+} from 'lucide-react';
 import { research, Article, PolicyEvent, MacroPoint } from '../lib/research';
 import { useLocale } from '../context/LocaleContext';
 
 const PAGE_SIZE = 8;
 
-// ── Event type colours ──────────────────────────────────────
-const EVENT_COLORS: Record<string, string> = {
-  crisis:      'bg-red-100 text-red-700 border-red-200',
-  policy:      'bg-blue-100 text-blue-700 border-blue-200',
-  geopolitical:'bg-amber-100 text-amber-700 border-amber-200',
-  regulation:  'bg-purple-100 text-purple-700 border-purple-200',
-  market:      'bg-emerald-100 text-emerald-700 border-emerald-200',
-};
+// ── Colour maps ──────────────────────────────────────────────
 const EVENT_DOT: Record<string, string> = {
-  crisis:      'bg-red-500',
-  policy:      'bg-blue-500',
-  geopolitical:'bg-amber-500',
-  regulation:  'bg-purple-500',
-  market:      'bg-emerald-500',
+  crisis:       'bg-[#C83E3E]',
+  policy:       'bg-blue-500',
+  geopolitical: 'bg-[#C4A35A]',
+  regulation:   'bg-purple-500',
+  market:       'bg-emerald-500',
+};
+const EVENT_TAG: Record<string, string> = {
+  crisis:       'text-[#C83E3E] bg-[#C83E3E]/5 border-[#C83E3E]/15',
+  policy:       'text-blue-600 bg-blue-50 border-blue-200',
+  geopolitical: 'text-[#C4A35A] bg-[#C4A35A]/5 border-[#C4A35A]/20',
+  regulation:   'text-purple-600 bg-purple-50 border-purple-200',
+  market:       'text-emerald-600 bg-emerald-50 border-emerald-200',
 };
 
-// ── Macro series config ─────────────────────────────────────
 const MACRO_CARDS = [
-  { id: 'SP500',     label: '标普 500',  label_en: 'S&P 500',      unit: 'pts'  },
-  { id: 'GOLD_USD',  label: '黄金',      label_en: 'Gold',         unit: 'USD'  },
-  { id: 'DXY',       label: '美元指数',  label_en: 'DXY',          unit: 'pts'  },
-  { id: 'CN_LPR_1Y', label: '中国 LPR', label_en: 'CN LPR 1Y',   unit: '%'    },
+  { id: 'SP500',     zh: '标普 500',   en: 'S&P 500',    unit: 'pts' },
+  { id: 'GOLD_USD',  zh: '黄  金',     en: 'Gold',       unit: 'USD' },
+  { id: 'DXY',       zh: '美元指数',   en: 'DXY',        unit: 'pts' },
+  { id: 'CN_LPR_1Y', zh: 'LPR 1Y',    en: 'CN LPR 1Y',  unit: '%'   },
 ];
 
-function fmt(v: number, unit: string): string {
+function fmtVal(v: number, unit: string) {
   if (unit === '%') return v.toFixed(2) + '%';
-  if (v >= 1000) return v.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  if (v >= 1000)    return v.toLocaleString('en-US', { maximumFractionDigits: 0 });
   return v.toFixed(2);
+}
+
+function fmtDate(iso?: string) {
+  if (!iso) return '';
+  return iso.slice(0, 10);
 }
 
 // ─────────────────────────────────────────────────────────────
 export default function ResearchPage() {
-  const navigate = useNavigate();
+  const navigate   = useNavigate();
   const { locale } = useLocale();
-  const isZh = locale === 'zh';
+  const isZh       = locale === 'zh';
 
-  // Articles
-  const [articles, setArticles]     = useState<Article[]>([]);
-  const [artPage, setArtPage]       = useState(0);
-  const [artTotal, setArtTotal]     = useState(0);
-  const [artLoading, setArtLoading] = useState(true);
+  // articles
+  const [articles,    setArticles]    = useState<Article[]>([]);
+  const [artPage,     setArtPage]     = useState(0);
+  const [artTotal,    setArtTotal]    = useState(0);
+  const [artLoading,  setArtLoading]  = useState(true);
+  const [category,    setCategory]    = useState('all');
+  const [categories,  setCategories]  = useState<string[]>([]);
 
-  // Events
-  const [upcoming, setUpcoming]     = useState<PolicyEvent[]>([]);
-  const [recent, setRecent]         = useState<PolicyEvent[]>([]);
-  const [evLoading, setEvLoading]   = useState(true);
+  // events
+  const [upcoming,    setUpcoming]    = useState<PolicyEvent[]>([]);
+  const [recent,      setRecent]      = useState<PolicyEvent[]>([]);
+  const [evLoading,   setEvLoading]   = useState(true);
 
-  // Macro
-  const [macro, setMacro]           = useState<Record<string, MacroPoint>>({});
-  const [macLoading, setMacLoading] = useState(true);
+  // macro
+  const [macro,       setMacro]       = useState<Record<string, MacroPoint>>({});
+  const [macLoading,  setMacLoading]  = useState(true);
 
-  // Active category filter
-  const [category, setCategory]     = useState<string>('all');
-  const [categories, setCategories] = useState<string[]>([]);
-
-  // ── Fetch articles ────────────────────────────────────────
+  // ── fetch articles ────────────────────────────────────────
   const loadArticles = useCallback(async (page: number, cat: string) => {
     setArtLoading(true);
     let q = research
@@ -71,31 +76,21 @@ export default function ResearchPage() {
       .eq('is_published', true)
       .order('published_at', { ascending: false })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
-
     if (cat !== 'all') q = q.eq('category', cat);
-
-    const { data, count, error } = await q;
-    if (!error && data) {
-      setArticles(prev => page === 0 ? data : [...prev, ...data]);
-      setArtTotal(count ?? 0);
-    }
+    const { data, count } = await q;
+    if (data) setArticles(prev => page === 0 ? data : [...prev, ...data]);
+    if (count != null) setArtTotal(count);
     setArtLoading(false);
   }, []);
 
-  // ── Fetch events ─────────────────────────────────────────
+  useEffect(() => { setArticles([]); setArtPage(0); loadArticles(0, category); }, [category, loadArticles]);
+
+  // ── fetch events ─────────────────────────────────────────
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().slice(0, 10);
     Promise.all([
-      research.from('policy_events')
-        .select('*')
-        .gte('date', today)
-        .order('date', { ascending: true })
-        .limit(6),
-      research.from('policy_events')
-        .select('*')
-        .lt('date', today)
-        .order('date', { ascending: false })
-        .limit(5),
+      research.from('policy_events').select('*').gte('date', today).order('date', { ascending: true }).limit(5),
+      research.from('policy_events').select('*').lt('date', today).order('date', { ascending: false }).limit(4),
     ]).then(([up, re]) => {
       if (up.data) setUpcoming(up.data);
       if (re.data) setRecent(re.data);
@@ -103,339 +98,327 @@ export default function ResearchPage() {
     });
   }, []);
 
-  // ── Fetch macro latest values ─────────────────────────────
+  // ── fetch macro ───────────────────────────────────────────
   useEffect(() => {
     Promise.all(
       MACRO_CARDS.map(c =>
-        research.from('macro_timeseries')
-          .select('series_id,series_name,date,value,unit')
-          .eq('series_id', c.id)
-          .order('date', { ascending: false })
-          .limit(2)
+        research.from('macro_timeseries').select('series_id,series_name,date,value,unit')
+          .eq('series_id', c.id).order('date', { ascending: false }).limit(1)
       )
     ).then(results => {
       const map: Record<string, MacroPoint> = {};
-      results.forEach((r, i) => {
-        if (r.data && r.data.length > 0) map[MACRO_CARDS[i].id] = r.data[0];
-      });
+      results.forEach((r, i) => { if (r.data?.[0]) map[MACRO_CARDS[i].id] = r.data[0]; });
       setMacro(map);
       setMacLoading(false);
     });
   }, []);
 
-  // ── Fetch category list ───────────────────────────────────
+  // ── fetch categories ──────────────────────────────────────
   useEffect(() => {
-    research.from('articles')
-      .select('category')
-      .eq('is_published', true)
+    research.from('articles').select('category').eq('is_published', true)
       .then(({ data }) => {
-        if (data) {
-          const cats = [...new Set(data.map(d => d.category).filter(Boolean))];
-          setCategories(cats);
-        }
+        if (data) setCategories([...new Set(data.map(d => d.category).filter(Boolean))]);
       });
   }, []);
 
-  // Initial load
-  useEffect(() => { loadArticles(0, category); }, [category, loadArticles]);
-
-  const loadMore = () => {
-    const next = artPage + 1;
-    setArtPage(next);
-    loadArticles(next, category);
-  };
-
   const hasMore = articles.length < artTotal;
 
-  // ────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────
   return (
     <div className="w-full bg-[#FDFCF9] text-[#1D1D1B] min-h-screen font-serif antialiased">
 
-      {/* ── Top Bar ────────────────────────────────────────── */}
+      {/* Top ticker */}
       <div className="bg-[#1D1D1B] text-[#FDFCF9] py-2 px-6 text-center text-[9px] tracking-[0.25em] font-sans font-bold uppercase select-none">
         🏛️ SGSYEN 独立研判系统研究终端 · 全球宏观情报 · 事件驱动分析
       </div>
 
-      <div className="max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10">
+      <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10">
 
-        {/* ── Breadcrumb / Nav ────────────────────────────── */}
-        <div className="flex items-center justify-between px-6 md:px-12 py-4 border-b border-[#1D1D1B]/10 bg-[#FAF9F5]">
+        {/* ── Breadcrumb ────────────────────────────────────── */}
+        <div className="flex items-center justify-between px-6 md:px-12 lg:px-20 py-4 border-b border-[#1D1D1B]/10 bg-[#FAF9F5] select-none">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-widest text-stone-500 hover:text-[#1D1D1B] transition-colors cursor-pointer"
+            className="flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-widest text-stone-400 hover:text-[#1D1D1B] transition-colors cursor-pointer"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            SGSYEN 首页
+            <ArrowLeft className="w-3.5 h-3.5" /> SGSYEN 首页
           </button>
-          <div className="flex items-center gap-2 text-[10px] font-sans uppercase tracking-widest text-stone-400">
-            <span>SGSYEN</span>
-            <ChevronRight className="w-3 h-3" />
-            <span className="text-[#A58261] font-bold">观点与研究</span>
-          </div>
-        </div>
-
-        {/* ── Hero ───────────────────────────────────────── */}
-        <div className="px-6 md:px-12 py-12 border-b border-[#1D1D1B]/10">
-          <span className="text-[10px] font-sans font-bold tracking-widest uppercase text-[#A58261]">
-            SECTION · 全球宏观研究
+          <span className="text-[10px] font-mono text-[#A58261] tracking-widest uppercase font-bold">
+            {isZh ? '观点与研究 · 全库' : 'Research Hub · Full Archive'}
           </span>
-          <h1 className="text-5xl md:text-7xl font-serif font-medium tracking-tight mt-2 leading-[0.95]">
-            观点与研究
-          </h1>
-          <p className="mt-4 font-sans text-sm text-stone-500 max-w-2xl leading-relaxed">
-            基于全球20年宏观时序数据、重大政策事件标注与量化情景预测的独立研判体系。
-            数据驱动，事件锚定，叙事穿透。
-          </p>
-          <div className="flex items-center gap-6 mt-6 text-[10px] font-sans font-bold uppercase tracking-widest text-stone-400">
-            <span className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              46,000+ 宏观数据点
-            </span>
-            <span>43 重大事件</span>
-            <span>{artTotal} 篇深度报告</span>
-          </div>
         </div>
 
-        {/* ── Macro Snapshot ─────────────────────────────── */}
-        <div className="px-6 md:px-12 py-8 border-b border-[#1D1D1B]/10">
-          <div className="text-[10px] font-sans font-bold uppercase tracking-widest text-[#A58261] mb-4">
-            宏观快照 · MACRO PULSE
+        {/* ── Hero ─────────────────────────────────────────── */}
+        <section
+          className="px-6 md:px-12 lg:px-20 py-20 relative overflow-hidden"
+          style={{ background: 'linear-gradient(165deg, #111110 0%, #151520 100%)' }}
+        >
+          {/* ambient */}
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ backgroundImage: 'radial-gradient(circle at 75% 25%, rgba(165,130,97,.07) 0%, transparent 55%), radial-gradient(circle at 20% 75%, rgba(200,62,62,.05) 0%, transparent 55%)' }} />
+
+          <div className="relative z-10 max-w-3xl">
+            <span className="text-[10px] font-sans font-bold tracking-[0.25em] uppercase text-[#A58261] mb-4 block">
+              SECTION · 04 — {isZh ? '最新出版物 / 观点聚焦' : 'Latest Publications / Viewpoints'}
+            </span>
+            <h1 className="text-5xl md:text-7xl font-serif font-semibold text-[#FDFCF9] leading-[0.95] tracking-tight"
+              style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
+              {isZh ? '观点与研究' : 'Viewpoints & Research'}
+            </h1>
+            <p className="mt-6 font-sans text-sm text-[#FDFCF9]/50 leading-relaxed max-w-xl">
+              {isZh
+                ? '基于全球20年宏观时序数据、重大政策事件标注与量化情景预测的独立研判体系。数据驱动，事件锚定，叙事穿透。'
+                : 'Independent analysis built on 20 years of global macro data, annotated policy events, and scenario-based forecasting.'}
+            </p>
+            <div className="flex items-center gap-8 mt-8 text-[9px] font-sans font-bold uppercase tracking-widest text-[#FDFCF9]/30">
+              <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />46,000+ 宏观数据点</span>
+              <span>43 重大事件</span>
+              <span>{artTotal > 0 ? artTotal : '—'} 篇深度报告</span>
+            </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {MACRO_CARDS.map(card => {
+        </section>
+
+        {/* ── Macro Snapshot ───────────────────────────────── */}
+        <section className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10">
+          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#A58261] mb-6 block">
+            {isZh ? '宏观快照 · MACRO PULSE' : 'MACRO PULSE'}
+          </span>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border border-[#1D1D1B]/10">
+            {MACRO_CARDS.map((card, i) => {
               const pt = macro[card.id];
               return (
-                <div key={card.id} className="border border-[#1D1D1B]/10 bg-white p-4 space-y-1">
-                  <div className="text-[9px] font-sans uppercase tracking-widest text-stone-400">
-                    {isZh ? card.label : card.label_en}
+                <div key={card.id} className={`p-6 ${i < MACRO_CARDS.length - 1 ? 'border-r border-[#1D1D1B]/10' : ''}`}>
+                  <div className="text-[9px] font-sans uppercase tracking-widest text-stone-400 mb-2">
+                    {isZh ? card.zh : card.en}
                   </div>
-                  {macLoading || !pt ? (
-                    <div className="h-7 bg-stone-100 animate-pulse rounded w-24" />
-                  ) : (
-                    <div className="text-2xl font-serif font-medium">
-                      {fmt(pt.value, card.unit)}
-                    </div>
-                  )}
-                  {pt && (
-                    <div className="text-[9px] font-mono text-stone-400">
-                      {pt.date}
-                    </div>
-                  )}
+                  {macLoading || !pt
+                    ? <div className="h-8 bg-stone-100 animate-pulse rounded w-20" />
+                    : <div className="text-2xl md:text-3xl font-serif font-semibold">{fmtVal(pt.value, card.unit)}</div>
+                  }
+                  {pt && <div className="text-[9px] font-mono text-stone-400 mt-1">{pt.date}</div>}
                 </div>
               );
             })}
           </div>
-        </div>
+        </section>
 
-        {/* ── Event Timeline ─────────────────────────────── */}
-        <div className="px-6 md:px-12 py-8 border-b border-[#1D1D1B]/10">
-          <div className="text-[10px] font-sans font-bold uppercase tracking-widest text-[#A58261] mb-6">
-            全球事件时间轴 · EVENT CALENDAR
-          </div>
+        {/* ── Event Timeline ───────────────────────────────── */}
+        <section className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10">
+          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#A58261] mb-6 block">
+            {isZh ? '全球事件时间轴 · EVENT CALENDAR' : 'GLOBAL EVENT CALENDAR'}
+          </span>
 
           {evLoading ? (
-            <div className="space-y-3">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-16 bg-stone-100 animate-pulse rounded" />
-              ))}
+            <div className="flex justify-center py-16">
+              <Loader2 className="w-6 h-6 text-[#C4A35A] animate-spin" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 border border-[#1D1D1B]/10">
 
               {/* Upcoming */}
-              <div>
-                <div className="text-[9px] font-sans font-bold uppercase tracking-widest text-stone-400 mb-3 flex items-center gap-2">
-                  <Calendar className="w-3 h-3" /> 未来催化剂
+              <div className="border-r border-[#1D1D1B]/10">
+                <div className="px-6 py-3 border-b border-[#1D1D1B]/10 bg-[#FAF9F5]">
+                  <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-stone-400 flex items-center gap-2">
+                    <Calendar className="w-3 h-3" /> {isZh ? '未来催化剂' : 'Upcoming Catalysts'}
+                  </span>
                 </div>
-                <div className="space-y-2">
-                  {upcoming.map(ev => (
-                    <div key={ev.id} className="flex gap-3 p-3 border border-dashed border-[#A58261]/30 bg-[#FAF9F5] hover:border-[#A58261]/60 transition-colors">
-                      <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${EVENT_DOT[ev.event_type] ?? 'bg-stone-400'}`} />
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-[9px] font-mono text-stone-400">{ev.date}</span>
-                          <span className={`text-[8px] font-sans font-bold uppercase px-1.5 py-0.5 border rounded ${EVENT_COLORS[ev.event_type] ?? 'bg-stone-100 text-stone-600 border-stone-200'}`}>
-                            {ev.event_type}
-                          </span>
-                          <span className="text-[8px] font-sans text-stone-400">
-                            {ev.status === 'predicted' ? `确定性 ${ev.certainty}/5` : '已确认'}
-                          </span>
-                        </div>
-                        <div className="text-sm font-serif font-medium mt-0.5 leading-tight">
-                          {ev.title}
-                        </div>
-                        <div className="text-[10px] font-sans text-stone-400 flex items-center gap-1 mt-0.5">
-                          <Globe className="w-2.5 h-2.5" /> {ev.region}
-                          {' · '}影响 {ev.impact_level}/5
-                        </div>
+                {upcoming.map((ev, i) => (
+                  <div key={ev.id}
+                    className={`flex gap-4 px-6 py-5 ${i < upcoming.length - 1 ? 'border-b border-[#1D1D1B]/8' : ''} hover:bg-[#FAF9F5] transition-colors`}
+                  >
+                    <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${EVENT_DOT[ev.event_type] ?? 'bg-stone-400'}`} />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-[9px] font-mono text-stone-400">{ev.date}</span>
+                        <span className={`text-[8px] font-sans font-bold uppercase px-1.5 py-0.5 border rounded ${EVENT_TAG[ev.event_type] ?? 'text-stone-500 bg-stone-50 border-stone-200'}`}>
+                          {ev.event_type}
+                        </span>
+                        {ev.status === 'predicted' && (
+                          <span className="text-[8px] font-mono text-stone-300">{ev.certainty}/5</span>
+                        )}
+                      </div>
+                      <div className="text-sm font-serif font-medium leading-snug">{ev.title}</div>
+                      <div className="text-[9px] font-sans text-stone-400 mt-0.5 flex items-center gap-1">
+                        <Globe className="w-2.5 h-2.5" />{ev.region} · 影响 {ev.impact_level}/5
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
 
-              {/* Recent past */}
+              {/* Recent */}
               <div>
-                <div className="text-[9px] font-sans font-bold uppercase tracking-widest text-stone-400 mb-3 flex items-center gap-2">
-                  <TrendingUp className="w-3 h-3" /> 近期历史节点
+                <div className="px-6 py-3 border-b border-[#1D1D1B]/10 bg-[#FAF9F5]">
+                  <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-stone-400">
+                    {isZh ? '近期历史节点' : 'Recent History'}
+                  </span>
                 </div>
-                <div className="space-y-2">
-                  {recent.map(ev => (
-                    <div key={ev.id} className="flex gap-3 p-3 border border-[#1D1D1B]/8 bg-white hover:bg-stone-50 transition-colors">
-                      <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${EVENT_DOT[ev.event_type] ?? 'bg-stone-400'}`} />
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-[9px] font-mono text-stone-400">{ev.date}</span>
-                          <span className={`text-[8px] font-sans font-bold uppercase px-1.5 py-0.5 border rounded ${EVENT_COLORS[ev.event_type] ?? 'bg-stone-100 text-stone-600 border-stone-200'}`}>
-                            {ev.event_type}
-                          </span>
-                        </div>
-                        <div className="text-sm font-serif font-medium mt-0.5 leading-tight">
-                          {ev.title}
-                        </div>
-                        <div className="text-[10px] font-sans text-stone-400 mt-0.5">
-                          {ev.description?.slice(0, 60)}…
-                        </div>
+                {recent.map((ev, i) => (
+                  <div key={ev.id}
+                    className={`flex gap-4 px-6 py-5 ${i < recent.length - 1 ? 'border-b border-[#1D1D1B]/8' : ''} hover:bg-[#FAF9F5] transition-colors`}
+                  >
+                    <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${EVENT_DOT[ev.event_type] ?? 'bg-stone-400'}`} />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-[9px] font-mono text-stone-400">{ev.date}</span>
+                        <span className={`text-[8px] font-sans font-bold uppercase px-1.5 py-0.5 border rounded ${EVENT_TAG[ev.event_type] ?? 'text-stone-500 bg-stone-50 border-stone-200'}`}>
+                          {ev.event_type}
+                        </span>
                       </div>
+                      <div className="text-sm font-serif font-medium leading-snug">{ev.title}</div>
+                      {ev.description && (
+                        <div className="text-[10px] font-sans text-stone-400 mt-0.5 leading-relaxed line-clamp-1">
+                          {ev.description}
+                        </div>
+                      )}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
+
             </div>
           )}
-        </div>
+        </section>
 
-        {/* ── Articles ───────────────────────────────────── */}
-        <div className="px-6 md:px-12 py-10">
-          <div className="flex items-end justify-between mb-6 gap-4 flex-wrap">
+        {/* ── Articles ─────────────────────────────────────── */}
+        <section className="py-16 px-6 md:px-12 lg:px-20">
+
+          {/* Section header */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6 select-none">
             <div>
-              <div className="text-[10px] font-sans font-bold uppercase tracking-widest text-[#A58261]">
-                深度报告 · RESEARCH BRIEFS
-              </div>
-              <div className="text-xs font-sans text-stone-400 mt-1">
-                共 {artTotal} 篇 · 每周更新
-              </div>
+              <span className="block text-[10px] uppercase tracking-[0.25em] mb-3 text-[#A58261] font-sans font-bold">
+                {isZh ? '深度报告 · RESEARCH BRIEFS' : 'RESEARCH BRIEFS'}
+              </span>
+              <h2 className="text-3xl lg:text-5xl font-serif font-semibold text-[#1D1D1B]"
+                style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
+                {isZh ? '全部出版物' : 'All Publications'}
+              </h2>
             </div>
-
             {/* Category Filter */}
             <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => { setCategory('all'); setArtPage(0); }}
-                className={`text-[9px] font-sans font-bold uppercase tracking-wider px-3 py-1.5 border transition-colors cursor-pointer ${
-                  category === 'all'
-                    ? 'bg-[#1D1D1B] text-[#FDFCF9] border-[#1D1D1B]'
-                    : 'border-stone-200 text-stone-500 hover:border-stone-400'
-                }`}
-              >全部</button>
-              {categories.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => { setCategory(cat); setArtPage(0); setArticles([]); }}
-                  className={`text-[9px] font-sans font-bold uppercase tracking-wider px-3 py-1.5 border transition-colors cursor-pointer ${
+              {['all', ...categories].map(cat => (
+                <button key={cat}
+                  onClick={() => setCategory(cat)}
+                  className={`text-[9px] font-sans font-bold uppercase tracking-widest px-3 py-1.5 border transition-colors cursor-pointer ${
                     category === cat
                       ? 'bg-[#1D1D1B] text-[#FDFCF9] border-[#1D1D1B]'
-                      : 'border-stone-200 text-stone-500 hover:border-stone-400'
+                      : 'border-[#1D1D1B]/15 text-stone-500 hover:border-stone-400 hover:text-[#1D1D1B]'
                   }`}
                 >
-                  {cat}
+                  {cat === 'all' ? (isZh ? '全部' : 'All') : cat}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Articles Grid */}
+          {/* Article rows — matches SgsyenReports layout */}
           {artLoading && articles.length === 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-40 bg-stone-100 animate-pulse rounded" />
-              ))}
+            <div className="py-24 flex flex-col items-center gap-4">
+              <Loader2 className="w-7 h-7 text-[#C4A35A] animate-spin" />
+              <p className="text-xs text-stone-400 font-sans tracking-widest uppercase">
+                {isZh ? '正在调阅研究档案...' : 'Loading research archive...'}
+              </p>
             </div>
           ) : (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {articles.map((art, i) => (
-                  <motion.div
-                    key={art.id}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.04 }}
-                    className="border border-[#1D1D1B]/10 bg-white p-6 hover:border-[#A58261]/50 hover:shadow-sm transition-all cursor-pointer group"
-                    onClick={() => navigate(`/research/${art.slug}`)}
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="space-y-2 flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261]">
-                            NO. {String(art.no ?? i + 1).padStart(3, '0')}
-                          </span>
-                          {art.category && (
-                            <span className="text-[8px] font-sans bg-stone-100 text-stone-500 px-2 py-0.5 rounded">
-                              {art.category}
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="font-serif font-medium text-base leading-snug group-hover:text-[#A58261] transition-colors line-clamp-2">
-                          {isZh ? art.title : (art.title_en || art.title)}
-                        </h3>
-                        <p className="text-xs font-sans text-stone-500 leading-relaxed line-clamp-2">
-                          {isZh ? art.subtitle : (art.subtitle_en || art.subtitle)}
-                        </p>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-stone-300 group-hover:text-[#A58261] flex-shrink-0 mt-1 transition-colors" />
-                    </div>
+            <div className="border-t border-[#1D1D1B]/10">
+              {articles.length === 0 && !artLoading && (
+                <div className="py-24 text-center border-b border-[#1D1D1B]/10">
+                  <p className="text-stone-400 text-sm font-sans">
+                    {isZh ? '该分类暂无出版物。' : 'No publications in this category yet.'}
+                  </p>
+                </div>
+              )}
 
-                    <div className="flex items-center gap-4 mt-4 pt-3 border-t border-stone-100">
-                      <span className="text-[9px] font-sans text-stone-400 uppercase tracking-wider">
-                        {art.author}
+              {articles.map((art, index) => (
+                <motion.div
+                  key={art.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.03 }}
+                  onClick={() => navigate(`/research/${art.slug}`)}
+                  className="group flex flex-col md:flex-row gap-6 md:gap-8 py-10 border-b border-[#1D1D1B]/10 hover:bg-[#FAF9F5] transition-all duration-300 px-4 cursor-pointer"
+                >
+                  {/* Serial number column */}
+                  <div className="w-32 shrink-0 flex flex-col justify-start">
+                    <span className="text-[10px] font-mono font-bold text-[#C83E3E] tracking-widest">
+                      NO. {String(art.no ?? index + 1).padStart(3, '0')}
+                    </span>
+                    <span className="text-[11px] text-stone-400 font-sans mt-2 flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5" />
+                      {fmtDate(art.published_at)}
+                    </span>
+                    {art.reading_time && (
+                      <span className="text-[10px] text-stone-400 font-sans mt-1.5 flex items-center gap-1">
+                        <Clock className="w-3 h-3" />{art.reading_time} min
                       </span>
-                      <span className="text-[9px] font-mono text-stone-400">
-                        {art.published_at?.slice(0, 10)}
+                    )}
+                  </div>
+
+                  {/* Body */}
+                  <div className="flex-1 min-w-0">
+                    {art.category && (
+                      <span className="inline-flex items-center gap-1 text-[9px] uppercase font-sans font-bold text-[#C83E3E] bg-[#C83E3E]/5 border border-[#C83E3E]/10 px-2 py-0.5 rounded mb-3">
+                        <Tag className="w-3 h-3" />{art.category}
                       </span>
-                      {art.reading_time && (
-                        <span className="text-[9px] font-sans text-stone-400 flex items-center gap-1 ml-auto">
-                          <Clock className="w-2.5 h-2.5" /> {art.reading_time} min
-                        </span>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                    )}
+                    <h3 className="text-xl md:text-2xl font-serif font-bold text-[#1D1D1B] group-hover:text-[#C4A35A] transition-colors leading-[1.3] mb-3"
+                      style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
+                      {isZh ? art.title : (art.title_en || art.title)}
+                    </h3>
+                    {(art.subtitle || art.subtitle_en) && (
+                      <p className="text-stone-500 font-sans text-xs leading-[1.8] line-clamp-2 font-light">
+                        {isZh ? art.subtitle : (art.subtitle_en || art.subtitle)}
+                      </p>
+                    )}
+                    {art.author && (
+                      <div className="mt-3 text-[10px] font-sans text-stone-400 uppercase tracking-wider">
+                        {isZh ? art.author : (art.author_en || art.author)}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Arrow CTA */}
+                  <div className="flex items-center justify-end md:justify-center shrink-0">
+                    <span className="w-10 h-10 rounded-full border border-[#1D1D1B]/15 flex items-center justify-center text-stone-400 group-hover:bg-[#1D1D1B] group-hover:text-white group-hover:border-transparent transition-all duration-300">
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
 
               {/* Load More */}
               {hasMore && (
-                <div className="text-center mt-8">
+                <div className="py-10 text-center">
                   <button
-                    onClick={loadMore}
+                    onClick={() => { const next = artPage + 1; setArtPage(next); loadArticles(next, category); }}
                     disabled={artLoading}
-                    className="flex items-center gap-2 mx-auto px-8 py-3 border border-[#1D1D1B] text-[10px] font-sans font-bold uppercase tracking-widest hover:bg-[#1D1D1B] hover:text-[#FDFCF9] transition-colors cursor-pointer disabled:opacity-40"
+                    className="inline-flex items-center gap-2 px-8 py-3 border border-[#1D1D1B] text-[10px] font-sans font-bold uppercase tracking-widest hover:bg-[#1D1D1B] hover:text-[#FDFCF9] transition-colors cursor-pointer disabled:opacity-40"
                   >
-                    {artLoading ? (
-                      <span className="animate-spin w-3 h-3 border-2 border-stone-400 border-t-[#1D1D1B] rounded-full" />
-                    ) : (
-                      <ChevronDown className="w-3.5 h-3.5" />
-                    )}
-                    加载更多 · {artTotal - articles.length} 篇待读
+                    {artLoading
+                      ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      : <ChevronDown className="w-3.5 h-3.5" />
+                    }
+                    {isZh ? `加载更多 · 还有 ${artTotal - articles.length} 篇` : `Load More · ${artTotal - articles.length} remaining`}
                   </button>
                 </div>
               )}
 
               {!hasMore && articles.length > 0 && (
-                <div className="text-center mt-8 text-[9px] font-sans uppercase tracking-widest text-stone-300">
-                  ── 已加载全部 {artTotal} 篇报告 ──
+                <div className="py-10 text-center text-[9px] font-sans uppercase tracking-widest text-stone-300">
+                  ── {isZh ? `已加载全部 ${artTotal} 篇报告` : `All ${artTotal} reports loaded`} ──
                 </div>
               )}
-            </>
+            </div>
           )}
-        </div>
+        </section>
 
-        {/* ── Footer ─────────────────────────────────────── */}
-        <footer className="px-6 md:px-12 py-8 border-t border-[#1D1D1B]/10 flex flex-col sm:flex-row justify-between items-center bg-[#FAF9F5] gap-4 select-none">
+        {/* ── Footer ───────────────────────────────────────── */}
+        <footer className="px-6 md:px-12 lg:px-20 py-8 border-t border-[#1D1D1B]/10 flex flex-col sm:flex-row justify-between items-center bg-[#FAF9F5] gap-4 select-none">
           <div className="text-[10px] font-sans tracking-widest uppercase text-stone-500">
-            © 2020 – 2026 SGSYEN 智库研究中心
+            © 2020 – 2026 SGSYEN 智库研究中心 · 庙街数字重建委员会
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-            <span className="text-[10px] font-mono uppercase font-bold tracking-tight text-stone-500">
+            <span className="text-[10px] font-mono uppercase font-bold tracking-widest text-stone-400">
               gsyen-research · LIVE
             </span>
           </div>
