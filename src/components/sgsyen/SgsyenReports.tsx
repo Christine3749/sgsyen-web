@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { FileText, ArrowRight, X, Download, Lock, CheckCircle2, Loader2, Calendar, Tag } from 'lucide-react';
 import { useLocale } from '../../context/LocaleContext';
 import { supabase } from '../../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 interface Report {
   id: string;
@@ -86,6 +87,7 @@ const FALLBACK_REPORTS_EN: Report[] = [
 
 export default function SgsyenReports() {
   const { t, locale, authorizedEmail, authenticate, setShowLoginModal } = useLocale();
+  const navigate = useNavigate();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -257,11 +259,20 @@ export default function SgsyenReports() {
             {t('sgsyenReportsTitle')}
           </h2>
         </div>
-        <div id="reports-badge-line-right" className="text-[10px] uppercase font-mono tracking-wider text-stone-400">
-          {locale === 'zh' 
-            ? '*与 GCP Cloud Run、GCS 离线持久层以及 Hono API 路由无缝互联'
-            : '*Directly integrated with Google Cloud Run & Secure GCS asset vaults'
-          }
+        <div id="reports-badge-line-right" className="flex flex-col items-end gap-3">
+          <div className="text-[10px] uppercase font-mono tracking-wider text-stone-400">
+            {locale === 'zh'
+              ? '*与 GCP Cloud Run、GCS 离线持久层以及 Hono API 路由无缝互联'
+              : '*Directly integrated with Google Cloud Run & Secure GCS asset vaults'
+            }
+          </div>
+          <button
+            onClick={() => navigate('/research')}
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#1D1D1B] text-[#FDFCF9] text-[10px] font-sans font-bold uppercase tracking-widest hover:bg-[#A58261] transition-colors cursor-pointer"
+          >
+            {locale === 'zh' ? '全部报告 · 数据中心' : 'All Reports & Data Hub'}
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
 

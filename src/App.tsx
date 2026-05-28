@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Routes, Route } from 'react-router-dom';
 import ModelPricingTable from './components/ModelPricingTable';
 import CostCalculator from './components/CostCalculator';
 import InsightArticles from './components/InsightArticles';
 import SgsyenPortal from './components/sgsyen/SgsyenPortal';
 import MiaojiePortal from './components/miaojie/MiaojiePortal';
+import ResearchPage from './pages/ResearchPage';
 import { Calculator, FileText, Layers, RefreshCw } from 'lucide-react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 
@@ -52,6 +53,10 @@ function InnerApp() {
 
   if (activeApp === 'miaojie') {
     return <MiaojiePortal />;
+  }
+
+  if (path.startsWith('/research')) {
+    return <ResearchPage />;
   }
 
   return (
