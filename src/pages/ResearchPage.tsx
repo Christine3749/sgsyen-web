@@ -69,6 +69,9 @@ export default function ResearchPage() {
   const [macro,       setMacro]       = useState<Record<string, MacroPoint>>({});
   const [macLoading,  setMacLoading]  = useState(true);
 
+  // regime signal
+  const [regime,      setRegime]      = useState<{ zh: string; en: string; signal: string; fed: number; inflation: string } | null>(null);
+
   // search
   const [searchInput,  setSearchInput]  = useState('');
   const [search,       setSearch]       = useState('');
@@ -188,6 +191,20 @@ export default function ResearchPage() {
     });
   }, []);
 
+  // ── fetch regime signal from GSYEN TERMINAL ─────────────
+  useEffect(() => {
+    fetch('https://terminal.gsyen.com/api/regime')
+      .then(r => r.json())
+      .then(d => setRegime({
+        zh:        d.regime.zh,
+        en:        d.regime.en,
+        signal:    d.regime.signal,
+        fed:       d.inputs.fed_funds_rate,
+        inflation: d.inputs.inflation_direction,
+      }))
+      .catch(() => {});
+  }, []);
+
   // ── fetch categories only (筛选条只放分类，tags 在行内) ──
   useEffect(() => {
     research.from('articles').select('category').eq('is_published', true)
@@ -284,6 +301,34 @@ export default function ResearchPage() {
             })}
           </div>
         </section>
+
+        {/* ── Regime Signal ────────────────────────────────── */}
+        {regime && (
+          <section className="px-6 md:px-12 lg:px-20 py-5 border-b border-[#1D1D1B]/10 bg-[#FAF9F5]">
+            <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-8">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+                <span className="text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-[#A58261]">
+                  {isZh ? '当前宏观象限' : 'MACRO REGIME'}
+                </span>
+                <span className="text-sm font-serif font-semibold text-[#1D1D1B]">
+                  {isZh ? regime.zh : regime.en}
+                </span>
+              </div>
+              <div className="h-px md:h-4 md:w-px bg-[#1D1D1B]/15 shrink-0" />
+              <span className="text-xs font-sans text-stone-500">
+                {isZh ? '配置信号：' : 'Signal: '}
+                <span className="text-[#C83E3E] font-medium">{regime.signal}</span>
+              </span>
+              <div className="h-px md:h-4 md:w-px bg-[#1D1D1B]/15 shrink-0" />
+              <span className="text-[10px] font-mono text-stone-400">
+                Fed {regime.fed}% · CPI {isZh
+                  ? (regime.inflation === 'rising' ? '↑上行' : regime.inflation === 'falling' ? '↓下行' : '→平稳')
+                  : (regime.inflation === 'rising' ? '↑ rising' : regime.inflation === 'falling' ? '↓ falling' : '→ flat')}
+              </span>
+            </div>
+          </section>
+        )}
 
         {/* ── Event Timeline ───────────────────────────────── */}
         <section className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10">
