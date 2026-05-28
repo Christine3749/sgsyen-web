@@ -156,7 +156,7 @@ export default function SgsyenReports() {
         setDownloading(false);
         return;
       }
-      const res = await fetch(`${API}/reports/${slug}/download`, {
+      const res = await fetch(`https://sgsyen-api-ocjwdme54q-de.a.run.app/reports/${slug}/download`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

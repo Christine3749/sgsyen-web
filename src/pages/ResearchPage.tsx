@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowRight, ArrowLeft, Calendar, Tag, Globe,
-  ChevronDown, Loader2, Clock, Star,
+  ChevronDown, Loader2, Clock, Star, Search, X, Terminal, Copy, Check,
 } from 'lucide-react';
 import { research, Article, PolicyEvent, MacroPoint } from '../lib/research';
 import { useLocale } from '../context/LocaleContext';
@@ -67,6 +67,24 @@ export default function ResearchPage() {
   const [macro,       setMacro]       = useState<Record<string, MacroPoint>>({});
   const [macLoading,  setMacLoading]  = useState(true);
 
+  // search
+  const [searchInput,  setSearchInput]  = useState('');
+  const [search,       setSearch]       = useState('');
+  const [showApi,      setShowApi]      = useState(false);
+  const [copied,       setCopied]       = useState<string | null>(null);
+
+  // debounce search
+  useEffect(() => {
+    const t = setTimeout(() => { setSearch(searchInput); setArticles([]); setArtPage(0); }, 400);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
+  const copyText = (text: string, key: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(key);
+    setTimeout(() => setCopied(null), 1800);
+  };
+
   // stars (localStorage dedup)
   const [starred, setStarred] = useState<Set<string>>(new Set());
 
@@ -93,7 +111,7 @@ export default function ResearchPage() {
   }, [starred]);
 
   // ── fetch articles ────────────────────────────────────────
-  const loadArticles = useCallback(async (page: number, cat: string) => {
+  const loadArticles = useCallback(async (page: number, cat: string, kw = '') => {
     setArtLoading(true);
     let q = research
       .from('articles')
@@ -102,13 +120,14 @@ export default function ResearchPage() {
       .order('published_at', { ascending: false })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
     if (cat !== 'all') q = q.or(`category.eq.${cat},tags.cs.{"${cat}"}`);
+    if (kw) q = q.or(`title.ilike.%${kw}%,title_en.ilike.%${kw}%,tags.cs.{"${kw}"}`);
     const { data, count } = await q;
     if (data) setArticles(prev => page === 0 ? data : [...prev, ...data]);
     if (count != null) setArtTotal(count);
     setArtLoading(false);
   }, []);
 
-  useEffect(() => { setArticles([]); setArtPage(0); loadArticles(0, category); }, [category, loadArticles]);
+  useEffect(() => { setArticles([]); setArtPage(0); loadArticles(0, category, search); }, [category, search, loadArticles]);
 
   // ── fetch events ─────────────────────────────────────────
   useEffect(() => {
@@ -167,9 +186,18 @@ export default function ResearchPage() {
           >
             <ArrowLeft className="w-3.5 h-3.5" /> SGSYEN 首页
           </button>
-          <span className="text-[10px] font-mono text-[#A58261] tracking-widest uppercase font-bold">
-            {isZh ? '观点与研究 · 全库' : 'Research Hub · Full Archive'}
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-[10px] font-mono text-[#A58261] tracking-widest uppercase font-bold hidden sm:block">
+              {isZh ? '观点与研究 · 全库' : 'Research Hub · Full Archive'}
+            </span>
+            <button
+              onClick={() => setShowApi(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] hover:bg-[#A58261] hover:text-white transition-colors cursor-pointer rounded"
+            >
+              <Terminal className="w-3 h-3" />
+              {isZh ? '研究员 API 接入' : 'Researcher API'}
+            </button>
+          </div>
         </div>
 
         {/* ── Hero ─────────────────────────────────────────── */}
@@ -308,7 +336,7 @@ export default function ResearchPage() {
         <section className="py-16 px-6 md:px-12 lg:px-20">
 
           {/* Section header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6 select-none">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6 select-none">
             <div>
               <span className="block text-[10px] uppercase tracking-[0.25em] mb-3 text-[#A58261] font-sans font-bold">
                 {isZh ? '雍彻智库 · SGSYEN INSTITUTE' : 'SGSYEN INSTITUTE'}
@@ -318,22 +346,47 @@ export default function ResearchPage() {
                 {isZh ? '雍彻评论' : 'SGSYEN REVIEW'}
               </h2>
             </div>
-            {/* Category Filter */}
-            <div className="flex flex-wrap gap-2">
-              {['all', ...categories].map(cat => (
-                <button key={cat}
-                  onClick={() => setCategory(cat)}
-                  className={`text-[9px] font-sans font-bold uppercase tracking-widest px-3 py-1.5 border transition-colors cursor-pointer ${
-                    category === cat
-                      ? 'bg-[#1D1D1B] text-[#FDFCF9] border-[#1D1D1B]'
-                      : 'border-[#1D1D1B]/15 text-stone-500 hover:border-stone-400 hover:text-[#1D1D1B]'
-                  }`}
-                >
-                  {cat === 'all' ? (isZh ? '全部' : 'All') : cat}
-                </button>
-              ))}
+            {/* Search + Category Filter */}
+            <div className="flex flex-col gap-3 items-end">
+              {/* Search box */}
+              <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchInput}
+                  onChange={e => setSearchInput(e.target.value)}
+                  placeholder={isZh ? '搜索标题 · 标签...' : 'Search title, tags...'}
+                  className="w-full pl-8 pr-8 py-2 text-[11px] font-sans border border-[#1D1D1B]/15 bg-white text-[#1D1D1B] placeholder:text-stone-300 focus:outline-none focus:border-[#A58261] transition-colors"
+                />
+                {searchInput && (
+                  <button onClick={() => setSearchInput('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-300 hover:text-[#1D1D1B] cursor-pointer">
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+              {/* Category Filter */}
+              <div className="flex flex-wrap gap-2 justify-end">
+                {['all', ...categories].map(cat => (
+                  <button key={cat}
+                    onClick={() => setCategory(cat)}
+                    className={`text-[9px] font-sans font-bold uppercase tracking-widest px-3 py-1.5 border transition-colors cursor-pointer ${
+                      category === cat
+                        ? 'bg-[#1D1D1B] text-[#FDFCF9] border-[#1D1D1B]'
+                        : 'border-[#1D1D1B]/15 text-stone-500 hover:border-stone-400 hover:text-[#1D1D1B]'
+                    }`}
+                  >
+                    {cat === 'all' ? (isZh ? '全部' : 'All') : cat}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
+          {/* Search hint */}
+          {search && (
+            <div className="mb-6 text-[10px] font-sans text-stone-400">
+              {isZh ? `关键词「${search}」共找到 ${artTotal} 篇` : `"${search}" — ${artTotal} result${artTotal !== 1 ? 's' : ''}`}
+            </div>
+          )}
 
           {/* Article rows — matches SgsyenReports layout */}
           {artLoading && articles.length === 0 ? (
@@ -438,7 +491,7 @@ export default function ResearchPage() {
               {hasMore && (
                 <div className="py-10 text-center">
                   <button
-                    onClick={() => { const next = artPage + 1; setArtPage(next); loadArticles(next, category); }}
+                    onClick={() => { const next = artPage + 1; setArtPage(next); loadArticles(next, category, search); }}
                     disabled={artLoading}
                     className="inline-flex items-center gap-2 px-8 py-3 border border-[#1D1D1B] text-[10px] font-sans font-bold uppercase tracking-widest hover:bg-[#1D1D1B] hover:text-[#FDFCF9] transition-colors cursor-pointer disabled:opacity-40"
                   >
@@ -472,8 +525,128 @@ export default function ResearchPage() {
             </span>
           </div>
         </footer>
-
       </div>
+
+      {/* ── API 接入文档抽屉 ──────────────────────────────── */}
+      <AnimatePresence>
+        {showApi && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[700] flex justify-end"
+            onClick={() => setShowApi(false)}
+          >
+            <motion.div
+              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+              transition={{ type: 'tween', duration: 0.4, ease: 'easeOut' }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-[680px] h-screen bg-[#0D0D0C] text-[#E8E4DC] flex flex-col overflow-hidden"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-8 py-5 border-b border-white/10">
+                <div className="flex items-center gap-3">
+                  <Terminal className="w-4 h-4 text-[#C4A35A]" />
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-[#C4A35A]">
+                    GSYEN RESEARCH · API 接入文档
+                  </span>
+                </div>
+                <button onClick={() => setShowApi(false)} className="text-white/40 hover:text-white transition-colors cursor-pointer">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="flex-1 overflow-y-auto px-8 py-8 space-y-8 text-sm font-mono">
+
+                {/* Status */}
+                <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-emerald-400 font-bold">PUBLIC · 公开读写阶段</span>
+                  <span className="text-white/25 ml-2">下月起切换为研究员认证模式</span>
+                </div>
+
+                {/* Connection */}
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-[#A58261] mb-3 font-sans font-bold">连接信息 · Connection</div>
+                  <div className="bg-[#161614] border border-white/8 rounded p-4 space-y-3">
+                    {[
+                      { label: 'URL', val: 'https://rrwmftbykbwuexietehj.supabase.co' },
+                      { label: 'ANON KEY', val: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJyd21mdGJ5a2J3dWV4aWV0ZWhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzAxNTcsImV4cCI6MjA5NTU0NjE1N30.XWgHIzgPaNXw5ok79XGkUTqAL-Nz4z4VWwzxpFsX25s' },
+                    ].map(({ label, val }) => (
+                      <div key={label} className="flex items-start gap-3">
+                        <span className="text-[9px] text-[#A58261] w-20 shrink-0 pt-0.5 uppercase">{label}</span>
+                        <code className="text-[10px] text-emerald-300 break-all leading-relaxed flex-1">{val}</code>
+                        <button onClick={() => copyText(val, label)} className="shrink-0 text-white/30 hover:text-[#C4A35A] transition-colors cursor-pointer mt-0.5">
+                          {copied === label ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Python example */}
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-[#A58261] mb-3 font-sans font-bold">Python 快速接入</div>
+                  <div className="relative bg-[#161614] border border-white/8 rounded p-4">
+                    <button onClick={() => copyText(`from supabase import create_client\nimport pandas as pd\n\nURL = "https://rrwmftbykbwuexietehj.supabase.co"\nKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."\n\nsb = create_client(URL, KEY)\n\n# 宏观时序数据\ndf = pd.DataFrame(\n    sb.table("macro_timeseries")\n      .select("*")\n      .eq("series_id", "SP500")\n      .order("date")\n      .execute().data\n)\n\n# 政策事件\nevents = sb.table("policy_events").select("*").execute()`, 'python')}
+                      className="absolute top-3 right-3 text-white/25 hover:text-[#C4A35A] cursor-pointer transition-colors"
+                    >
+                      {copied === 'python' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
+                    <pre className="text-[11px] leading-relaxed overflow-x-auto text-[#E8E4DC]/80 whitespace-pre">{`from supabase import create_client
+import pandas as pd
+
+URL = "https://rrwmftbykbwuexietehj.supabase.co"
+KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+sb = create_client(URL, KEY)
+
+# 宏观时序数据
+df = pd.DataFrame(
+    sb.table("macro_timeseries")
+      .select("*")
+      .eq("series_id", "SP500")
+      .order("date")
+      .execute().data
+)
+
+# 政策事件
+events = sb.table("policy_events").select("*").execute()`}</pre>
+                  </div>
+                </div>
+
+                {/* Tables */}
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-[#A58261] mb-3 font-sans font-bold">可用数据表 · Tables</div>
+                  <div className="bg-[#161614] border border-white/8 rounded overflow-hidden">
+                    {[
+                      { name: 'macro_timeseries', desc: '46,000+ 宏观时序 · SP500 / 黄金 / LPR / CPI ...', badge: 'READ' },
+                      { name: 'policy_events',    desc: '历史 + 预测政策事件，含 certainty 1–5 评分',    badge: 'READ' },
+                      { name: 'articles',         desc: '雍彻评论发布文章，含 star_count',               badge: 'READ' },
+                      { name: 'predictions',      desc: '量化预测写入通道，供研究员 INSERT 模型结果',     badge: 'WRITE' },
+                    ].map(({ name, desc, badge }, i, arr) => (
+                      <div key={name} className={`flex items-start gap-4 px-4 py-3 ${i < arr.length - 1 ? 'border-b border-white/6' : ''}`}>
+                        <code className="text-emerald-300 text-[11px] w-44 shrink-0">{name}</code>
+                        <span className="text-white/40 text-[10px] leading-relaxed flex-1">{desc}</span>
+                        <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded shrink-0 ${badge === 'WRITE' ? 'text-blue-300 bg-blue-500/15' : 'text-emerald-300 bg-emerald-500/10'}`}>{badge}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Coming soon */}
+                <div className="border border-[#A58261]/20 rounded p-5 bg-[#A58261]/5">
+                  <div className="text-[10px] uppercase tracking-widest text-[#A58261] mb-2 font-sans font-bold">🔑 研究员认证 · 即将开放</div>
+                  <p className="text-[11px] text-white/50 leading-relaxed">
+                    下期将开放「研究员」成员等级。认证后获得专属 API Token，可写入 predictions 表并订阅实时数据推送。
+                    如有合作意向，请联系 <span className="text-[#C4A35A]">Ethan7586@gsyen.com</span>
+                  </p>
+                </div>
+
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
