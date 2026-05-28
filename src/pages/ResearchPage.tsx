@@ -53,6 +53,14 @@ export default function ResearchPage() {
   const [recent,      setRecent]      = useState<PolicyEvent[]>([]);
   const [evLoading,   setEvLoading]   = useState(true);
 
+  // regime signal (for breadcrumb bar)
+  const [regime, setRegime] = useState<{
+    zh: string; en: string; signal: string; fed: number; inflation: string;
+  } | null>(null);
+
+  // total macro data point count (dynamic)
+  const [macroCount, setMacroCount] = useState<number | null>(null);
+
   // search
   const [searchInput,  setSearchInput]  = useState('');
   const [search,       setSearch]       = useState('');
@@ -157,6 +165,25 @@ export default function ResearchPage() {
     });
   }, []);
 
+  // ── fetch regime signal ──────────────────────────────────
+  useEffect(() => {
+    fetch('https://terminal.gsyen.com/api/regime')
+      .then(r => r.json())
+      .then(d => setRegime({
+        zh: d.regime.zh, en: d.regime.en, signal: d.regime.signal,
+        fed: d.inputs.fed_funds_rate, inflation: d.inputs.inflation_direction,
+      }))
+      .catch(() => {});
+  }, []);
+
+  // ── fetch total macro record count ───────────────────────
+  useEffect(() => {
+    research
+      .from('macro_timeseries')
+      .select('*', { count: 'exact', head: true })
+      .then(({ count }) => { if (count !== null) setMacroCount(count); });
+  }, []);
+
   // ── fetch categories only (筛选条只放分类，tags 在行内) ──
   useEffect(() => {
     research.from('articles').select('category').eq('is_published', true)
@@ -179,14 +206,48 @@ export default function ResearchPage() {
       <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10">
 
         {/* ── Breadcrumb ────────────────────────────────────── */}
-        <div className="flex items-center justify-between px-6 md:px-12 lg:px-20 py-4 border-b border-[#1D1D1B]/10 bg-[#FAF9F5] select-none">
+        <div className="relative flex items-center px-6 md:px-10 lg:px-16 py-3 border-b border-[#1D1D1B]/10 bg-[#FAF9F5] select-none min-h-[52px]">
+
+          {/* Left: back button */}
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-widest text-stone-400 hover:text-[#1D1D1B] transition-colors cursor-pointer"
+            className="flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-widest text-stone-400 hover:text-[#1D1D1B] transition-colors cursor-pointer shrink-0 z-10"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> SGSYEN 首页
           </button>
-          <div className="flex items-center gap-4">
+
+          {/* Center: regime signal — true centered via absolute */}
+          <div className="absolute inset-x-0 flex justify-center pointer-events-none">
+            {regime ? (
+              <div className="flex items-center gap-2.5 md:gap-4 pointer-events-auto">
+                <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse" />
+                <span className="text-[9px] font-sans font-bold uppercase tracking-[0.18em] text-[#A58261] hidden md:block">
+                  {isZh ? '宏观象限' : 'REGIME'}
+                </span>
+                <span className="text-[13px] font-serif font-semibold text-[#1D1D1B]">
+                  {isZh ? regime.zh : regime.en}
+                </span>
+                <span className="h-3.5 w-px bg-[#1D1D1B]/15 hidden md:block" />
+                <span className="text-[11px] font-sans text-stone-500 hidden md:block">
+                  {isZh ? '配置信号：' : 'Signal: '}
+                  <span className="text-[#C83E3E] font-semibold">{regime.signal}</span>
+                </span>
+                <span className="h-3.5 w-px bg-[#1D1D1B]/15 hidden lg:block" />
+                <span className="text-[10px] font-mono text-stone-400 hidden lg:block">
+                  Fed {regime.fed}%
+                  {' · '}CPI {isZh
+                    ? (regime.inflation === 'rising' ? '↑ 上行' : regime.inflation === 'falling' ? '↓ 下行' : '→ 平稳')
+                    : (regime.inflation === 'rising' ? '↑ rising' : regime.inflation === 'falling' ? '↓ falling' : '→ flat')}
+                </span>
+              </div>
+            ) : (
+              /* loading skeleton */
+              <div className="w-64 h-3 rounded bg-stone-100 animate-pulse" />
+            )}
+          </div>
+
+          {/* Right: archive label + API button */}
+          <div className="ml-auto flex items-center gap-4 shrink-0 z-10">
             <span className="text-[10px] font-mono text-[#A58261] tracking-widest uppercase font-bold hidden sm:block">
               {isZh ? '观点与研究 · 全库' : 'Research Hub · Full Archive'}
             </span>
@@ -226,7 +287,12 @@ export default function ResearchPage() {
                 : 'Independent analysis built on 20 years of global macro data, annotated policy events, and scenario-based forecasting.'}
             </p>
             <div className="flex items-center gap-8 mt-8 text-[9px] font-sans font-bold uppercase tracking-widest text-[#FDFCF9]/30">
-              <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />46,000+ 宏观数据点</span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                {macroCount !== null
+                  ? `${macroCount.toLocaleString('en-US')}+ ${isZh ? '宏观数据点' : 'macro data pts'}`
+                  : (isZh ? '— 宏观数据点' : '— macro data pts')}
+              </span>
               <span>43 重大事件</span>
               <span>{artTotal > 0 ? artTotal : '—'} 篇深度报告</span>
             </div>

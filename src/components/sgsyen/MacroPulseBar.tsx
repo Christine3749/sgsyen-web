@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { research, MacroPoint } from '../../lib/research';
 import { useLocale } from '../../context/LocaleContext';
 
-// ── 15 market indicators ──────────────────────────────────────
+// ── 15 market indicators ─────────────────────────────────────
 const MACRO_CARDS = [
   { id: 'SP500',        zh: '标普 500',  en: 'S&P 500',    unit: 'pts' },
   { id: 'NASDAQ100',    zh: '纳指 100',  en: 'Nasdaq 100', unit: 'pts' },
@@ -27,23 +27,14 @@ function fmtVal(v: number, unit: string) {
   return v.toFixed(2);
 }
 
-interface RegimeData {
-  zh: string;
-  en: string;
-  signal: string;
-  fed: number;
-  inflation: string;
-}
-
 export default function MacroPulseBar() {
   const { locale } = useLocale();
   const isZh = locale === 'zh';
 
   const [macro,      setMacro]      = useState<Record<string, MacroPoint>>({});
   const [macLoading, setMacLoading] = useState(true);
-  const [regime,     setRegime]     = useState<RegimeData | null>(null);
 
-  // ── fetch macro from Supabase ─────────────────────────────
+  // ── fetch latest value for each series ───────────────────
   useEffect(() => {
     Promise.all(
       MACRO_CARDS.map(c =>
@@ -62,55 +53,8 @@ export default function MacroPulseBar() {
     });
   }, []);
 
-  // ── fetch regime from GSYEN TERMINAL ─────────────────────
-  useEffect(() => {
-    fetch('https://terminal.gsyen.com/api/regime')
-      .then(r => r.json())
-      .then(d => setRegime({
-        zh:        d.regime.zh,
-        en:        d.regime.en,
-        signal:    d.regime.signal,
-        fed:       d.inputs.fed_funds_rate,
-        inflation: d.inputs.inflation_direction,
-      }))
-      .catch(() => {});
-  }, []);
-
-  // ── build the combined ticker item list ───────────────────
-  // Regime items (only when available)
-  type TickerItem =
-    | { kind: 'regime-label'; label: string; value: string }
-    | { kind: 'regime-signal'; label: string; value: string }
-    | { kind: 'regime-stat';   label: string; value: string }
-    | { kind: 'macro';         label: string; id: string; unit: string };
-
-  const regimeItems: TickerItem[] = regime
-    ? [
-        { kind: 'regime-label',  label: isZh ? '宏观象限' : 'REGIME',  value: isZh ? regime.zh : regime.en },
-        { kind: 'regime-signal', label: isZh ? '配置信号' : 'SIGNAL',  value: regime.signal },
-        { kind: 'regime-stat',   label: 'FED',                          value: `${regime.fed}%` },
-        {
-          kind: 'regime-stat',
-          label: 'CPI',
-          value: isZh
-            ? (regime.inflation === 'rising' ? '↑ 上行' : regime.inflation === 'falling' ? '↓ 下行' : '→ 平稳')
-            : (regime.inflation === 'rising' ? '↑ rising' : regime.inflation === 'falling' ? '↓ falling' : '→ flat'),
-        },
-      ]
-    : [];
-
-  const macroItems: TickerItem[] = MACRO_CARDS.map(c => ({
-    kind: 'macro',
-    label: isZh ? c.zh : c.en,
-    id:    c.id,
-    unit:  c.unit,
-  }));
-
-  // combine + duplicate for seamless infinite loop
-  const allItems = [...regimeItems, ...macroItems];
-  const doubled  = [...allItems, ...allItems];
-
-  const isReady = !macLoading;
+  // Duplicate the cards array for a seamless infinite loop
+  const doubled = [...MACRO_CARDS, ...MACRO_CARDS];
 
   return (
     <div
@@ -118,7 +62,8 @@ export default function MacroPulseBar() {
       style={{ background: '#111110' }}
     >
       <div className="flex items-stretch">
-        {/* Label badge */}
+
+        {/* Gold label badge */}
         <div
           className="shrink-0 flex items-center px-4 py-2.5 z-10"
           style={{ background: '#C4A35A' }}
@@ -128,64 +73,33 @@ export default function MacroPulseBar() {
           </span>
         </div>
 
-        {/* Divider dot */}
         <div className="shrink-0 w-px self-stretch bg-white/10" />
 
         {/* Scrolling track */}
-        <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 overflow-hidden">
           <div
-            className="inline-flex gap-0 whitespace-nowrap"
+            className="inline-flex whitespace-nowrap"
             style={{
-              animation: isReady ? 'macro-ticker 55s linear infinite' : 'none',
+              animation: macLoading ? 'none' : 'macro-ticker 55s linear infinite',
               willChange: 'transform',
             }}
           >
-            {doubled.map((item, i) => {
-              if (item.kind === 'macro') {
-                const pt = macro[item.id];
-                return (
-                  <div
-                    key={i}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 border-r border-white/6"
-                  >
-                    <span className="text-[8px] font-sans uppercase tracking-widest text-white/35">
-                      {item.label}
-                    </span>
-                    {macLoading || !pt
-                      ? <span className="w-10 h-2.5 rounded bg-white/8 animate-pulse inline-block" />
-                      : <span className="text-[13px] font-mono font-semibold text-[#C4A35A]">
-                          {fmtVal(pt.value, item.unit)}
-                        </span>
-                    }
-                  </div>
-                );
-              }
-
-              // Regime items
-              const isSignal = item.kind === 'regime-signal';
-              const isLabel  = item.kind === 'regime-label';
+            {doubled.map((card, i) => {
+              const pt = macro[card.id];
               return (
                 <div
                   key={i}
                   className="inline-flex items-center gap-2 px-5 py-2.5 border-r border-white/6"
                 >
-                  {isLabel && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
-                  )}
                   <span className="text-[8px] font-sans uppercase tracking-widest text-white/35">
-                    {item.label}
+                    {isZh ? card.zh : card.en}
                   </span>
-                  <span
-                    className={
-                      isSignal
-                        ? 'text-[13px] font-sans font-semibold text-[#C83E3E]'
-                        : isLabel
-                          ? 'text-[13px] font-serif font-semibold text-white/90'
-                          : 'text-[13px] font-mono text-white/70'
-                    }
-                  >
-                    {item.value}
-                  </span>
+                  {macLoading || !pt
+                    ? <span className="w-10 h-2.5 rounded bg-white/8 animate-pulse inline-block" />
+                    : <span className="text-[13px] font-mono font-semibold text-[#C4A35A]">
+                        {fmtVal(pt.value, card.unit)}
+                      </span>
+                  }
                 </div>
               );
             })}
