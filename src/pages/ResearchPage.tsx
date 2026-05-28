@@ -248,6 +248,58 @@ export default function ResearchPage() {
           </div>
         </div>
 
+        {/* ── Macro Snapshot ───────────────────────────────── */}
+        <section className="px-6 md:px-12 lg:px-20 py-8 border-b border-[#1D1D1B]/10">
+          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#A58261] mb-5 block">
+            {isZh ? '宏观快照 · MACRO PULSE' : 'MACRO PULSE'}
+          </span>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border border-[#1D1D1B]/10">
+            {MACRO_CARDS.map((card, i) => {
+              const pt = macro[card.id];
+              return (
+                <div key={card.id} className={`p-6 ${i < MACRO_CARDS.length - 1 ? 'border-r border-[#1D1D1B]/10' : ''}`}>
+                  <div className="text-[9px] font-sans uppercase tracking-widest text-stone-400 mb-2">
+                    {isZh ? card.zh : card.en}
+                  </div>
+                  {macLoading || !pt
+                    ? <div className="h-8 bg-stone-100 animate-pulse rounded w-20" />
+                    : <div className="text-2xl md:text-3xl font-serif font-semibold">{fmtVal(pt.value, card.unit)}</div>
+                  }
+                  {pt && <div className="text-[9px] font-mono text-stone-400 mt-1">{pt.date}</div>}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ── Regime Signal ────────────────────────────────── */}
+        {regime && (
+          <section className="px-6 md:px-12 lg:px-20 py-4 border-b border-[#1D1D1B]/10 bg-[#FAF9F5]">
+            <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-8">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+                <span className="text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-[#A58261]">
+                  {isZh ? '当前宏观象限' : 'MACRO REGIME'}
+                </span>
+                <span className="text-sm font-serif font-semibold text-[#1D1D1B]">
+                  {isZh ? regime.zh : regime.en}
+                </span>
+              </div>
+              <div className="h-px md:h-4 md:w-px bg-[#1D1D1B]/15 shrink-0" />
+              <span className="text-xs font-sans text-stone-500">
+                {isZh ? '配置信号：' : 'Signal: '}
+                <span className="text-[#C83E3E] font-medium">{regime.signal}</span>
+              </span>
+              <div className="h-px md:h-4 md:w-px bg-[#1D1D1B]/15 shrink-0" />
+              <span className="text-[10px] font-mono text-stone-400">
+                Fed {regime.fed}% · CPI {isZh
+                  ? (regime.inflation === 'rising' ? '↑上行' : regime.inflation === 'falling' ? '↓下行' : '→平稳')
+                  : (regime.inflation === 'rising' ? '↑ rising' : regime.inflation === 'falling' ? '↓ falling' : '→ flat')}
+              </span>
+            </div>
+          </section>
+        )}
+
         {/* ── Hero ─────────────────────────────────────────── */}
         <section
           className="px-6 md:px-12 lg:px-20 py-20 relative overflow-hidden"
@@ -277,58 +329,6 @@ export default function ResearchPage() {
             </div>
           </div>
         </section>
-
-        {/* ── Macro Snapshot ───────────────────────────────── */}
-        <section className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10">
-          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#A58261] mb-6 block">
-            {isZh ? '宏观快照 · MACRO PULSE' : 'MACRO PULSE'}
-          </span>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border border-[#1D1D1B]/10">
-            {MACRO_CARDS.map((card, i) => {
-              const pt = macro[card.id];
-              return (
-                <div key={card.id} className={`p-6 ${i < MACRO_CARDS.length - 1 ? 'border-r border-[#1D1D1B]/10' : ''}`}>
-                  <div className="text-[9px] font-sans uppercase tracking-widest text-stone-400 mb-2">
-                    {isZh ? card.zh : card.en}
-                  </div>
-                  {macLoading || !pt
-                    ? <div className="h-8 bg-stone-100 animate-pulse rounded w-20" />
-                    : <div className="text-2xl md:text-3xl font-serif font-semibold">{fmtVal(pt.value, card.unit)}</div>
-                  }
-                  {pt && <div className="text-[9px] font-mono text-stone-400 mt-1">{pt.date}</div>}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* ── Regime Signal ────────────────────────────────── */}
-        {regime && (
-          <section className="px-6 md:px-12 lg:px-20 py-5 border-b border-[#1D1D1B]/10 bg-[#FAF9F5]">
-            <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-8">
-              <div className="flex items-center gap-3">
-                <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
-                <span className="text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-[#A58261]">
-                  {isZh ? '当前宏观象限' : 'MACRO REGIME'}
-                </span>
-                <span className="text-sm font-serif font-semibold text-[#1D1D1B]">
-                  {isZh ? regime.zh : regime.en}
-                </span>
-              </div>
-              <div className="h-px md:h-4 md:w-px bg-[#1D1D1B]/15 shrink-0" />
-              <span className="text-xs font-sans text-stone-500">
-                {isZh ? '配置信号：' : 'Signal: '}
-                <span className="text-[#C83E3E] font-medium">{regime.signal}</span>
-              </span>
-              <div className="h-px md:h-4 md:w-px bg-[#1D1D1B]/15 shrink-0" />
-              <span className="text-[10px] font-mono text-stone-400">
-                Fed {regime.fed}% · CPI {isZh
-                  ? (regime.inflation === 'rising' ? '↑上行' : regime.inflation === 'falling' ? '↓下行' : '→平稳')
-                  : (regime.inflation === 'rising' ? '↑ rising' : regime.inflation === 'falling' ? '↓ falling' : '→ flat')}
-              </span>
-            </div>
-          </section>
-        )}
 
         {/* ── Event Timeline ───────────────────────────────── */}
         <section className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10">
