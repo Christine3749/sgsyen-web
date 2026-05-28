@@ -29,10 +29,21 @@ const EVENT_TAG: Record<string, string> = {
 };
 
 const MACRO_CARDS = [
-  { id: 'SP500',     zh: '标普 500',   en: 'S&P 500',    unit: 'pts' },
-  { id: 'GOLD_USD',  zh: '黄  金',     en: 'Gold',       unit: 'USD' },
-  { id: 'DXY',       zh: '美元指数',   en: 'DXY',        unit: 'pts' },
-  { id: 'CN_LPR_1Y', zh: 'LPR 1Y',    en: 'CN LPR 1Y',  unit: '%'   },
+  { id: 'SP500',          zh: '标普 500',      en: 'S&P 500',      unit: 'pts' },
+  { id: 'NASDAQ100',      zh: '纳指 100',      en: 'Nasdaq 100',   unit: 'pts' },
+  { id: 'CSI300',         zh: '沪深 300',      en: 'CSI 300',      unit: 'pts' },
+  { id: 'HSI',            zh: '恒生指数',      en: 'Hang Seng',    unit: 'pts' },
+  { id: 'NIKKEI225',      zh: '日经 225',      en: 'Nikkei 225',   unit: 'pts' },
+  { id: 'GOLD_USD',       zh: '黄  金',        en: 'Gold',         unit: 'USD' },
+  { id: 'WTI_OIL',        zh: 'WTI 原油',      en: 'WTI Oil',      unit: 'USD' },
+  { id: 'COPPER',         zh: '铜',            en: 'Copper',       unit: 'USD' },
+  { id: 'DXY',            zh: '美元指数',      en: 'DXY',          unit: 'pts' },
+  { id: 'VIX',            zh: 'VIX 恐慌',      en: 'VIX',          unit: 'pts' },
+  { id: 'US10Y',          zh: '美债 10Y',      en: 'US 10Y',       unit: '%'   },
+  { id: 'US3M',           zh: '美债 3M',       en: 'US 3M',        unit: '%'   },
+  { id: 'FEDFUNDS',       zh: '联邦基金',      en: 'Fed Funds',    unit: '%'   },
+  { id: 'CN_LPR_1Y',      zh: 'LPR 1Y',       en: 'CN LPR 1Y',    unit: '%'   },
+  { id: 'BAMLH0A0HYM2',   zh: 'HY 利差',       en: 'HY Spread',    unit: 'bp'  },
 ];
 
 function fmtVal(v: number, unit: string) {
@@ -248,28 +259,43 @@ export default function ResearchPage() {
           </div>
         </div>
 
-        {/* ── Macro Snapshot ───────────────────────────────── */}
-        <section className="px-6 md:px-12 lg:px-20 py-8 border-b border-[#1D1D1B]/10">
-          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#A58261] mb-5 block">
-            {isZh ? '宏观快照 · MACRO PULSE' : 'MACRO PULSE'}
-          </span>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border border-[#1D1D1B]/10">
-            {MACRO_CARDS.map((card, i) => {
-              const pt = macro[card.id];
-              return (
-                <div key={card.id} className={`p-6 ${i < MACRO_CARDS.length - 1 ? 'border-r border-[#1D1D1B]/10' : ''}`}>
-                  <div className="text-[9px] font-sans uppercase tracking-widest text-stone-400 mb-2">
-                    {isZh ? card.zh : card.en}
-                  </div>
-                  {macLoading || !pt
-                    ? <div className="h-8 bg-stone-100 animate-pulse rounded w-20" />
-                    : <div className="text-2xl md:text-3xl font-serif font-semibold">{fmtVal(pt.value, card.unit)}</div>
-                  }
-                  {pt && <div className="text-[9px] font-mono text-stone-400 mt-1">{pt.date}</div>}
-                </div>
-              );
-            })}
+        {/* ── Macro Ticker ─────────────────────────────────── */}
+        <section className="border-b border-[#1D1D1B]/10 overflow-hidden bg-white select-none">
+          {/* label */}
+          <div className="flex items-center">
+            <div className="shrink-0 px-4 py-3 bg-[#1D1D1B] text-[#C4A35A] text-[9px] font-sans font-bold uppercase tracking-[0.2em] z-10">
+              MACRO PULSE
+            </div>
+            {/* scrolling track */}
+            <div className="flex-1 overflow-hidden relative">
+              <div
+                className="flex gap-0 whitespace-nowrap"
+                style={{ animation: macLoading ? 'none' : 'ticker-scroll 40s linear infinite' }}
+              >
+                {/* duplicate for seamless loop */}
+                {[...MACRO_CARDS, ...MACRO_CARDS].map((card, i) => {
+                  const pt = macro[card.id];
+                  return (
+                    <div key={i} className="inline-flex items-center gap-2 px-5 py-3 border-r border-[#1D1D1B]/8">
+                      <span className="text-[9px] font-sans uppercase tracking-widest text-stone-400">
+                        {isZh ? card.zh : card.en}
+                      </span>
+                      {macLoading || !pt
+                        ? <span className="w-12 h-3 bg-stone-100 rounded animate-pulse inline-block" />
+                        : <span className="text-sm font-mono font-semibold text-[#1D1D1B]">{fmtVal(pt.value, card.unit)}</span>
+                      }
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
+          <style>{`
+            @keyframes ticker-scroll {
+              0%   { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+          `}</style>
         </section>
 
         {/* ── Regime Signal ────────────────────────────────── */}
