@@ -9,11 +9,11 @@ import MacroPulseBar from './MacroPulseBar';
 export default function SgsyenPortal() {
   return (
     <div id="sgsyen-portal-layout" className="w-full flex flex-col bg-[#FDFCF9] scroll-smooth antialiased">
-      {/* 1. Hero Landing Cover */}
-      <SgsyenHero />
-
-      {/* 1.5 Live Macro Pulse — regime signal + 15 market indicators */}
+      {/* 1. Live Macro Pulse — sits above hero, same as research page */}
       <MacroPulseBar />
+
+      {/* 2. Hero Landing Cover */}
+      <SgsyenHero />
 
       {/* 2. Study fields & metrics */}
       <SgsyenDomains />
