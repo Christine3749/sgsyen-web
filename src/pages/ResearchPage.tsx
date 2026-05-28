@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import {
   ArrowRight, ArrowLeft, Calendar, Tag, Globe,
-  ChevronDown, Loader2, Clock,
+  ChevronDown, Loader2, Clock, Star,
 } from 'lucide-react';
 import { research, Article, PolicyEvent, MacroPoint } from '../lib/research';
 import { useLocale } from '../context/LocaleContext';
@@ -67,12 +67,37 @@ export default function ResearchPage() {
   const [macro,       setMacro]       = useState<Record<string, MacroPoint>>({});
   const [macLoading,  setMacLoading]  = useState(true);
 
+  // stars (localStorage dedup)
+  const [starred, setStarred] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('sgsyen_starred') || '[]');
+      setStarred(new Set(stored));
+    } catch { /* ignore */ }
+  }, []);
+
+  const handleStar = useCallback(async (e: React.MouseEvent, artId: string) => {
+    e.stopPropagation();
+    if (starred.has(artId)) return;
+    // optimistic UI
+    setArticles(prev => prev.map(a =>
+      a.id === artId ? { ...a, star_count: (a.star_count ?? 0) + 1 } : a
+    ));
+    const next = new Set(starred);
+    next.add(artId);
+    setStarred(next);
+    localStorage.setItem('sgsyen_starred', JSON.stringify([...next]));
+    // atomic increment via RPC
+    await research.rpc('increment_article_star', { article_id: artId });
+  }, [starred]);
+
   // ── fetch articles ────────────────────────────────────────
   const loadArticles = useCallback(async (page: number, cat: string) => {
     setArtLoading(true);
     let q = research
       .from('articles')
-      .select('id,no,slug,title,title_en,subtitle,subtitle_en,author,author_en,category,tags,reading_time,published_at,is_published', { count: 'exact' })
+      .select('id,no,slug,title,title_en,subtitle,subtitle_en,author,author_en,category,tags,reading_time,published_at,is_published,star_count', { count: 'exact' })
       .eq('is_published', true)
       .order('published_at', { ascending: false })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
@@ -376,8 +401,20 @@ export default function ResearchPage() {
                     )}
                   </div>
 
-                  {/* Arrow CTA */}
-                  <div className="flex items-center justify-end md:justify-center shrink-0">
+                  {/* Star + Arrow CTA */}
+                  <div className="flex items-center gap-3 justify-end md:justify-center shrink-0">
+                    <button
+                      onClick={(e) => handleStar(e, art.id)}
+                      title={isZh ? '标星收藏' : 'Star this'}
+                      className={`flex flex-col items-center gap-0.5 transition-colors cursor-pointer ${
+                        starred.has(art.id)
+                          ? 'text-[#C4A35A]'
+                          : 'text-stone-300 hover:text-[#C4A35A]'
+                      }`}
+                    >
+                      <Star className={`w-4 h-4 ${starred.has(art.id) ? 'fill-[#C4A35A]' : ''}`} />
+                      <span className="text-[9px] font-mono">{art.star_count ?? 0}</span>
+                    </button>
                     <span className="w-10 h-10 rounded-full border border-[#1D1D1B]/15 flex items-center justify-center text-stone-400 group-hover:bg-[#1D1D1B] group-hover:text-white group-hover:border-transparent transition-all duration-300">
                       <ArrowRight className="w-4 h-4" />
                     </span>

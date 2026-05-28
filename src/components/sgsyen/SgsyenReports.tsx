@@ -102,11 +102,11 @@ export default function SgsyenReports() {
     setLoading(true);
     research
       .from('articles')
-      .select('id,no,slug,title,title_en,subtitle,subtitle_en,author,author_en,category,summary,content,published_at,is_published,is_featured')
+      .select('id,no,slug,title,title_en,subtitle,subtitle_en,author,author_en,category,summary,content,published_at,is_published,star_count')
       .eq('is_published', true)
-      .eq('is_featured', true)
+      .order('star_count', { ascending: false, nullsFirst: false })
       .order('published_at', { ascending: false })
-      .limit(5)
+      .limit(3)
       .then(({ data, error }) => {
         if (error || !data || data.length === 0) {
           setReports(locale === 'zh' ? FALLBACK_REPORTS : FALLBACK_REPORTS_EN);

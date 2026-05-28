@@ -24,6 +24,7 @@ export interface Article {
   is_featured?: boolean;
   summary?: string;
   content?: string;
+  star_count?: number;
 }
 
 export interface PolicyEvent {
