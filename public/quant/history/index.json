@@ -1,0 +1,22 @@
+{
+  "latest": {
+    "date": "2026-06-20",
+    "generated_at": "2026-06-20T16:29:02.741770+00:00",
+    "path": "/quant/history/2026-06-20.json",
+    "indices": [
+      "csi500",
+      "hs300"
+    ]
+  },
+  "items": [
+    {
+      "date": "2026-06-20",
+      "generated_at": "2026-06-20T16:29:02.741770+00:00",
+      "path": "/quant/history/2026-06-20.json",
+      "indices": [
+        "csi500",
+        "hs300"
+      ]
+    }
+  ]
+}

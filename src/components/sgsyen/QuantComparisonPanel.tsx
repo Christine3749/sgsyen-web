@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Activity, RefreshCcw, ShieldCheck, TrendingUp } from 'lucide-react';
+import { Activity, CalendarDays, RefreshCcw, ShieldCheck, TrendingUp } from 'lucide-react';
 import { useLocale } from '../../context/LocaleContext';
 
 type QuantRow = {
@@ -31,6 +31,7 @@ type QuantIndexPayload = {
   label: string;
   start: string;
   end: string;
+  available_dates?: string[];
   highflyer: QuantReference;
   aqr: QuantReference;
   rows: QuantRow[];
@@ -38,8 +39,21 @@ type QuantIndexPayload = {
 
 type QuantPayload = {
   generated_at: string;
+  snapshot_date?: string;
   aqr_ticker: string;
   indices: Record<string, QuantIndexPayload>;
+};
+
+type QuantHistoryItem = {
+  date: string;
+  generated_at: string;
+  path: string;
+  indices: string[];
+};
+
+type QuantHistoryIndex = {
+  latest?: QuantHistoryItem;
+  items: QuantHistoryItem[];
 };
 
 const INDEX_ORDER = ['hs300', 'csi500'] as const;
@@ -49,12 +63,15 @@ export default function QuantComparisonPanel() {
   const isZh = locale === 'zh';
   const [payload, setPayload] = useState<QuantPayload | null>(null);
   const [selected, setSelected] = useState<'hs300' | 'csi500'>('hs300');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [history, setHistory] = useState<QuantHistoryIndex | null>(null);
+  const [snapshotPath, setSnapshotPath] = useState('/quant/latest-comparison.json');
   const [loading, setLoading] = useState(true);
 
-  const load = async () => {
+  const load = async (path = snapshotPath) => {
     setLoading(true);
     try {
-      const res = await fetch(`/quant/latest-comparison.json?t=${Date.now()}`, { cache: 'no-store' });
+      const res = await fetch(`${path}?t=${Date.now()}`, { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setPayload(data);
@@ -66,44 +83,64 @@ export default function QuantComparisonPanel() {
   };
 
   useEffect(() => {
-    load();
-    const timer = window.setInterval(load, 60_000);
-    return () => window.clearInterval(timer);
+    fetch(`/quant/history/index.json?t=${Date.now()}`, { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setHistory(data))
+      .catch(() => setHistory(null));
+    load('/quant/latest-comparison.json');
   }, []);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => load(snapshotPath), 60_000);
+    return () => window.clearInterval(timer);
+  }, [snapshotPath]);
 
   const current = payload?.indices?.[selected] ?? null;
   const rows = current?.rows ?? [];
-  const latest = rows[rows.length - 1];
+  const dateOptions = current?.available_dates?.length ? current.available_dates : rows.map((row) => row.date);
+  const dateOptionsKey = dateOptions.join('|');
+  const visibleRows = selectedDate ? rows.filter((row) => row.date <= selectedDate) : rows;
+  const selectedRow = visibleRows[visibleRows.length - 1];
+
+  useEffect(() => {
+    if (!dateOptions.length) {
+      setSelectedDate('');
+      return;
+    }
+    if (!selectedDate || !dateOptions.includes(selectedDate)) {
+      setSelectedDate(dateOptions[dateOptions.length - 1]);
+    }
+  }, [dateOptionsKey]);
 
   const stats = useMemo(() => {
-    if (!current) return [];
+    if (!current || !selectedRow) return [];
     return [
       {
         label: isZh ? '模型累计' : 'Model',
-        value: pct(current.highflyer.summary?.model_cumulative_return),
+        value: pctPoint(selectedRow.model_cumulative_return_pct),
         icon: TrendingUp,
         tone: 'text-emerald-600',
       },
       {
         label: 'High-Flyer',
-        value: pct(current.highflyer.summary?.reference_cumulative_return),
+        value: pctPoint(selectedRow.highflyer_cumulative_return_pct),
         icon: Activity,
         tone: 'text-[#A58261]',
       },
       {
         label: `AQR ${payload?.aqr_ticker ?? ''}`,
-        value: pct(current.aqr.summary?.reference_cumulative_return),
+        value: pctPoint(selectedRow.aqr_cumulative_return_pct),
         icon: Activity,
         tone: 'text-blue-600',
       },
       {
         label: isZh ? '最大回撤' : 'Max DD',
-        value: pct(current.highflyer.summary?.model_max_drawdown),
+        value: pctPoint(selectedRow.model_drawdown_pct),
         icon: ShieldCheck,
         tone: 'text-[#C83E3E]',
       },
     ];
-  }, [current, isZh, payload?.aqr_ticker]);
+  }, [current, isZh, payload?.aqr_ticker, selectedRow]);
 
   return (
     <section className="px-6 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#F5F2EA]">
@@ -122,7 +159,29 @@ export default function QuantComparisonPanel() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-start lg:justify-end gap-2">
+          {history?.items?.length ? (
+            <label className="inline-flex items-center gap-2 h-9 px-3 border border-[#1D1D1B]/10 bg-white/50 text-stone-500 rounded">
+              <CalendarDays className="w-4 h-4 text-[#A58261]" />
+              <select
+                value={snapshotPath}
+                onChange={(event) => {
+                  const path = event.target.value;
+                  setSnapshotPath(path);
+                  load(path);
+                }}
+                className="bg-transparent text-[10px] font-sans font-bold uppercase tracking-widest outline-none"
+                aria-label={isZh ? '选择生成日期' : 'Select snapshot date'}
+              >
+                <option value="/quant/latest-comparison.json">{isZh ? '最新' : 'Latest'}</option>
+                {history.items.map((item) => (
+                  <option key={item.path} value={item.path}>
+                    {item.date}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
           {INDEX_ORDER.map((key) => (
             <button
               key={key}
@@ -136,8 +195,22 @@ export default function QuantComparisonPanel() {
               {payload?.indices?.[key]?.label ?? key.toUpperCase()}
             </button>
           ))}
+          {dateOptions.length ? (
+            <select
+              value={selectedDate}
+              onChange={(event) => setSelectedDate(event.target.value)}
+              className="h-9 px-3 border border-[#1D1D1B]/10 bg-white/50 text-[10px] font-sans font-bold uppercase tracking-widest text-stone-500 rounded outline-none hover:border-[#A58261]/40"
+              aria-label={isZh ? '选择交易日期' : 'Select trading date'}
+            >
+              {dateOptions.map((date) => (
+                <option key={date} value={date}>
+                  {date}
+                </option>
+              ))}
+            </select>
+          ) : null}
           <button
-            onClick={load}
+            onClick={() => load()}
             className="w-9 h-9 inline-flex items-center justify-center border border-[#1D1D1B]/10 bg-white/50 text-stone-500 hover:text-[#1D1D1B] hover:border-[#A58261]/40 rounded transition-colors"
             aria-label={isZh ? '刷新量化对比' : 'Refresh quant comparison'}
           >
@@ -166,7 +239,7 @@ export default function QuantComparisonPanel() {
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             <QuantSvgChart
               title={isZh ? '累计收益路径' : 'Cumulative Return Path'}
-              rows={rows}
+              rows={visibleRows}
               fields={[
                 ['model_cumulative_return_pct', isZh ? '当前模型' : 'Current Model', '#0F8B5F'],
                 ['highflyer_cumulative_return_pct', 'High-Flyer', '#A58261'],
@@ -175,7 +248,7 @@ export default function QuantComparisonPanel() {
             />
             <QuantSvgChart
               title={isZh ? '回撤路径' : 'Drawdown Path'}
-              rows={rows}
+              rows={visibleRows}
               fields={[
                 ['model_drawdown_pct', isZh ? '当前模型' : 'Current Model', '#0F8B5F'],
                 ['highflyer_drawdown_pct', 'High-Flyer', '#A58261'],
@@ -189,7 +262,8 @@ export default function QuantComparisonPanel() {
               {current.start} → {current.end}
             </span>
             <span>
-              {isZh ? '最新交易日' : 'Latest'} {latest?.date ?? '-'} · {isZh ? '刷新' : 'Updated'} {fmtTime(payload?.generated_at)}
+              {isZh ? '显示交易日' : 'Trading date'} {selectedRow?.date ?? '-'} · {isZh ? '生成' : 'Generated'} {payload?.snapshot_date ?? fmtDate(payload?.generated_at)} ·{' '}
+              {isZh ? '刷新' : 'Updated'} {fmtTime(payload?.generated_at)}
             </span>
           </div>
         </div>
@@ -267,9 +341,16 @@ function QuantSvgChart({
   );
 }
 
-function pct(value?: number | null) {
+function pctPoint(value?: number | null) {
   if (typeof value !== 'number' || !Number.isFinite(value)) return '-';
-  return `${(value * 100).toFixed(2)}%`;
+  return `${value.toFixed(2)}%`;
+}
+
+function fmtDate(value?: string) {
+  if (!value) return '-';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value.slice(0, 10);
+  return date.toISOString().slice(0, 10);
 }
 
 function fmtTime(value?: string) {
