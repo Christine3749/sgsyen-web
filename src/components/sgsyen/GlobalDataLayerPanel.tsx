@@ -93,22 +93,22 @@ export default function GlobalDataLayerPanel() {
   );
 
   return (
-    <section className="px-6 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#FDFCF9]">
+    <section className="px-6 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#FFFFFF]">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-8">
         <div>
-          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#A58261]">
+          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#4B5563]">
             {isZh ? '全球数据分析 · GLOBAL DATA LAYER' : 'GLOBAL DATA LAYER'}
           </span>
           <h2 className="mt-3 text-3xl md:text-5xl font-serif font-semibold leading-tight text-[#1D1D1B]">
             {isZh ? '全球事件地域与来源覆盖' : 'Global Event Regions & Sources'}
           </h2>
-          <p className="mt-3 max-w-2xl text-xs md:text-sm font-sans leading-relaxed text-stone-500">
+          <p className="mt-3 max-w-2xl text-xs md:text-sm font-sans leading-relaxed text-zinc-500">
             {isZh
               ? '这里展示世界模型每天吸收的地域、来源和事件簇。它解释资讯如何成为 regime、情景权重和风险预算，不修改原始数据。'
               : 'This layer shows the regions, sources, and event clusters consumed by the world model, before they become regime, scenario, and risk-budget signals.'}
           </p>
         </div>
-        <div className="text-[10px] font-mono uppercase tracking-widest text-stone-400">
+        <div className="text-[10px] font-mono uppercase tracking-widest text-zinc-400">
           {loading ? (isZh ? '读取中' : 'Loading') : `${isZh ? '截至' : 'As of'} ${sources?.as_of ?? digest?.as_of ?? '-'}`}
         </div>
       </div>
@@ -131,7 +131,7 @@ export default function GlobalDataLayerPanel() {
             <h3 className="text-sm font-serif font-bold text-[#1D1D1B]">
               {isZh ? '事件簇与模型压力' : 'Event Clusters & Model Pressure'}
             </h3>
-            <span className="text-[9px] font-mono uppercase tracking-widest text-stone-400">
+            <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-400">
               {ingestion ? `${ingestion.normalized_event_count} / ${ingestion.merged_event_count}` : '-'}
             </span>
           </div>
@@ -154,11 +154,11 @@ export default function GlobalDataLayerPanel() {
                   <div className="text-[11px] font-sans font-bold uppercase tracking-wider text-[#1D1D1B] truncate">
                     {cluster.label.replaceAll('_', ' ')}
                   </div>
-                  <div className="text-[9px] font-mono text-stone-400">
+                  <div className="text-[9px] font-mono text-zinc-400">
                     {cluster.latest_date} · {cluster.event_count} {isZh ? '条事件' : 'events'}
                   </div>
                 </div>
-                <div className="text-[11px] font-mono font-semibold text-[#A58261]">
+                <div className="text-[11px] font-mono font-semibold text-[#4B5563]">
                   {percent(cluster.confidence)}
                 </div>
               </div>
@@ -184,12 +184,12 @@ function MetricCard({
   return (
     <div className="p-5 border-r border-[#1D1D1B]/10 last:border-r-0">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-stone-400">{label}</span>
-        <Icon className="w-4 h-4 text-[#A58261]" />
+        <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-zinc-400">{label}</span>
+        <Icon className="w-4 h-4 text-[#4B5563]" />
       </div>
       <div className="mt-3 text-2xl font-mono font-semibold text-[#1D1D1B]">
         {value}
-        {suffix ? <span className="text-sm text-stone-400">{suffix}</span> : null}
+        {suffix ? <span className="text-sm text-zinc-400">{suffix}</span> : null}
       </div>
     </div>
   );
@@ -203,12 +203,12 @@ function BreakdownPanel({ title, items }: { title: string; items: [string, numbe
       <div className="space-y-3">
         {items.map(([label, value]) => (
           <div key={label}>
-            <div className="flex items-center justify-between gap-3 text-[10px] font-sans font-bold uppercase tracking-wider text-stone-500">
+            <div className="flex items-center justify-between gap-3 text-[10px] font-sans font-bold uppercase tracking-wider text-zinc-500">
               <span className="truncate">{label}</span>
-              <span className="font-mono text-[#A58261]">{value}</span>
+              <span className="font-mono text-[#4B5563]">{value}</span>
             </div>
             <div className="mt-1 h-1.5 bg-[#1D1D1B]/5 overflow-hidden">
-              <div className="h-full bg-[#C4A35A]" style={{ width: `${Math.max(7, (value / max) * 100)}%` }} />
+              <div className="h-full bg-[#C83E3E]" style={{ width: `${Math.max(7, (value / max) * 100)}%` }} />
             </div>
           </div>
         ))}
@@ -220,9 +220,9 @@ function BreakdownPanel({ title, items }: { title: string; items: [string, numbe
 function BarRow({ label, value }: { label: string; value: number }) {
   return (
     <div>
-      <div className="flex items-center justify-between gap-3 text-[10px] font-sans font-bold uppercase tracking-wider text-stone-500">
+      <div className="flex items-center justify-between gap-3 text-[10px] font-sans font-bold uppercase tracking-wider text-zinc-500">
         <span>{label}</span>
-        <span className="font-mono text-[#A58261]">{percent(value)}</span>
+        <span className="font-mono text-[#4B5563]">{percent(value)}</span>
       </div>
       <div className="mt-1.5 h-2 bg-[#1D1D1B]/5 overflow-hidden">
         <div className="h-full bg-[#1D1D1B]" style={{ width: `${Math.max(4, value * 100)}%` }} />

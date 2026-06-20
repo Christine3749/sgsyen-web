@@ -127,7 +127,7 @@ export default function MacroPulseBar() {
         {/* Gold label */}
         <div
           className="shrink-0 flex items-center px-4 py-2.5 z-10"
-          style={{ background: '#C4A35A' }}
+          style={{ background: '#C83E3E' }}
         >
           <span className="text-[8px] font-sans font-black uppercase tracking-[0.25em] text-[#111110] whitespace-nowrap">
             MACRO PULSE
@@ -157,7 +157,7 @@ export default function MacroPulseBar() {
                   </span>
                   {macLoading || !pt
                     ? <span className="w-10 h-2.5 rounded bg-white/8 animate-pulse inline-block" />
-                    : <span className="text-[13px] font-mono font-semibold text-[#C4A35A]">
+                    : <span className="text-[13px] font-mono font-semibold text-[#C83E3E]">
                         {fmtVal(pt.value, card.unit)}
                       </span>
                   }
@@ -189,7 +189,7 @@ export default function MacroPulseBar() {
           <>
             <span className="text-white/15 text-[10px]">·</span>
             {/* Calendar label: solar term / festival / lunar date */}
-            <span className="text-[11px] font-sans text-[#C4A35A]/80 tracking-widest">
+            <span className="text-[11px] font-sans text-[#C83E3E]/80 tracking-widest">
               {calendar}
             </span>
           </>

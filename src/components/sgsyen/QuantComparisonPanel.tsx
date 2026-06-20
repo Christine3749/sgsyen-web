@@ -150,7 +150,7 @@ export default function QuantComparisonPanel() {
         label: 'High-Flyer',
         value: pctPoint(selectedRow.highflyer_cumulative_return_pct),
         icon: Activity,
-        tone: 'text-[#A58261]',
+        tone: 'text-[#4B5563]',
       },
       {
         label: `AQR ${payload?.aqr_ticker ?? ''}`,
@@ -168,16 +168,16 @@ export default function QuantComparisonPanel() {
   }, [current, isZh, payload?.aqr_ticker, selectedRow]);
 
   return (
-    <section className="px-5 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#FDFCF9] overflow-hidden">
+    <section className="px-5 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#FFFFFF] overflow-hidden">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
         <div className="min-w-0">
-          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.24em] text-[#A58261]">
+          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.24em] text-[#4B5563]">
             DGWM QUANT · LIVE BENCHMARK
           </span>
           <h2 className="mt-3 text-2xl sm:text-3xl md:text-5xl font-serif font-semibold text-[#1D1D1B] leading-tight break-words">
             {isZh ? '未来世界模型 · 实时量化对比' : 'Future World Model · Live Quant Comparison'}
           </h2>
-          <p className="mt-3 max-w-2xl text-xs md:text-sm font-sans leading-relaxed text-stone-500 break-all [overflow-wrap:anywhere]">
+          <p className="mt-3 max-w-2xl text-xs md:text-sm font-sans leading-relaxed text-zinc-500 break-all [overflow-wrap:anywhere]">
             {isZh
               ? '同周期对比当前模型、幻方公开净值与 AQR 公开基金代理净值，展示收益路径和回撤路径。'
               : 'Same-period comparison across the current model, public High-Flyer NAV, and an AQR public-fund proxy.'}
@@ -186,8 +186,8 @@ export default function QuantComparisonPanel() {
 
         <div className="flex flex-wrap items-center justify-start lg:justify-end gap-2">
           {history?.items?.length ? (
-            <label className="inline-flex items-center gap-2 h-9 px-3 border border-[#1D1D1B]/10 bg-white text-stone-500 rounded">
-              <CalendarDays className="w-4 h-4 text-[#A58261]" />
+            <label className="inline-flex items-center gap-2 h-9 px-3 border border-[#1D1D1B]/10 bg-white text-zinc-500 rounded">
+              <CalendarDays className="w-4 h-4 text-[#4B5563]" />
               <select
                 value={snapshotPath}
                 onChange={(event) => {
@@ -213,8 +213,8 @@ export default function QuantComparisonPanel() {
               onClick={() => setSelected(key)}
               className={`px-4 py-2 text-[10px] font-sans font-bold uppercase tracking-widest border transition-colors rounded ${
                 selected === key
-                  ? 'bg-[#1D1D1B] text-[#FDFCF9] border-[#1D1D1B]'
-                  : 'bg-white text-stone-500 border-[#1D1D1B]/10 hover:border-[#A58261]/50'
+                  ? 'bg-[#1D1D1B] text-[#FFFFFF] border-[#1D1D1B]'
+                  : 'bg-white text-zinc-500 border-[#1D1D1B]/10 hover:border-[#4B5563]/50'
               }`}
             >
               {payload?.indices?.[key]?.label ?? key.toUpperCase()}
@@ -224,7 +224,7 @@ export default function QuantComparisonPanel() {
             <select
               value={selectedDate}
               onChange={(event) => setSelectedDate(event.target.value)}
-              className="h-9 px-3 border border-[#1D1D1B]/10 bg-white text-[10px] font-sans font-bold uppercase tracking-widest text-stone-500 rounded outline-none hover:border-[#A58261]/40"
+              className="h-9 px-3 border border-[#1D1D1B]/10 bg-white text-[10px] font-sans font-bold uppercase tracking-widest text-zinc-500 rounded outline-none hover:border-[#4B5563]/40"
               aria-label={isZh ? '选择交易日期' : 'Select trading date'}
             >
               {dateOptions.map((date) => (
@@ -236,7 +236,7 @@ export default function QuantComparisonPanel() {
           ) : null}
           <button
             onClick={() => load()}
-            className="w-9 h-9 inline-flex items-center justify-center border border-[#1D1D1B]/10 bg-white text-stone-500 hover:text-[#1D1D1B] hover:border-[#A58261]/40 rounded transition-colors"
+            className="w-9 h-9 inline-flex items-center justify-center border border-[#1D1D1B]/10 bg-white text-zinc-500 hover:text-[#1D1D1B] hover:border-[#4B5563]/40 rounded transition-colors"
             aria-label={isZh ? '刷新量化对比' : 'Refresh quant comparison'}
           >
             <RefreshCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -263,11 +263,11 @@ export default function QuantComparisonPanel() {
               return (
                 <div key={item.label} className={`p-5 ${index < stats.length - 1 ? 'border-r border-[#1D1D1B]/10' : ''}`}>
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-stone-400">{item.label}</span>
+                    <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-zinc-400">{item.label}</span>
                     <Icon className={`w-4 h-4 ${item.tone}`} />
                   </div>
                   <div className={`mt-3 text-2xl font-mono font-semibold ${item.tone}`}>{item.value}</div>
-                  <div className="mt-2 text-[10px] font-sans leading-relaxed text-stone-400 break-all [overflow-wrap:anywhere]">
+                  <div className="mt-2 text-[10px] font-sans leading-relaxed text-zinc-400 break-all [overflow-wrap:anywhere]">
                     {metricHint(item.label, isZh)}
                   </div>
                 </div>
@@ -281,7 +281,7 @@ export default function QuantComparisonPanel() {
               rows={visibleRows}
               fields={[
                 ['model_cumulative_return_pct', isZh ? '当前模型' : 'Current Model', '#0F8B5F'],
-                ['highflyer_cumulative_return_pct', 'High-Flyer', '#A58261'],
+                ['highflyer_cumulative_return_pct', 'High-Flyer', '#4B5563'],
                 ['aqr_cumulative_return_pct', `AQR ${payload?.aqr_ticker ?? ''}`, '#2563EB'],
               ]}
             />
@@ -290,13 +290,13 @@ export default function QuantComparisonPanel() {
               rows={visibleRows}
               fields={[
                 ['model_drawdown_pct', isZh ? '当前模型' : 'Current Model', '#0F8B5F'],
-                ['highflyer_drawdown_pct', 'High-Flyer', '#A58261'],
+                ['highflyer_drawdown_pct', 'High-Flyer', '#4B5563'],
                 ['aqr_drawdown_pct', `AQR ${payload?.aqr_ticker ?? ''}`, '#2563EB'],
               ]}
             />
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-[10px] font-mono text-stone-400 uppercase tracking-widest">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-[10px] font-mono text-zinc-400 uppercase tracking-widest">
             <span>
               {current.start} → {current.end}
             </span>
@@ -305,7 +305,7 @@ export default function QuantComparisonPanel() {
               {isZh ? '刷新' : 'Updated'} {fmtTime(payload?.generated_at)}
             </span>
           </div>
-          <div className="text-[10px] font-sans leading-relaxed text-stone-400 border-l-2 border-[#A58261]/30 pl-3">
+          <div className="text-[10px] font-sans leading-relaxed text-zinc-400 border-l-2 border-[#4B5563]/30 pl-3">
             {isZh
               ? `AQR 使用 ${payload?.aqr_ticker ?? '公开基金'} 的公开基金净值作为代理值，不等同于 AQR 私募策略真实账本。`
               : `AQR uses ${payload?.aqr_ticker ?? 'a public fund'} adjusted NAV as a public proxy, not a disclosed private-strategy book.`}
@@ -343,15 +343,15 @@ function QuantDecisionSummary({
     ? `${label} 当前模型累计收益 ${modelReturn.toFixed(2)}%，较幻方公开净值超额 ${excess.toFixed(2)}%；最大回撤 ${modelMdd.toFixed(2)}%，低于幻方 ${highflyerMdd.toFixed(2)}%。`
     : `${label} model return is ${modelReturn.toFixed(2)}%, with ${excess.toFixed(2)}% excess versus public High-Flyer NAV; max drawdown is ${modelMdd.toFixed(2)}% versus ${highflyerMdd.toFixed(2)}%.`;
   return (
-    <div className="border border-[#A58261]/25 bg-[#A58261]/8 px-5 py-4 max-w-full overflow-hidden">
+    <div className="border border-[#4B5563]/25 bg-[#4B5563]/8 px-5 py-4 max-w-full overflow-hidden">
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div className="min-w-0">
-          <div className="text-[10px] font-sans font-bold uppercase tracking-[0.22em] text-[#A58261]">
+          <div className="text-[10px] font-sans font-bold uppercase tracking-[0.22em] text-[#4B5563]">
             {isZh ? '当前量化结论' : 'Current Quant Read'}
           </div>
           <p className="mt-2 text-sm md:text-base font-serif leading-relaxed text-[#1D1D1B] break-all [overflow-wrap:anywhere]">{conclusion}</p>
           {aqrExcess !== null ? (
-            <p className="mt-2 text-[10px] font-sans leading-relaxed text-stone-500 break-all [overflow-wrap:anywhere]">
+            <p className="mt-2 text-[10px] font-sans leading-relaxed text-zinc-500 break-all [overflow-wrap:anywhere]">
               {isZh
                 ? `相对 AQR ${aqrTicker ?? ''} 公开基金代理值，当前超额为 ${aqrExcess.toFixed(2)}%。`
                 : `Versus AQR ${aqrTicker ?? ''} public-fund proxy, current excess is ${aqrExcess.toFixed(2)}%.`}
@@ -366,7 +366,7 @@ function QuantDecisionSummary({
         </div>
       </div>
       {selectedRow ? (
-        <div className="mt-3 text-[10px] font-mono uppercase tracking-widest text-stone-400">
+        <div className="mt-3 text-[10px] font-mono uppercase tracking-widest text-zinc-400">
           {isZh ? '当前交易日' : 'Trading Date'} {selectedRow.date}
         </div>
       ) : null}
@@ -377,7 +377,7 @@ function QuantDecisionSummary({
 function SummaryStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="border border-[#1D1D1B]/10 bg-white px-3 py-2 min-w-0">
-      <div className="text-[8px] font-sans font-bold uppercase tracking-widest text-stone-400">{label}</div>
+      <div className="text-[8px] font-sans font-bold uppercase tracking-widest text-zinc-400">{label}</div>
       <div className="mt-1 text-sm font-mono font-semibold text-[#1D1D1B]">{value}</div>
     </div>
   );
@@ -385,10 +385,10 @@ function SummaryStat({ label, value }: { label: string; value: string }) {
 
 function QuantFallback({ loading, isZh }: { loading: boolean; isZh: boolean }) {
   return (
-    <div className="border border-[#1D1D1B]/10 bg-white p-8 text-xs font-sans text-stone-500">
+    <div className="border border-[#1D1D1B]/10 bg-white p-8 text-xs font-sans text-zinc-500">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#A58261]">
+          <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#4B5563]">
             {isZh ? '等待量化快照' : 'Waiting For Quant Snapshot'}
           </div>
           <p className="mt-2 leading-relaxed">
@@ -397,7 +397,7 @@ function QuantFallback({ loading, isZh }: { loading: boolean; isZh: boolean }) {
               : 'The panel loads the latest quant comparison first and falls back to the most recent historical snapshot when needed.'}
           </p>
         </div>
-        <RefreshCcw className={`w-4 h-4 text-[#A58261] ${loading ? 'animate-spin' : ''}`} />
+        <RefreshCcw className={`w-4 h-4 text-[#4B5563] ${loading ? 'animate-spin' : ''}`} />
       </div>
     </div>
   );
@@ -429,7 +429,7 @@ function QuantSvgChart({
         <h3 className="text-sm font-serif font-bold text-[#1D1D1B]">{title}</h3>
         <div className="flex flex-wrap items-center justify-end gap-3">
           {fields.map(([, label, color]) => (
-            <span key={label} className="inline-flex items-center gap-1.5 text-[9px] font-sans font-bold uppercase tracking-widest text-stone-400">
+            <span key={label} className="inline-flex items-center gap-1.5 text-[9px] font-sans font-bold uppercase tracking-widest text-zinc-400">
               <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
               {label}
             </span>
