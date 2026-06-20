@@ -10,6 +10,7 @@ import { research, Article, PolicyEvent } from '../lib/research';
 import { supabase } from '../lib/supabase';
 import { useLocale } from '../context/LocaleContext';
 import MacroPulseBar from '../components/sgsyen/MacroPulseBar';
+import GlobalDataLayerPanel from '../components/sgsyen/GlobalDataLayerPanel';
 import QuantComparisonPanel from '../components/sgsyen/QuantComparisonPanel';
 
 const PAGE_SIZE = 8;
@@ -578,6 +579,8 @@ export default function ResearchPage() {
         </section>
 
         <WeeklyEventFrame latestArticle={articles[0]} isZh={isZh} />
+
+        <GlobalDataLayerPanel />
 
         <QuantComparisonPanel />
 
