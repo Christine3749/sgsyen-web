@@ -7,7 +7,7 @@ import InsightArticles from './components/InsightArticles';
 import SgsyenPortal from './components/sgsyen/SgsyenPortal';
 import MiaojiePortal from './components/miaojie/MiaojiePortal';
 import ResearchPage from './pages/ResearchPage';
-import { Calculator, FileText, Layers, RefreshCw } from 'lucide-react';
+import { BookOpen, Calculator, Cpu, FileText, Layers } from 'lucide-react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 
 function InnerApp() {
@@ -69,7 +69,7 @@ function InnerApp() {
         }
       </div>
 
-      {/* Structural Central Switcher for SGSYEN and Gemini Analyzer */}
+      {/* Structural Central Switcher for SGSYEN and Research */}
       <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 grid grid-cols-2 text-center text-xs font-sans font-bold uppercase select-none border-b border-[#1D1D1B]/10 bg-white">
         <button
           id="toggle-sgsyen-portal-btn"
@@ -83,15 +83,12 @@ function InnerApp() {
           <span>🏛️ {locale === 'zh' ? 'SGSYEN 智库研究中心' : 'SGSYEN Research Center (sgsyen.com)'}</span>
         </button>
         <button
-          id="toggle-gemini-pricing-btn"
-          onClick={() => navigate('/gemini/calculator/')}
-          className={`py-4 transition-all flex items-center justify-center gap-2 cursor-pointer outline-none ${
-            activeApp === 'gemini'
-              ? 'bg-[#1D1D1B] text-[#FDFCF9]'
-              : 'text-[#1D1D1B] hover:bg-stone-50'
-          }`}
+          id="toggle-research-hub-btn"
+          onClick={() => navigate('/research')}
+          className="py-4 transition-all flex items-center justify-center gap-2 cursor-pointer outline-none text-[#1D1D1B] hover:bg-stone-50"
         >
-          <span>⚡ {locale === 'zh' ? 'Gemini 算力价格实验室' : 'Gemini Compute Explainer Studio'}</span>
+          <BookOpen className="w-3.5 h-3.5" />
+          <span>{locale === 'zh' ? 'Research 观点与研究' : 'Research Hub'}</span>
         </button>
       </div>
 
@@ -116,7 +113,16 @@ function InnerApp() {
               </div>
 
               {/* Right Side: Language Switcher and Top-Right Login */}
-              <div className="flex items-center gap-4 text-[10px] uppercase font-sans tracking-widest text-[#1D1D1B]">
+              <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 text-[10px] uppercase font-sans tracking-widest text-[#1D1D1B]">
+                <button
+                  id="sgsyen-compute-center-link"
+                  onClick={() => navigate('/gemini/calculator/')}
+                  className="flex items-center gap-1.5 rounded border border-[#1D1D1B]/10 bg-white px-3 py-1.5 font-bold text-stone-600 transition-colors hover:border-[#A58261]/40 hover:text-[#A58261] outline-none cursor-pointer"
+                >
+                  <Cpu className="w-3.5 h-3.5" />
+                  <span>{locale === 'zh' ? '算力中心' : 'Compute Lab'}</span>
+                </button>
+
                 {/* Top-Right Unified Login */}
                 <div className="flex items-center gap-2 border-r border-[#1D1D1B]/10 pr-4">
                   {authorizedEmail ? (
