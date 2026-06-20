@@ -150,7 +150,7 @@ export default function QuantComparisonPanel() {
         label: 'High-Flyer',
         value: pctPoint(selectedRow.highflyer_cumulative_return_pct),
         icon: Activity,
-        tone: 'text-[#4B5563]',
+        tone: 'text-[#A58261]',
       },
       {
         label: `AQR ${payload?.aqr_ticker ?? ''}`,
@@ -171,7 +171,7 @@ export default function QuantComparisonPanel() {
     <section className="px-5 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#FFFFFF] overflow-hidden">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
         <div className="min-w-0">
-          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.24em] text-[#4B5563]">
+          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.24em] text-[#A58261]">
             DGWM QUANT · LIVE BENCHMARK
           </span>
           <h2 className="mt-3 text-2xl sm:text-3xl md:text-5xl font-serif font-semibold text-[#1D1D1B] leading-tight break-words">
@@ -187,7 +187,7 @@ export default function QuantComparisonPanel() {
         <div className="flex flex-wrap items-center justify-start lg:justify-end gap-2">
           {history?.items?.length ? (
             <label className="inline-flex items-center gap-2 h-9 px-3 border border-[#1D1D1B]/10 bg-white text-zinc-500 rounded">
-              <CalendarDays className="w-4 h-4 text-[#4B5563]" />
+              <CalendarDays className="w-4 h-4 text-[#A58261]" />
               <select
                 value={snapshotPath}
                 onChange={(event) => {
@@ -214,7 +214,7 @@ export default function QuantComparisonPanel() {
               className={`px-4 py-2 text-[10px] font-sans font-bold uppercase tracking-widest border transition-colors rounded ${
                 selected === key
                   ? 'bg-[#1D1D1B] text-[#FFFFFF] border-[#1D1D1B]'
-                  : 'bg-white text-zinc-500 border-[#1D1D1B]/10 hover:border-[#4B5563]/50'
+                  : 'bg-white text-zinc-500 border-[#1D1D1B]/10 hover:border-[#A58261]/50'
               }`}
             >
               {payload?.indices?.[key]?.label ?? key.toUpperCase()}
@@ -224,7 +224,7 @@ export default function QuantComparisonPanel() {
             <select
               value={selectedDate}
               onChange={(event) => setSelectedDate(event.target.value)}
-              className="h-9 px-3 border border-[#1D1D1B]/10 bg-white text-[10px] font-sans font-bold uppercase tracking-widest text-zinc-500 rounded outline-none hover:border-[#4B5563]/40"
+              className="h-9 px-3 border border-[#1D1D1B]/10 bg-white text-[10px] font-sans font-bold uppercase tracking-widest text-zinc-500 rounded outline-none hover:border-[#A58261]/40"
               aria-label={isZh ? '选择交易日期' : 'Select trading date'}
             >
               {dateOptions.map((date) => (
@@ -236,7 +236,7 @@ export default function QuantComparisonPanel() {
           ) : null}
           <button
             onClick={() => load()}
-            className="w-9 h-9 inline-flex items-center justify-center border border-[#1D1D1B]/10 bg-white text-zinc-500 hover:text-[#1D1D1B] hover:border-[#4B5563]/40 rounded transition-colors"
+            className="w-9 h-9 inline-flex items-center justify-center border border-[#1D1D1B]/10 bg-white text-zinc-500 hover:text-[#1D1D1B] hover:border-[#A58261]/40 rounded transition-colors"
             aria-label={isZh ? '刷新量化对比' : 'Refresh quant comparison'}
           >
             <RefreshCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -281,7 +281,7 @@ export default function QuantComparisonPanel() {
               rows={visibleRows}
               fields={[
                 ['model_cumulative_return_pct', isZh ? '当前模型' : 'Current Model', '#0F8B5F'],
-                ['highflyer_cumulative_return_pct', 'High-Flyer', '#4B5563'],
+                ['highflyer_cumulative_return_pct', 'High-Flyer', '#A58261'],
                 ['aqr_cumulative_return_pct', `AQR ${payload?.aqr_ticker ?? ''}`, '#2563EB'],
               ]}
             />
@@ -290,7 +290,7 @@ export default function QuantComparisonPanel() {
               rows={visibleRows}
               fields={[
                 ['model_drawdown_pct', isZh ? '当前模型' : 'Current Model', '#0F8B5F'],
-                ['highflyer_drawdown_pct', 'High-Flyer', '#4B5563'],
+                ['highflyer_drawdown_pct', 'High-Flyer', '#A58261'],
                 ['aqr_drawdown_pct', `AQR ${payload?.aqr_ticker ?? ''}`, '#2563EB'],
               ]}
             />
@@ -305,7 +305,7 @@ export default function QuantComparisonPanel() {
               {isZh ? '刷新' : 'Updated'} {fmtTime(payload?.generated_at)}
             </span>
           </div>
-          <div className="text-[10px] font-sans leading-relaxed text-zinc-400 border-l-2 border-[#4B5563]/30 pl-3">
+          <div className="text-[10px] font-sans leading-relaxed text-zinc-400 border-l-2 border-[#A58261]/30 pl-3">
             {isZh
               ? `AQR 使用 ${payload?.aqr_ticker ?? '公开基金'} 的公开基金净值作为代理值，不等同于 AQR 私募策略真实账本。`
               : `AQR uses ${payload?.aqr_ticker ?? 'a public fund'} adjusted NAV as a public proxy, not a disclosed private-strategy book.`}
@@ -343,10 +343,10 @@ function QuantDecisionSummary({
     ? `${label} 当前模型累计收益 ${modelReturn.toFixed(2)}%，较幻方公开净值超额 ${excess.toFixed(2)}%；最大回撤 ${modelMdd.toFixed(2)}%，低于幻方 ${highflyerMdd.toFixed(2)}%。`
     : `${label} model return is ${modelReturn.toFixed(2)}%, with ${excess.toFixed(2)}% excess versus public High-Flyer NAV; max drawdown is ${modelMdd.toFixed(2)}% versus ${highflyerMdd.toFixed(2)}%.`;
   return (
-    <div className="border border-[#4B5563]/25 bg-[#4B5563]/8 px-5 py-4 max-w-full overflow-hidden">
+    <div className="border border-[#A58261]/25 bg-[#A58261]/8 px-5 py-4 max-w-full overflow-hidden">
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div className="min-w-0">
-          <div className="text-[10px] font-sans font-bold uppercase tracking-[0.22em] text-[#4B5563]">
+          <div className="text-[10px] font-sans font-bold uppercase tracking-[0.22em] text-[#A58261]">
             {isZh ? '当前量化结论' : 'Current Quant Read'}
           </div>
           <p className="mt-2 text-sm md:text-base font-serif leading-relaxed text-[#1D1D1B] break-all [overflow-wrap:anywhere]">{conclusion}</p>
@@ -388,7 +388,7 @@ function QuantFallback({ loading, isZh }: { loading: boolean; isZh: boolean }) {
     <div className="border border-[#1D1D1B]/10 bg-white p-8 text-xs font-sans text-zinc-500">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#4B5563]">
+          <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#A58261]">
             {isZh ? '等待量化快照' : 'Waiting For Quant Snapshot'}
           </div>
           <p className="mt-2 leading-relaxed">
@@ -397,7 +397,7 @@ function QuantFallback({ loading, isZh }: { loading: boolean; isZh: boolean }) {
               : 'The panel loads the latest quant comparison first and falls back to the most recent historical snapshot when needed.'}
           </p>
         </div>
-        <RefreshCcw className={`w-4 h-4 text-[#4B5563] ${loading ? 'animate-spin' : ''}`} />
+        <RefreshCcw className={`w-4 h-4 text-[#A58261] ${loading ? 'animate-spin' : ''}`} />
       </div>
     </div>
   );
