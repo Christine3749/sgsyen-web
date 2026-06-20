@@ -122,8 +122,8 @@ function modelAction(ev: PolicyEvent, isZh: boolean) {
 
 function WeeklyEventFrame({ latestArticle, isZh }: { latestArticle?: Article; isZh: boolean }) {
   return (
-    <section id="weekly-event-frame" className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10 bg-[#FAF9F5]">
-      <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] border border-[#1D1D1B]/10 bg-[#FDFCF9]">
+    <section id="weekly-event-frame" className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10 bg-[#FDFCF9]">
+      <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] border border-[#1D1D1B]/10 bg-white">
         <div className="p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-[#1D1D1B]/10">
           <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#A58261] flex items-center gap-2">
             <BookMarked className="w-3.5 h-3.5" />
