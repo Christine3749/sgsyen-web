@@ -73,6 +73,16 @@ const WEEKLY_FRAMEWORK = [
   },
 ];
 
+const LATEST_WEEKLY_MEMO = {
+  date: '2026-06-21',
+  titleZh: '全球事件进入模型：从日元 160 到世界风险权重重估',
+  titleEn: 'Global Events Enter the Model: From JPY 160 to Risk-Weight Repricing',
+  thesisZh: '新闻只有在改变市场状态时才成为事件。日元 160、政策干预、流动性压力与拥挤平仓，应被压缩成 regime、情景先验和风险预算，而不是简单写成涨跌判断。',
+  thesisEn: 'News becomes an event only when it changes market state. JPY 160, policy intervention, liquidity stress, and crowded unwind should become regime, scenario-prior, and risk-budget inputs, not simple directional calls.',
+  pathZh: ['全球信息', '事件识别', '地域与来源覆盖', '压力维度', '风险预算'],
+  pathEn: ['Global information', 'Event detection', 'Region and source coverage', 'Pressure dimensions', 'Risk budget'],
+};
+
 type LiveMacroEvent = {
   date: string;
   title: string;
@@ -156,7 +166,7 @@ function modelAction(ev: PolicyEvent, isZh: boolean) {
     : 'Model action: use as an auxiliary state variable for regime probability and sector exposure tuning.';
 }
 
-function WeeklyEventFrame({ latestArticle, isZh }: { latestArticle?: Article; isZh: boolean }) {
+function WeeklyEventFrame({ isZh }: { isZh: boolean }) {
   return (
     <section id="weekly-event-frame" className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10 bg-[#FDFCF9]">
       <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] border border-[#1D1D1B]/10 bg-white">
@@ -189,20 +199,28 @@ function WeeklyEventFrame({ latestArticle, isZh }: { latestArticle?: Article; is
 
           <div className="mt-6 border-t border-[#1D1D1B]/10 pt-5">
             <div className="text-[9px] font-sans font-bold uppercase tracking-widest text-stone-400">
-              {isZh ? '最新周评入口' : 'Latest weekly entry'}
+              {isZh ? '本周核心论点' : 'This Week’s Core Thesis'}
             </div>
-            <div className="mt-2 flex items-center justify-between gap-4">
+            <div className="mt-2 flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <div className="text-sm font-serif font-semibold leading-snug truncate">
-                  {latestArticle
-                    ? (isZh ? latestArticle.title : (latestArticle.title_en || latestArticle.title))
-                    : (isZh ? '等待本周核心事件确认' : 'Waiting for this week’s lead event')}
+                <div className="text-base font-serif font-semibold leading-snug">
+                  {isZh ? LATEST_WEEKLY_MEMO.titleZh : LATEST_WEEKLY_MEMO.titleEn}
                 </div>
-                <div className="mt-1 text-[10px] font-sans text-stone-400">
-                  {latestArticle?.published_at ? fmtDate(latestArticle.published_at) : (isZh ? '周度节奏：每周一篇' : 'Cadence: one note per week')}
+                <p className="mt-2 text-[11px] font-sans leading-relaxed text-stone-500">
+                  {isZh ? LATEST_WEEKLY_MEMO.thesisZh : LATEST_WEEKLY_MEMO.thesisEn}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {(isZh ? LATEST_WEEKLY_MEMO.pathZh : LATEST_WEEKLY_MEMO.pathEn).map((item) => (
+                    <span key={item} className="text-[8px] font-sans font-bold uppercase tracking-wider text-[#A58261] border border-[#A58261]/20 px-2 py-0.5">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-3 text-[10px] font-sans text-stone-400">
+                  {LATEST_WEEKLY_MEMO.date} · {isZh ? '周度节奏：每周一篇' : 'Cadence: one note per week'}
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-[#A58261] shrink-0" />
+              <ArrowRight className="w-4 h-4 text-[#A58261] shrink-0 mt-1" />
             </div>
           </div>
         </div>
@@ -578,7 +596,7 @@ export default function ResearchPage() {
           </div>
         </section>
 
-        <WeeklyEventFrame latestArticle={articles[0]} isZh={isZh} />
+        <WeeklyEventFrame isZh={isZh} />
 
         <GlobalDataLayerPanel />
 
