@@ -72,9 +72,43 @@ const WEEKLY_FRAMEWORK = [
   },
 ];
 
+type LiveMacroEvent = {
+  date: string;
+  title: string;
+  event_type?: string;
+  source?: string;
+  source_url?: string;
+  region?: string;
+  confidence?: number;
+  severity?: number;
+  regime_signal?: string;
+  historical_anchor?: string;
+  affected_markets?: string[];
+};
+
+type LiveMacroDigest = {
+  as_of?: string;
+  generated_at?: string;
+  clusters?: Array<{ events?: LiveMacroEvent[] }>;
+};
+
 function fmtDate(iso?: string) {
   if (!iso) return '';
   return iso.slice(0, 10);
+}
+
+function collectLiveEvents(payload: LiveMacroDigest | null): LiveMacroEvent[] {
+  const unique = new Map<string, LiveMacroEvent>();
+  for (const cluster of payload?.clusters ?? []) {
+    for (const event of cluster.events ?? []) {
+      if (!event.date || !event.title) continue;
+      const key = `${event.date}|${event.title}|${event.source ?? ''}`;
+      if (!unique.has(key)) unique.set(key, event);
+    }
+  }
+  return Array.from(unique.values())
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 6);
 }
 
 function eventLens(ev: PolicyEvent, isZh: boolean) {
@@ -238,6 +272,25 @@ function EventImpactNote({ event, isZh }: { event: PolicyEvent; isZh: boolean })
   );
 }
 
+function LiveEventImpactNote({ event, isZh }: { event: LiveMacroEvent; isZh: boolean }) {
+  const signal = event.regime_signal?.replaceAll('_', ' ') || event.event_type?.replaceAll('_', ' ') || 'macro signal';
+  const confidence = typeof event.confidence === 'number' ? `${(event.confidence * 100).toFixed(0)}%` : '-';
+  return (
+    <div className="mt-3 space-y-1 border-l border-[#A58261]/30 pl-3">
+      <div className="text-[10px] font-sans text-stone-500 leading-relaxed">
+        {isZh
+          ? `冲击链：最新事件 → ${signal} → regime 概率、风险预算与因子权重重估`
+          : `Path: latest event -> ${signal} -> regime probability, risk budget, and factor-weight review`}
+      </div>
+      <div className="text-[10px] font-sans text-[#A58261] leading-relaxed">
+        {isZh
+          ? `模型动作：进入全球事件消化层，可信度 ${confidence}，只改变状态解释与权重，不改原始数据。`
+          : `Model action: promoted into the global event digestion layer with ${confidence} confidence; state interpretation changes, raw data does not.`}
+      </div>
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────
 export default function ResearchPage() {
   const navigate   = useNavigate();
@@ -256,6 +309,9 @@ export default function ResearchPage() {
   // events
   const [upcoming,    setUpcoming]    = useState<PolicyEvent[]>([]);
   const [recent,      setRecent]      = useState<PolicyEvent[]>([]);
+  const [liveEvents,  setLiveEvents]  = useState<LiveMacroEvent[]>([]);
+  const [liveAsOf, setLiveAsOf] = useState<string | null>(null);
+  const [liveGeneratedAt, setLiveGeneratedAt] = useState<string | null>(null);
   const [evLoading,   setEvLoading]   = useState(true);
 
   // regime signal (for breadcrumb bar)
@@ -372,9 +428,15 @@ export default function ResearchPage() {
     Promise.all([
       research.from('policy_events').select('*').gte('date', today).order('date', { ascending: true }).limit(5),
       research.from('policy_events').select('*').lt('date', today).order('date', { ascending: false }).limit(4),
-    ]).then(([up, re]) => {
+      fetch(`/quant/macro-events/latest.json?t=${Date.now()}`, { cache: 'no-store' })
+        .then(r => r.ok ? r.json() as Promise<LiveMacroDigest> : null)
+        .catch(() => null),
+    ]).then(([up, re, live]) => {
       if (up.data) setUpcoming(up.data);
       if (re.data) setRecent(re.data);
+      setLiveEvents(collectLiveEvents(live));
+      setLiveAsOf(live?.as_of ?? null);
+      setLiveGeneratedAt(live?.generated_at ?? null);
       setEvLoading(false);
     });
   }, []);
@@ -521,9 +583,16 @@ export default function ResearchPage() {
 
         {/* ── Event Timeline ───────────────────────────────── */}
         <section className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10">
-          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#A58261] mb-6 block">
-            {isZh ? '全球事件时间轴 · EVENT CALENDAR' : 'GLOBAL EVENT CALENDAR'}
-          </span>
+          <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-3">
+            <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#A58261] block">
+              {isZh ? '全球事件时间轴 · EVENT CALENDAR' : 'GLOBAL EVENT CALENDAR'}
+            </span>
+            <span className="text-[9px] font-mono uppercase tracking-widest text-stone-400">
+              {liveGeneratedAt
+                ? `${isZh ? '全球抓取层更新' : 'Live feed'} ${liveAsOf ?? fmtDate(liveGeneratedAt)}`
+                : (isZh ? '静态政策事件表' : 'Static policy-event table')}
+            </span>
+          </div>
 
           {evLoading ? (
             <div className="flex justify-center py-16">
@@ -568,10 +637,47 @@ export default function ResearchPage() {
               <div>
                 <div className="px-6 py-3 border-b border-[#1D1D1B]/10 bg-[#FAF9F5]">
                   <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-stone-400">
-                    {isZh ? '近期历史节点' : 'Recent History'}
+                    {liveEvents.length ? (isZh ? '最新全球事件' : 'Latest Global Events') : (isZh ? '近期历史节点' : 'Recent History')}
                   </span>
                 </div>
-                {recent.map((ev, i) => (
+                {liveEvents.length ? liveEvents.map((ev, i) => (
+                  <div key={`${ev.date}-${ev.title}-${ev.source ?? i}`}
+                    className={`flex gap-4 px-6 py-5 ${i < liveEvents.length - 1 ? 'border-b border-[#1D1D1B]/8' : ''} hover:bg-[#FAF9F5] transition-colors`}
+                  >
+                    <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${EVENT_DOT[ev.event_type ?? ''] ?? 'bg-[#A58261]'}`} />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-[9px] font-mono text-stone-400">{ev.date}</span>
+                        <span className={`text-[8px] font-sans font-bold uppercase px-1.5 py-0.5 border rounded ${EVENT_TAG[ev.event_type ?? ''] ?? 'text-[#A58261] bg-[#A58261]/5 border-[#A58261]/20'}`}>
+                          {(ev.event_type ?? 'live').replaceAll('_', ' ')}
+                        </span>
+                      </div>
+                      {ev.source_url ? (
+                        <a
+                          href={ev.source_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-sm font-serif font-medium leading-snug hover:text-[#A58261] transition-colors"
+                        >
+                          {ev.title}
+                        </a>
+                      ) : (
+                        <div className="text-sm font-serif font-medium leading-snug">{ev.title}</div>
+                      )}
+                      <div className="text-[9px] font-sans text-stone-400 mt-0.5 flex items-center gap-1">
+                        <Globe className="w-2.5 h-2.5" />
+                        {ev.region || ev.affected_markets?.join(', ') || 'GLOBAL'}
+                        {ev.source ? ` · ${ev.source}` : ''}
+                      </div>
+                      {ev.historical_anchor ? (
+                        <div className="text-[10px] font-sans text-stone-400 mt-1 leading-relaxed">
+                          {isZh ? '历史参照：' : 'Anchor: '}{ev.historical_anchor}
+                        </div>
+                      ) : null}
+                      <LiveEventImpactNote event={ev} isZh={isZh} />
+                    </div>
+                  </div>
+                )) : recent.map((ev, i) => (
                   <div key={ev.id}
                     className={`flex gap-4 px-6 py-5 ${i < recent.length - 1 ? 'border-b border-[#1D1D1B]/8' : ''} hover:bg-[#FAF9F5] transition-colors`}
                   >
