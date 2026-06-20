@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -83,6 +83,10 @@ const LATEST_WEEKLY_MEMO = {
   pathEn: ['Global information', 'Event detection', 'Region and source coverage', 'Pressure dimensions', 'Risk budget'],
 };
 
+const WEEKLY_MEMO_NO = 8;
+const WEEKLY_MEMO_CATEGORY = '全球格局';
+const WEEKLY_MEMO_TAGS = ['全球事件', '量化研究', '日元160', '风险预算', '世界模型'];
+
 type LiveMacroEvent = {
   date: string;
   title: string;
@@ -103,6 +107,11 @@ type LiveMacroDigest = {
   clusters?: Array<{ events?: LiveMacroEvent[] }>;
 };
 
+type DisplayArticle = Article & {
+  is_generated_weekly?: boolean;
+  content_en?: string;
+};
+
 function fmtDate(iso?: string) {
   if (!iso) return '';
   return iso.slice(0, 10);
@@ -120,6 +129,103 @@ function collectLiveEvents(payload: LiveMacroDigest | null): LiveMacroEvent[] {
   return Array.from(unique.values())
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, 6);
+}
+
+function signalLabel(signal?: string) {
+  return (signal || 'macro_state').replaceAll('_', ' ');
+}
+
+function buildWeeklyMemoArticle(events: LiveMacroEvent[], asOf?: string | null): DisplayArticle {
+  const date = asOf || LATEST_WEEKLY_MEMO.date;
+  const lead = events[0];
+  const focusZh = lead
+    ? `${lead.region ? `${lead.region} · ` : ''}${lead.title}`
+    : '日元 160、政策干预与全球风险权重重估';
+  const focusEn = lead
+    ? `${lead.region ? `${lead.region} · ` : ''}${lead.title}`
+    : 'JPY 160, policy intervention, and global risk-weight repricing';
+  const eventLinesZh = (events.length ? events : []).slice(0, 4).map((event, index) => {
+    const signal = signalLabel(event.regime_signal || event.event_type);
+    return `${index + 1}. ${event.date}｜${event.region || 'Global'}｜${event.title}｜状态信号：${signal}`;
+  }).join('\n');
+  const eventLinesEn = (events.length ? events : []).slice(0, 4).map((event, index) => {
+    const signal = signalLabel(event.regime_signal || event.event_type);
+    return `${index + 1}. ${event.date} | ${event.region || 'Global'} | ${event.title} | state signal: ${signal}`;
+  }).join('\n');
+  const articleId = `weekly-memo-${date}`;
+
+  return {
+    id: articleId,
+    no: WEEKLY_MEMO_NO,
+    slug: articleId,
+    title: LATEST_WEEKLY_MEMO.titleZh,
+    title_en: LATEST_WEEKLY_MEMO.titleEn,
+    subtitle: `本周主事件：${focusZh}`,
+    subtitle_en: `Lead event this week: ${focusEn}`,
+    author: '庄屿 SGSYEN',
+    author_en: 'SGSYEN Institute',
+    category: WEEKLY_MEMO_CATEGORY,
+    tags: WEEKLY_MEMO_TAGS,
+    reading_time: 12,
+    published_at: `${date}T08:00:00+08:00`,
+    is_published: true,
+    is_featured: true,
+    star_count: 0,
+    is_generated_weekly: true,
+    summary: LATEST_WEEKLY_MEMO.thesisZh,
+    content: `本周核心论点
+
+${LATEST_WEEKLY_MEMO.thesisZh}
+
+一、为什么这不是一条普通新闻
+本周的重点不是“某个价格点会不会带来单日涨跌”，而是它是否改变市场的状态描述。日元进入 160 区域、央行政策沟通、流动性压力与拥挤交易平仓，会共同影响资金的避险偏好、套息交易容量、风险预算和跨区域资产再定价。
+
+二、事件样本
+${eventLinesZh || '1. 当前宏观事件流尚未给出新的高可信样本，周评先使用日元 160 与政策压力阈值作为主事件。'}
+
+三、进入模型的方式
+这篇周评不把新闻直接翻译成买卖指令，而是先压缩成三类变量：第一是 regime 概率，判断市场处在平稳、转换还是压力尾部；第二是 scenario priors，判断货币干预、carry unwind、流动性缺口等情景权重；第三是 risk budget，决定在波动扩散时是否降低杠杆和单因子暴露。
+
+四、策略动作
+当事件可信度升高，模型不应该简单追涨杀跌，而应提高外汇、利率、流动性和拥挤度因子的解释权重；同时对高波动资产设置更强的回撤刹车，避免把一次历史阈值误判成普通噪声。
+
+五、结论
+世界模型真正要消化的不是“新闻数量”，而是新闻对状态空间的重写能力。每周只选一件主事件，是为了让研究页面保持克制，也让量化模型知道：哪些信息只是背景，哪些信息已经足以改变风险权重。`,
+    content_en: `This Week's Core Thesis
+
+${LATEST_WEEKLY_MEMO.thesisEn}
+
+1. Why this is not ordinary news
+The key question is not whether one price point predicts a one-day move. The question is whether it changes the market-state description. JPY near 160, central-bank communication, liquidity stress, and crowded unwind can jointly reshape risk appetite, carry capacity, risk budgets, and cross-region asset repricing.
+
+2. Event sample
+${eventLinesEn || '1. The current macro event stream has not produced a fresh high-confidence sample; this memo uses JPY 160 and policy-pressure thresholds as the lead event.'}
+
+3. How it enters the model
+The memo does not translate news directly into a trading command. It compresses news into three variables: regime probability, scenario priors, and risk budget. Those variables decide whether the market is stable, transitioning, or entering tail stress.
+
+4. Strategy action
+When confidence rises, the model should raise the explanatory weight of FX, rates, liquidity, and crowding factors. It should also tighten drawdown brakes on high-volatility assets so that a historical threshold is not treated as ordinary noise.
+
+5. Conclusion
+The world model should digest not the number of headlines, but the ability of an event to rewrite the state space. One lead event per week keeps the research page disciplined and tells the quant model which information is background and which information deserves risk-weight adjustment.`,
+  };
+}
+
+function articleMatches(art: Article, cat: string, kw: string) {
+  const categoryOk = cat === 'all' || art.category === cat || (art.tags ?? []).includes(cat);
+  if (!categoryOk) return false;
+  const query = kw.trim().toLowerCase();
+  if (!query) return true;
+  const text = [
+    art.title,
+    art.title_en,
+    art.subtitle,
+    art.subtitle_en,
+    art.category,
+    ...(art.tags ?? []),
+  ].filter(Boolean).join(' ').toLowerCase();
+  return text.includes(query);
 }
 
 function eventLens(ev: PolicyEvent, isZh: boolean) {
@@ -348,7 +454,7 @@ export default function ResearchPage() {
   const [copied,       setCopied]       = useState<string | null>(null);
 
   // article drawer
-  const [selectedArt,  setSelectedArt]  = useState<Article | null>(null);
+  const [selectedArt,  setSelectedArt]  = useState<DisplayArticle | null>(null);
   const [downloading,  setDownloading]  = useState(false);
   const [dlMsg,        setDlMsg]        = useState<string | null>(null);
   const { authorizedEmail, setShowLoginModal } = useLocale();
@@ -410,6 +516,13 @@ export default function ResearchPage() {
   const handleStar = useCallback(async (e: React.MouseEvent, artId: string) => {
     e.stopPropagation();
     if (starred.has(artId)) return;
+    if (artId.startsWith('weekly-memo-')) {
+      const next = new Set(starred);
+      next.add(artId);
+      setStarred(next);
+      localStorage.setItem('sgsyen_starred', JSON.stringify([...next]));
+      return;
+    }
     // optimistic UI
     setArticles(prev => prev.map(a =>
       a.id === artId ? { ...a, star_count: (a.star_count ?? 0) + 1 } : a
@@ -487,7 +600,30 @@ export default function ResearchPage() {
       });
   }, []);
 
+  const weeklyArticle = useMemo(
+    () => buildWeeklyMemoArticle(liveEvents, liveAsOf),
+    [liveEvents, liveAsOf]
+  );
+  const generatedArticles = useMemo(
+    () => articleMatches(weeklyArticle, category, search) ? [weeklyArticle] : [],
+    [weeklyArticle, category, search]
+  );
+  const displayArticles = useMemo<DisplayArticle[]>(() => {
+    const generatedSlugs = new Set(generatedArticles.map(art => art.slug));
+    return [
+      ...generatedArticles,
+      ...articles.filter(art => !generatedSlugs.has(art.slug)),
+    ];
+  }, [articles, generatedArticles]);
+  const displayCategories = useMemo(
+    () => [...new Set([...categories, WEEKLY_MEMO_CATEGORY])],
+    [categories]
+  );
+  const displayTotal = artTotal + generatedArticles.length;
   const hasMore = articles.length < artTotal;
+  const selectedContent = selectedArt
+    ? (isZh ? selectedArt.content : (selectedArt.content_en || selectedArt.content))
+    : '';
 
   // ─────────────────────────────────────────────────────────
   return (
@@ -760,7 +896,7 @@ export default function ResearchPage() {
               </div>
               {/* Category Filter */}
               <div className="flex flex-wrap gap-2 justify-end">
-                {['all', ...categories].map(cat => (
+                {['all', ...displayCategories].map(cat => (
                   <button key={cat}
                     onClick={() => setCategory(cat)}
                     className={`text-[9px] font-sans font-bold uppercase tracking-widest px-3 py-1.5 border transition-colors cursor-pointer ${
@@ -778,12 +914,12 @@ export default function ResearchPage() {
           {/* Search hint */}
           {search && (
             <div className="mb-6 text-[10px] font-sans text-stone-400">
-              {isZh ? `关键词「${search}」共找到 ${artTotal} 篇` : `"${search}" — ${artTotal} result${artTotal !== 1 ? 's' : ''}`}
+              {isZh ? `关键词「${search}」共找到 ${displayTotal} 篇` : `"${search}" — ${displayTotal} result${displayTotal !== 1 ? 's' : ''}`}
             </div>
           )}
 
           {/* Article rows — matches SgsyenReports layout */}
-          {artLoading && articles.length === 0 ? (
+          {artLoading && displayArticles.length === 0 ? (
             <div className="py-24 flex flex-col items-center gap-4">
               <Loader2 className="w-7 h-7 text-[#C4A35A] animate-spin" />
               <p className="text-xs text-stone-400 font-sans tracking-widest uppercase">
@@ -792,7 +928,7 @@ export default function ResearchPage() {
             </div>
           ) : (
             <div className="border-t border-[#1D1D1B]/10">
-              {articles.length === 0 && !artLoading && (
+              {displayArticles.length === 0 && !artLoading && (
                 <div className="py-24 text-center border-b border-[#1D1D1B]/10">
                   <p className="text-stone-400 text-sm font-sans">
                     {isZh ? '该分类暂无出版物。' : 'No publications in this category yet.'}
@@ -800,7 +936,7 @@ export default function ResearchPage() {
                 </div>
               )}
 
-              {articles.map((art, index) => (
+              {displayArticles.map((art, index) => (
                 <motion.div
                   key={art.id}
                   initial={{ opacity: 0, y: 8 }}
@@ -898,9 +1034,9 @@ export default function ResearchPage() {
                 </div>
               )}
 
-              {!hasMore && articles.length > 0 && (
+              {!hasMore && displayArticles.length > 0 && (
                 <div className="py-10 text-center text-[9px] font-sans uppercase tracking-widest text-stone-300">
-                  ── {isZh ? `已加载全部 ${artTotal} 篇报告` : `All ${artTotal} reports loaded`} ──
+                  ── {isZh ? `已加载全部 ${displayTotal} 篇报告` : `All ${displayTotal} reports loaded`} ──
                 </div>
               )}
             </div>
@@ -995,9 +1131,9 @@ export default function ResearchPage() {
                   )}
 
                   {/* Content or placeholder */}
-                  {(selectedArt as any).content ? (
+                  {selectedContent ? (
                     <div className="text-sm font-sans leading-[1.9] text-stone-700 whitespace-pre-wrap">
-                      {(selectedArt as any).content}
+                      {selectedContent}
                     </div>
                   ) : (
                     <div className="py-12 text-center bg-[#FAF9F5] border border-[#1D1D1B]/8 rounded">
