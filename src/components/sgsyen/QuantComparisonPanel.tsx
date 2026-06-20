@@ -168,7 +168,7 @@ export default function QuantComparisonPanel() {
   }, [current, isZh, payload?.aqr_ticker, selectedRow]);
 
   return (
-    <section className="px-5 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#F5F2EA] overflow-hidden">
+    <section className="px-5 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#FDFCF9] overflow-hidden">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
         <div className="min-w-0">
           <span className="text-[10px] font-sans font-bold uppercase tracking-[0.24em] text-[#A58261]">
@@ -186,7 +186,7 @@ export default function QuantComparisonPanel() {
 
         <div className="flex flex-wrap items-center justify-start lg:justify-end gap-2">
           {history?.items?.length ? (
-            <label className="inline-flex items-center gap-2 h-9 px-3 border border-[#1D1D1B]/10 bg-white/50 text-stone-500 rounded">
+            <label className="inline-flex items-center gap-2 h-9 px-3 border border-[#1D1D1B]/10 bg-white text-stone-500 rounded">
               <CalendarDays className="w-4 h-4 text-[#A58261]" />
               <select
                 value={snapshotPath}
@@ -214,7 +214,7 @@ export default function QuantComparisonPanel() {
               className={`px-4 py-2 text-[10px] font-sans font-bold uppercase tracking-widest border transition-colors rounded ${
                 selected === key
                   ? 'bg-[#1D1D1B] text-[#FDFCF9] border-[#1D1D1B]'
-                  : 'bg-white/50 text-stone-500 border-[#1D1D1B]/10 hover:border-[#A58261]/50'
+                  : 'bg-white text-stone-500 border-[#1D1D1B]/10 hover:border-[#A58261]/50'
               }`}
             >
               {payload?.indices?.[key]?.label ?? key.toUpperCase()}
@@ -224,7 +224,7 @@ export default function QuantComparisonPanel() {
             <select
               value={selectedDate}
               onChange={(event) => setSelectedDate(event.target.value)}
-              className="h-9 px-3 border border-[#1D1D1B]/10 bg-white/50 text-[10px] font-sans font-bold uppercase tracking-widest text-stone-500 rounded outline-none hover:border-[#A58261]/40"
+              className="h-9 px-3 border border-[#1D1D1B]/10 bg-white text-[10px] font-sans font-bold uppercase tracking-widest text-stone-500 rounded outline-none hover:border-[#A58261]/40"
               aria-label={isZh ? '选择交易日期' : 'Select trading date'}
             >
               {dateOptions.map((date) => (
@@ -236,7 +236,7 @@ export default function QuantComparisonPanel() {
           ) : null}
           <button
             onClick={() => load()}
-            className="w-9 h-9 inline-flex items-center justify-center border border-[#1D1D1B]/10 bg-white/50 text-stone-500 hover:text-[#1D1D1B] hover:border-[#A58261]/40 rounded transition-colors"
+            className="w-9 h-9 inline-flex items-center justify-center border border-[#1D1D1B]/10 bg-white text-stone-500 hover:text-[#1D1D1B] hover:border-[#A58261]/40 rounded transition-colors"
             aria-label={isZh ? '刷新量化对比' : 'Refresh quant comparison'}
           >
             <RefreshCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -257,7 +257,7 @@ export default function QuantComparisonPanel() {
             />
           ) : null}
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 border border-[#1D1D1B]/10 bg-[#FDFCF9]">
+          <div className="grid grid-cols-2 lg:grid-cols-4 border border-[#1D1D1B]/10 bg-white">
             {stats.map((item, index) => {
               const Icon = item.icon;
               return (
@@ -376,7 +376,7 @@ function QuantDecisionSummary({
 
 function SummaryStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border border-[#1D1D1B]/10 bg-[#FDFCF9]/70 px-3 py-2 min-w-0">
+    <div className="border border-[#1D1D1B]/10 bg-white px-3 py-2 min-w-0">
       <div className="text-[8px] font-sans font-bold uppercase tracking-widest text-stone-400">{label}</div>
       <div className="mt-1 text-sm font-mono font-semibold text-[#1D1D1B]">{value}</div>
     </div>
@@ -385,7 +385,7 @@ function SummaryStat({ label, value }: { label: string; value: string }) {
 
 function QuantFallback({ loading, isZh }: { loading: boolean; isZh: boolean }) {
   return (
-    <div className="border border-[#1D1D1B]/10 bg-[#FDFCF9] p-8 text-xs font-sans text-stone-500">
+    <div className="border border-[#1D1D1B]/10 bg-white p-8 text-xs font-sans text-stone-500">
       <div className="flex items-center justify-between gap-4">
         <div>
           <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#A58261]">
@@ -424,7 +424,7 @@ function QuantSvgChart({
   const zeroY = y(0);
 
   return (
-    <div className="border border-[#1D1D1B]/10 bg-[#FDFCF9] p-5">
+    <div className="border border-[#1D1D1B]/10 bg-white p-5">
       <div className="flex items-center justify-between gap-4 mb-4">
         <h3 className="text-sm font-serif font-bold text-[#1D1D1B]">{title}</h3>
         <div className="flex flex-wrap items-center justify-end gap-3">
