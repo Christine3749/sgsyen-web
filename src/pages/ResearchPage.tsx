@@ -10,6 +10,7 @@ import { research, Article, PolicyEvent } from '../lib/research';
 import { supabase } from '../lib/supabase';
 import { useLocale } from '../context/LocaleContext';
 import MacroPulseBar from '../components/sgsyen/MacroPulseBar';
+import QuantComparisonPanel from '../components/sgsyen/QuantComparisonPanel';
 
 const PAGE_SIZE = 8;
 
@@ -298,6 +299,8 @@ export default function ResearchPage() {
             </div>
           </div>
         </section>
+
+        <QuantComparisonPanel />
 
         {/* ── Event Timeline ───────────────────────────────── */}
         <section className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10">
@@ -825,3 +828,4 @@ events = sb.table("policy_events").select("*").execute()`}</pre>
     </div>
   );
 }
+
