@@ -615,11 +615,6 @@ export default function ResearchPage() {
       ...articles.filter(art => !generatedSlugs.has(art.slug)),
     ];
   }, [articles, generatedArticles]);
-  const displayCategories = useMemo(
-    () => [...new Set([...categories, WEEKLY_MEMO_CATEGORY])],
-    [categories]
-  );
-  const displayTotal = artTotal + generatedArticles.length;
   const hasMore = articles.length < artTotal;
   const selectedContent = selectedArt
     ? (isZh ? selectedArt.content : (selectedArt.content_en || selectedArt.content))
@@ -896,7 +891,7 @@ export default function ResearchPage() {
               </div>
               {/* Category Filter */}
               <div className="flex flex-wrap gap-2 justify-end">
-                {['all', ...displayCategories].map(cat => (
+                {['all', ...categories].map(cat => (
                   <button key={cat}
                     onClick={() => setCategory(cat)}
                     className={`text-[9px] font-sans font-bold uppercase tracking-widest px-3 py-1.5 border transition-colors cursor-pointer ${
@@ -914,12 +909,12 @@ export default function ResearchPage() {
           {/* Search hint */}
           {search && (
             <div className="mb-6 text-[10px] font-sans text-stone-400">
-              {isZh ? `关键词「${search}」共找到 ${displayTotal} 篇` : `"${search}" — ${displayTotal} result${displayTotal !== 1 ? 's' : ''}`}
+              {isZh ? `关键词「${search}」共找到 ${artTotal} 篇` : `"${search}" — ${artTotal} result${artTotal !== 1 ? 's' : ''}`}
             </div>
           )}
 
           {/* Article rows — matches SgsyenReports layout */}
-          {artLoading && displayArticles.length === 0 ? (
+          {artLoading && articles.length === 0 ? (
             <div className="py-24 flex flex-col items-center gap-4">
               <Loader2 className="w-7 h-7 text-[#C4A35A] animate-spin" />
               <p className="text-xs text-stone-400 font-sans tracking-widest uppercase">
@@ -1034,9 +1029,9 @@ export default function ResearchPage() {
                 </div>
               )}
 
-              {!hasMore && displayArticles.length > 0 && (
+              {!hasMore && articles.length > 0 && (
                 <div className="py-10 text-center text-[9px] font-sans uppercase tracking-widest text-stone-300">
-                  ── {isZh ? `已加载全部 ${displayTotal} 篇报告` : `All ${displayTotal} reports loaded`} ──
+                  ── {isZh ? `已加载全部 ${artTotal} 篇报告` : `All ${artTotal} reports loaded`} ──
                 </div>
               )}
             </div>
