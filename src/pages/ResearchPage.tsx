@@ -19,16 +19,20 @@ const PAGE_SIZE = 8;
 const EVENT_DOT: Record<string, string> = {
   crisis:       'bg-[#C83E3E]',
   policy:       'bg-blue-500',
-  geopolitical: 'bg-[#C4A35A]',
+  geopolitical: 'bg-zinc-400',
   regulation:   'bg-purple-500',
   market:       'bg-emerald-500',
+  fx_breakout:  'bg-zinc-400',
+  central_bank: 'bg-zinc-400',
 };
 const EVENT_TAG: Record<string, string> = {
   crisis:       'text-[#C83E3E] bg-[#C83E3E]/5 border-[#C83E3E]/15',
   policy:       'text-blue-600 bg-blue-50 border-blue-200',
-  geopolitical: 'text-[#C4A35A] bg-[#C4A35A]/5 border-[#C4A35A]/20',
+  geopolitical: 'text-zinc-500 bg-zinc-50 border-zinc-200',
   regulation:   'text-purple-600 bg-purple-50 border-purple-200',
   market:       'text-emerald-600 bg-emerald-50 border-emerald-200',
+  fx_breakout:  'text-zinc-500 bg-zinc-50 border-zinc-200',
+  central_bank: 'text-zinc-500 bg-zinc-50 border-zinc-200',
 };
 
 const FEATURED_EVENT_MIRROR = {
@@ -386,11 +390,11 @@ function EventMirrorField({ icon, label, value }: { icon: React.ReactNode; label
 
 function EventImpactNote({ event, isZh }: { event: PolicyEvent; isZh: boolean }) {
   return (
-    <div className="mt-3 space-y-1 border-l border-[#A58261]/30 pl-3">
+    <div className="mt-3 space-y-1 border-l border-[#1D1D1B]/10 pl-3">
       <div className="text-[10px] font-sans text-zinc-500 leading-relaxed">
         {eventLens(event, isZh)}
       </div>
-      <div className="text-[10px] font-sans text-[#A58261] leading-relaxed">
+      <div className="text-[10px] font-sans text-zinc-500 leading-relaxed">
         {modelAction(event, isZh)}
       </div>
     </div>
@@ -401,13 +405,13 @@ function LiveEventImpactNote({ event, isZh }: { event: LiveMacroEvent; isZh: boo
   const signal = event.regime_signal?.replaceAll('_', ' ') || event.event_type?.replaceAll('_', ' ') || 'macro signal';
   const confidence = typeof event.confidence === 'number' ? `${(event.confidence * 100).toFixed(0)}%` : '-';
   return (
-    <div className="mt-3 space-y-1 border-l border-[#A58261]/30 pl-3">
+    <div className="mt-3 space-y-1 border-l border-[#1D1D1B]/10 pl-3">
       <div className="text-[10px] font-sans text-zinc-500 leading-relaxed">
         {isZh
           ? `冲击链：最新事件 → ${signal} → regime 概率、风险预算与因子权重重估`
           : `Path: latest event -> ${signal} -> regime probability, risk budget, and factor-weight review`}
       </div>
-      <div className="text-[10px] font-sans text-[#A58261] leading-relaxed">
+      <div className="text-[10px] font-sans text-zinc-500 leading-relaxed">
         {isZh
           ? `模型动作：进入全球事件消化层，可信度 ${confidence}，只改变状态解释与权重，不改原始数据。`
           : `Model action: promoted into the global event digestion layer with ${confidence} confidence; state interpretation changes, raw data does not.`}
@@ -624,11 +628,6 @@ export default function ResearchPage() {
   return (
     <div className="research-page w-full bg-[#FFFFFF] text-[#1D1D1B] min-h-screen font-serif antialiased overflow-x-hidden">
 
-      {/* Top ticker */}
-      <div className="bg-[#1D1D1B] text-[#FFFFFF] py-2 px-4 text-center text-[9px] tracking-[0.18em] md:tracking-[0.25em] font-sans font-bold uppercase select-none whitespace-nowrap overflow-hidden text-ellipsis">
-        🏛️ SGSYEN 独立研判系统研究终端 · 全球宏观情报 · 事件驱动分析
-      </div>
-
       <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10">
 
         {/* ── Breadcrumb ────────────────────────────────────── */}
@@ -679,7 +678,7 @@ export default function ResearchPage() {
             </span>
             <button
               onClick={() => setShowApi(true)}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] hover:bg-[#A58261] hover:text-white transition-colors cursor-pointer rounded"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded"
             >
               <Terminal className="w-3 h-3" />
               <span className="hidden sm:inline">{isZh ? '研究员 API 接入' : 'Researcher API'}</span>
@@ -698,7 +697,7 @@ export default function ResearchPage() {
         >
           {/* ambient */}
           <div className="absolute inset-0 pointer-events-none"
-            style={{ backgroundImage: 'radial-gradient(circle at 75% 25%, rgba(165,130,97,.07) 0%, transparent 55%), radial-gradient(circle at 20% 75%, rgba(200,62,62,.05) 0%, transparent 55%)' }} />
+            style={{ backgroundImage: 'radial-gradient(circle at 20% 75%, rgba(200,62,62,.04) 0%, transparent 55%)' }} />
 
           <div className="relative z-10 max-w-3xl">
             <span className="text-[10px] font-sans font-bold tracking-[0.25em] uppercase text-[#A58261] mb-4 block">
@@ -729,9 +728,9 @@ export default function ResearchPage() {
 
         <WeeklyEventFrame isZh={isZh} />
 
-        <GlobalDataLayerPanel />
-
         <QuantComparisonPanel />
+
+        <GlobalDataLayerPanel />
 
         {/* ── Event Timeline ───────────────────────────────── */}
         <section className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10">
@@ -796,11 +795,11 @@ export default function ResearchPage() {
                   <div key={`${ev.date}-${ev.title}-${ev.source ?? i}`}
                     className={`flex gap-4 px-6 py-5 ${i < liveEvents.length - 1 ? 'border-b border-[#1D1D1B]/8' : ''} hover:bg-[#F7F8FA] transition-colors`}
                   >
-                    <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${EVENT_DOT[ev.event_type ?? ''] ?? 'bg-[#A58261]'}`} />
+                    <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${EVENT_DOT[ev.event_type ?? ''] ?? 'bg-zinc-400'}`} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <span className="text-[9px] font-mono text-zinc-400">{ev.date}</span>
-                        <span className={`text-[8px] font-sans font-bold uppercase px-1.5 py-0.5 border rounded ${EVENT_TAG[ev.event_type ?? ''] ?? 'text-[#A58261] bg-[#A58261]/5 border-[#A58261]/20'}`}>
+                        <span className={`text-[8px] font-sans font-bold uppercase px-1.5 py-0.5 border rounded ${EVENT_TAG[ev.event_type ?? ''] ?? 'text-zinc-500 bg-zinc-50 border-zinc-200'}`}>
                           {(ev.event_type ?? 'live').replaceAll('_', ' ')}
                         </span>
                       </div>
@@ -969,7 +968,7 @@ export default function ResearchPage() {
                         <button
                           key={tag}
                           onClick={e => { e.stopPropagation(); setCategory(tag); setArticles([]); setArtPage(0); loadArticles(0, tag); }}
-                          className="text-[9px] font-sans text-[#A58261] bg-[#A58261]/5 border border-[#A58261]/15 px-2 py-0.5 rounded hover:bg-[#A58261]/15 transition-colors cursor-pointer"
+                          className="text-[9px] font-sans text-[#A58261] bg-white border border-[#1D1D1B]/10 px-2 py-0.5 rounded hover:bg-[#F7F8FA] transition-colors cursor-pointer"
                         >
                           {tag}
                         </button>
@@ -1090,7 +1089,7 @@ export default function ResearchPage() {
                       </span>
                     )}
                     {selectedArt.tags?.map(t => (
-                      <span key={t} className="text-[9px] font-sans text-[#A58261] bg-[#A58261]/5 border border-[#A58261]/15 px-2 py-0.5 rounded">{t}</span>
+                      <span key={t} className="text-[9px] font-sans text-[#A58261] bg-white border border-[#1D1D1B]/10 px-2 py-0.5 rounded">{t}</span>
                     ))}
                     <span className="text-zinc-400 text-xs font-sans flex items-center gap-1 ml-1">
                       <Calendar className="w-3.5 h-3.5" />{fmtDate(selectedArt.published_at)}
@@ -1289,7 +1288,7 @@ events = sb.table("policy_events").select("*").execute()`}</pre>
                 </div>
 
                 {/* Coming soon */}
-                <div className="border border-[#A58261]/20 rounded p-5 bg-[#A58261]/5">
+                <div className="border border-white/10 rounded p-5 bg-white/5">
                   <div className="text-[10px] uppercase tracking-widest text-[#A58261] mb-2 font-sans font-bold">🔑 研究员认证 · 即将开放</div>
                   <p className="text-[11px] text-white/50 leading-relaxed">
                     下期将开放「研究员」成员等级。认证后获得专属 API Token，可写入 predictions 表并订阅实时数据推送。

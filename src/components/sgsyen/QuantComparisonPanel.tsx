@@ -343,7 +343,7 @@ function QuantDecisionSummary({
     ? `${label} 当前模型累计收益 ${modelReturn.toFixed(2)}%，较幻方公开净值超额 ${excess.toFixed(2)}%；最大回撤 ${modelMdd.toFixed(2)}%，低于幻方 ${highflyerMdd.toFixed(2)}%。`
     : `${label} model return is ${modelReturn.toFixed(2)}%, with ${excess.toFixed(2)}% excess versus public High-Flyer NAV; max drawdown is ${modelMdd.toFixed(2)}% versus ${highflyerMdd.toFixed(2)}%.`;
   return (
-    <div className="border border-[#A58261]/25 bg-[#A58261]/8 px-5 py-4 max-w-full overflow-hidden">
+    <div className="border border-[#1D1D1B]/10 bg-[#F7F8FA] px-5 py-4 max-w-full overflow-hidden">
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div className="min-w-0">
           <div className="text-[10px] font-sans font-bold uppercase tracking-[0.22em] text-[#A58261]">

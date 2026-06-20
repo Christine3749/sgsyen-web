@@ -10,6 +10,8 @@ import ResearchPage from './pages/ResearchPage';
 import { BookOpen, Calculator, Cpu, FileText, Layers } from 'lucide-react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 
+type ActiveApp = 'sgsyen' | 'research' | 'gemini' | 'miaojie';
+
 function InnerApp() {
   const { locale, setLocale, t, authorizedEmail, login, logout, showLoginModal, setShowLoginModal } = useLocale();
   const location = useLocation();
@@ -17,7 +19,14 @@ function InnerApp() {
 
   // Derive active state from URL path
   const path = location.pathname;
-  const activeApp = path.startsWith('/gemini') ? 'gemini' : path.startsWith('/miaojie') ? 'miaojie' : 'sgsyen';
+  const initialActiveApp: ActiveApp = path.startsWith('/research')
+    ? 'research'
+    : path.startsWith('/gemini')
+      ? 'gemini'
+      : path.startsWith('/miaojie')
+        ? 'miaojie'
+        : 'sgsyen';
+  const [activeApp, setActiveApp] = useState<ActiveApp>(initialActiveApp);
   let activeTab: 'calculator' | 'articles' | 'tariffs' = 'calculator';
   if (path.includes('/pricing')) activeTab = 'tariffs';
   else if (path.includes('/analysis')) activeTab = 'articles';
@@ -33,6 +42,13 @@ function InnerApp() {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
   };
 
+  useEffect(() => {
+    if (path.startsWith('/research')) setActiveApp('research');
+    else if (path.startsWith('/gemini')) setActiveApp('gemini');
+    else if (path.startsWith('/miaojie')) setActiveApp('miaojie');
+    else setActiveApp('sgsyen');
+  }, [path]);
+
   // Dynamic page title based on active app/tab
   useEffect(() => {
     const baseTitle = locale === 'zh' ? '雍彻智库' : '雍彻智库 · SGSYEN';
@@ -40,6 +56,10 @@ function InnerApp() {
       document.title = locale === 'zh'
         ? `SGSYEN 智库研究中心 | ${baseTitle}`
         : `SGSYEN Research Center | ${baseTitle}`;
+    } else if (activeApp === 'research') {
+      document.title = locale === 'zh'
+        ? `Research 观点与研究 | ${baseTitle}`
+        : `Research Hub | ${baseTitle}`;
     } else {
       const tabNames = {
         calculator: locale === 'zh' ? '算力成本估算' : 'Cost Calculator',
@@ -49,23 +69,19 @@ function InnerApp() {
       const geminiPrefix = locale === 'zh' ? 'Gemini 算力实验室' : 'Gemini Compute Lab';
       document.title = `${tabNames[activeTab]} | ${geminiPrefix} | ${baseTitle}`;
     }
-  }, [path, locale]);
+  }, [activeApp, activeTab, locale]);
 
   if (activeApp === 'miaojie') {
     return <MiaojiePortal />;
   }
 
-  if (path.startsWith('/research')) {
-    return <ResearchPage />;
-  }
-
   return (
-    <div className="w-full bg-[#FDFCF9] text-[#1D1D1B] font-serif min-h-screen flex flex-col overflow-x-hidden antialiased">
+    <div className="w-full bg-[#FFFFFF] text-[#1D1D1B] font-serif min-h-screen flex flex-col overflow-x-hidden antialiased">
       {/* Top Margin Editorial Board */}
       <div className="bg-[#1D1D1B] text-[#FDFCF9] py-2 px-6 text-center select-none text-[9px] tracking-[0.25em] font-sans font-bold uppercase">
-        {activeApp === 'sgsyen' 
-          ? '🏛️ SGSYEN 独立研判系统研究终端 • 中国顶尖数字活化智库 • 双流合一云原生环境'
-          : t('topAlert')
+        {activeApp === 'gemini'
+          ? t('topAlert')
+          : '🏛️ SGSYEN 独立研判系统研究终端 • 中国顶尖数字活化智库 • 双流合一云原生环境'
         }
       </div>
 
@@ -73,7 +89,7 @@ function InnerApp() {
       <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 grid grid-cols-2 text-center text-xs font-sans font-bold uppercase select-none border-b border-[#1D1D1B]/10 bg-white">
         <button
           id="toggle-sgsyen-portal-btn"
-          onClick={() => navigate('/')}
+          onClick={() => setActiveApp('sgsyen')}
           className={`py-4 transition-all flex items-center justify-center gap-2 cursor-pointer outline-none ${
             activeApp === 'sgsyen'
               ? 'bg-[#1D1D1B] text-[#FDFCF9]'
@@ -84,26 +100,26 @@ function InnerApp() {
         </button>
         <button
           id="toggle-research-hub-btn"
-          onClick={() => navigate('/research')}
-          className="py-4 transition-all flex items-center justify-center gap-2 cursor-pointer outline-none text-[#1D1D1B] hover:bg-stone-50"
+          onClick={() => setActiveApp('research')}
+          className={`py-4 transition-all flex items-center justify-center gap-2 cursor-pointer outline-none ${
+            activeApp === 'research'
+              ? 'bg-[#1D1D1B] text-[#FDFCF9]'
+              : 'text-[#1D1D1B] hover:bg-stone-50'
+          }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
           <span>{locale === 'zh' ? 'Research 观点与研究' : 'Research Hub'}</span>
         </button>
       </div>
 
-      <AnimatePresence mode="wait">
-        {activeApp === 'sgsyen' ? (
-          <motion.div
-            key="sgsyen-portal"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.4 }}
-            className="flex-1 w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 flex flex-col bg-[#FDFCF9]"
-          >
+      <div>
+        <div
+          className={`flex-1 w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 flex-col bg-[#FFFFFF] ${
+            activeApp === 'sgsyen' ? 'flex' : 'hidden'
+          }`}
+        >
             {/* Top mini-bar for lang switcher to keep it accessible everywhere */}
-            <div className="flex flex-col sm:flex-row justify-between items-center px-6 md:px-12 py-3 bg-[#FAF9F5] border-b border-[#1D1D1B]/10 select-none gap-3">
+            <div className="flex flex-col sm:flex-row justify-between items-center px-6 md:px-12 py-3 bg-[#FFFFFF] border-b border-[#1D1D1B]/10 select-none gap-3">
               {/* Left Side: Domain Identity Network Status */}
               <div className="flex items-center gap-2 text-left">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
@@ -164,7 +180,7 @@ function InnerApp() {
             <SgsyenPortal />
 
             {/* Custom footer indicator */}
-            <footer className="px-6 md:px-12 py-8 border-t border-[#1D1D1B]/10 flex flex-col sm:flex-row justify-between items-center bg-[#FAF9F5] gap-4 select-none">
+            <footer className="px-6 md:px-12 py-8 border-t border-[#1D1D1B]/10 flex flex-col sm:flex-row justify-between items-center bg-[#FFFFFF] gap-4 select-none">
               <div className="text-[10px] font-sans tracking-widest uppercase text-stone-500 text-center sm:text-left">
                 © 2020 - 2026 SGSYEN 智库研究中心 • 庙街数字重建委员会
               </div>
@@ -178,15 +194,21 @@ function InnerApp() {
                 </div>
               </div>
             </footer>
-          </motion.div>
-        ) : (
+        </div>
+
+        <div className={activeApp === 'research' ? 'block' : 'hidden'}>
+          <ResearchPage />
+        </div>
+
+        <AnimatePresence mode="wait">
+          {activeApp === 'gemini' && (
           <motion.div
             key="gemini-cost-explainer"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.4 }}
-            className="flex-1 w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 flex flex-col bg-[#FDFCF9]"
+            className="flex-1 w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 flex flex-col bg-[#FFFFFF]"
           >
             {/* Header Navigation */}
             <header className="flex flex-col sm:flex-row justify-between items-center px-6 md:px-12 py-8 border-b border-[#1D1D1B]/10 gap-4 select-none">
@@ -283,7 +305,7 @@ function InnerApp() {
                 </div>
 
                 {/* Editorial Tab Controls */}
-                <div className="flex flex-col sm:flex-row border border-[#1D1D1B]/20 bg-[#FAF9F5] p-1.5 rounded items-stretch sm:items-center justify-between gap-4 select-none">
+                <div className="flex flex-col sm:flex-row border border-[#1D1D1B]/20 bg-[#FFFFFF] p-1.5 rounded items-stretch sm:items-center justify-between gap-4 select-none">
                   <div className="flex flex-wrap gap-1 font-sans text-xs">
                     <button
                       onClick={() => navigate('/gemini/calculator/')}
@@ -439,8 +461,9 @@ function InnerApp() {
               </div>
             </footer>
           </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Unified Security Login Modal */}
       <AnimatePresence>
@@ -456,7 +479,7 @@ function InnerApp() {
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="bg-[#FDFCF9] border border-[#1D1D1B]/10 max-w-md w-full shadow-2xl p-8 md:p-10 relative text-left"
+              className="bg-[#FFFFFF] border border-[#1D1D1B]/10 max-w-md w-full shadow-2xl p-8 md:p-10 relative text-left"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -504,7 +527,7 @@ function InnerApp() {
                       placeholder="e.g. Ethan7586@gsyen.com"
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
-                      className="w-full bg-[#FAF9F5] border border-[#1D1D1B]/15 px-4 py-3 text-sm rounded outline-none text-[#1D1D1B] font-sans focus:border-[#C4A35A] transition-colors placeholder-stone-400"
+                      className="w-full bg-[#FFFFFF] border border-[#1D1D1B]/15 px-4 py-3 text-sm rounded outline-none text-[#1D1D1B] font-sans focus:border-[#C4A35A] transition-colors placeholder-stone-400"
                     />
                   </div>
 
@@ -516,7 +539,7 @@ function InnerApp() {
                       placeholder="••••••••"
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
-                      className="w-full bg-[#FAF9F5] border border-[#1D1D1B]/15 px-4 py-3 text-sm rounded outline-none text-[#1D1D1B] font-sans focus:border-[#C4A35A] transition-colors placeholder-stone-400"
+                      className="w-full bg-[#FFFFFF] border border-[#1D1D1B]/15 px-4 py-3 text-sm rounded outline-none text-[#1D1D1B] font-sans focus:border-[#C4A35A] transition-colors placeholder-stone-400"
                     />
                   </div>
 

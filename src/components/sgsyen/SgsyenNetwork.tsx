@@ -156,7 +156,7 @@ export default function SgsyenNetwork() {
   return (
     <section 
       id="sgsyen-portal-network-matrix" 
-      className="py-24 px-6 md:px-12 lg:px-20 bg-[#FAF9F5] text-[#1D1D1B] border-t border-b border-[#1D1D1B]/10 relative overflow-hidden"
+      className="py-24 px-6 md:px-12 lg:px-20 bg-[#FFFFFF] text-[#1D1D1B] border-t border-b border-[#1D1D1B]/10 relative overflow-hidden"
     >
       {/* Decorative vertical stripe */}
       <div className="absolute top-0 right-1/4 w-[1px] h-full bg-[#1D1D1B]/5 pointer-events-none" />
@@ -199,7 +199,7 @@ export default function SgsyenNetwork() {
               className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                 currentIndex === 0 
                   ? 'text-stone-300 bg-stone-50 cursor-not-allowed border border-transparent' 
-                  : 'text-[#1D1D1B] hover:bg-[#FAF9F5] hover:text-[#A58261] border border-stone-200'
+                  : 'text-[#1D1D1B] hover:bg-[#FFFFFF] hover:text-[#A58261] border border-stone-200'
               }`}
               title={locale === 'zh' ? '上一个' : 'Previous'}
             >
@@ -214,7 +214,7 @@ export default function SgsyenNetwork() {
               className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                 currentIndex >= maxIndex 
                   ? 'text-stone-300 bg-stone-50 cursor-not-allowed border border-transparent' 
-                  : 'text-[#1D1D1B] hover:bg-[#FAF9F5] hover:text-[#A58261] border border-stone-200'
+                  : 'text-[#1D1D1B] hover:bg-[#FFFFFF] hover:text-[#A58261] border border-stone-200'
               }`}
               title={locale === 'zh' ? '下一个' : 'Next'}
             >

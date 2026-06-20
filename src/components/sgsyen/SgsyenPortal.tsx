@@ -8,7 +8,7 @@ import MacroPulseBar from './MacroPulseBar';
 
 export default function SgsyenPortal() {
   return (
-    <div id="sgsyen-portal-layout" className="w-full flex flex-col bg-[#FDFCF9] scroll-smooth antialiased">
+    <div id="sgsyen-portal-layout" className="w-full flex flex-col bg-[#FFFFFF] scroll-smooth antialiased">
       {/* 1. Live Macro Pulse — sits above hero, same as research page */}
       <MacroPulseBar />
 

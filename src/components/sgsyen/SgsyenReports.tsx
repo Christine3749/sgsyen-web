@@ -233,7 +233,7 @@ export default function SgsyenReports() {
       }
       if (trimmed.startsWith("> ")) {
         return (
-          <blockquote key={i} className="my-6 pl-5 py-2 border-l-4 border-[#C4A35A] bg-[#FAF9F5] italic text-stone-600 font-serif leading-relaxed text-xs md:text-sm">
+          <blockquote key={i} className="my-6 pl-5 py-2 border-l-4 border-[#C4A35A] bg-[#FFFFFF] italic text-stone-600 font-serif leading-relaxed text-xs md:text-sm">
             {renderInline(trimmed.slice(2))}
           </blockquote>
         );
@@ -246,7 +246,7 @@ export default function SgsyenReports() {
   }
 
   return (
-    <section id="sgsyen-viewpoints-reports-container" className="py-24 px-6 md:px-12 lg:px-20 bg-[#FDFCF9] text-[#1D1D1B]">
+    <section id="sgsyen-viewpoints-reports-container" className="py-24 px-6 md:px-12 lg:px-20 bg-[#FFFFFF] text-[#1D1D1B]">
       
       {/* Dynamic Header */}
       <div id="reports-header-row" className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6 select-none">
@@ -297,7 +297,7 @@ export default function SgsyenReports() {
                 key={report.id}
                 id={`report-row-${report.slug}`}
                 onClick={() => handleOpenReport(report)}
-                className="group flex flex-col md:flex-row gap-8 py-10 border-b border-[#1D1D1B]/10 hover:bg-[#FAF9F5] transition-all duration-300 px-4 cursor-pointer"
+                className="group flex flex-col md:flex-row gap-8 py-10 border-b border-[#1D1D1B]/10 hover:bg-[#FFFFFF] transition-all duration-300 px-4 cursor-pointer"
               >
                 {/* Visual Serial index column */}
                 <div id={`report-row-num-${report.slug}`} className="w-32 shrink-0 flex flex-col justify-start">
@@ -356,12 +356,12 @@ export default function SgsyenReports() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'tween', duration: 0.45, ease: 'easeOut' }}
-              className="w-full max-w-[850px] bg-[#FDFCF9] h-screen shadow-2xl flex flex-col justify-between relative overflow-hidden text-left"
+              className="w-full max-w-[850px] bg-[#FFFFFF] h-screen shadow-2xl flex flex-col justify-between relative overflow-hidden text-left"
               onClick={(e) => e.stopPropagation()}
             >
               
               {/* Header inside drawer */}
-              <div id="drawer-header" className="px-6 md:px-10 py-6 border-b border-[#1D1D1B]/10 flex justify-between items-center bg-[#FAF9F5] select-none">
+              <div id="drawer-header" className="px-6 md:px-10 py-6 border-b border-[#1D1D1B]/10 flex justify-between items-center bg-[#FFFFFF] select-none">
                 <div className="flex items-center gap-2 text-left">
                   <FileText className="w-4 h-4 text-[#C4A35A]" />
                   <span className="text-[10px] uppercase font-sans font-bold tracking-widest text-stone-500">
@@ -409,7 +409,7 @@ export default function SgsyenReports() {
 
                   {/* Summary Callout banner */}
                   {selectedReport.summary && (
-                    <div className="p-6 border-l-3 border-[#C4A35A] bg-[#FAF9F5] mb-8 select-text text-left">
+                    <div className="p-6 border-l-3 border-[#C4A35A] bg-[#FFFFFF] mb-8 select-text text-left">
                       <p className="text-[10px] font-sans tracking-widest font-bold text-[#A58261] uppercase mb-2">
                         {locale === 'zh' ? '研究提要 (Executive Summary)' : 'EXECUTIVE SUMMARY'}
                       </p>
@@ -422,7 +422,7 @@ export default function SgsyenReports() {
                     {selectedReport.content ? (
                       renderMarkdownContent(selectedReport.content)
                     ) : (
-                      <p className="text-stone-400 italic text-sm py-8 text-center bg-[#FAF9F5]">
+                      <p className="text-stone-400 italic text-sm py-8 text-center bg-[#FFFFFF]">
                         {locale === 'zh' ? '正在从 API 数据链路挂载并确权正文，请稍等...' : 'Establishing secure content tokens, please hold...'}
                       </p>
                     )}
@@ -431,7 +431,7 @@ export default function SgsyenReports() {
               </div>
 
               {/* Lower Section drawer - Secure PDF download console */}
-              <div id="drawer-download-console" className="border-t border-[#1D1D1B]/10 p-6 md:p-8 bg-[#FAF9F5] select-none text-left">
+              <div id="drawer-download-console" className="border-t border-[#1D1D1B]/10 p-6 md:p-8 bg-[#FFFFFF] select-none text-left">
                 <div className="max-w-[700px] mx-auto space-y-4">
                   
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 text-left">
@@ -475,7 +475,7 @@ export default function SgsyenReports() {
                       className={`flex items-center justify-center gap-2 py-3 px-6 text-[10px] font-bold font-sans tracking-[0.15em] uppercase rounded transition-all cursor-pointer ${
                         isMemberLoggedIn 
                           ? 'bg-[#1D1D1B] text-white hover:bg-emerald-800' 
-                          : 'bg-[#FAF9F5] border border-[#1D1D1B]/20 text-[#1D1D1B] hover:bg-[#1D1D1B] hover:text-[#FDFCF9]'
+                          : 'bg-[#FFFFFF] border border-[#1D1D1B]/20 text-[#1D1D1B] hover:bg-[#1D1D1B] hover:text-[#FDFCF9]'
                       }`}
                     >
                       {downloading ? (
