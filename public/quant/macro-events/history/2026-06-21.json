@@ -1,32 +1,467 @@
 {
   "as_of": "2026-06-21",
-  "generated_at": "2026-06-20T17:34:36+00:00",
+  "generated_at": "2026-06-20T18:17:19+00:00",
   "dimensions": {
-    "currency_stress": 0.6321205588285577,
-    "rate_stress": 0.0,
-    "liquidity_stress": 0.29531191028128656,
-    "geopolitical_stress": 0.0,
-    "credit_stress": 0.0,
-    "commodity_stress": 0.0,
-    "policy_intervention": 0.5276334472589853,
-    "crowding_unwind": 0.47795422323898396
+    "currency_stress": 0.952641075608859,
+    "rate_stress": 0.8173164759472653,
+    "liquidity_stress": 0.964915645899155,
+    "geopolitical_stress": 0.6321205588285577,
+    "credit_stress": 0.8946007754381357,
+    "commodity_stress": 0.7654297119062023,
+    "policy_intervention": 0.9751649669589272,
+    "crowding_unwind": 0.9327944872602503
   },
   "scenario_priors": {
-    "currency_intervention": 0.5798770030437714,
-    "carry_unwind": 0.5550373910337708,
-    "liquidity_gap": 0.14765595514064328,
-    "policy_shock": 0.26381672362949266,
-    "geopolitical_tail": 0.0,
-    "baseline": 0.42012299695622857
+    "currency_intervention": 0.963903021283893,
+    "carry_unwind": 0.9427177814345546,
+    "liquidity_gap": 0.9297582106686453,
+    "policy_shock": 0.8962407214530963,
+    "geopolitical_tail": 0.69877513536738,
+    "baseline": 0.05
   },
   "model_effect": {
-    "regime_stress": 0.6321205588285577,
-    "scenario_tail_weight": 0.5798770030437714,
-    "risk_budget_multiplier": 0.7787578044100049,
-    "drawdown_brake_pressure": 0.5781623413722068,
-    "macro_event_count": 1.0
+    "regime_stress": 0.964915645899155,
+    "scenario_tail_weight": 0.963903021283893,
+    "risk_budget_multiplier": 0.55,
+    "drawdown_brake_pressure": 0.9536732403755384,
+    "macro_event_count": 13.0
   },
   "clusters": [
+    {
+      "key": "central_bank:global:policy_intervention",
+      "label": "policy_intervention",
+      "score": 1.0,
+      "confidence": 0.98,
+      "event_count": 2,
+      "latest_date": "2026-06-19",
+      "dimensions": {
+        "currency_stress": 0.35000000000000003,
+        "rate_stress": 0.85,
+        "liquidity_stress": 0.25,
+        "geopolitical_stress": 0.0,
+        "credit_stress": 0.0,
+        "commodity_stress": 0.0,
+        "policy_intervention": 0.7999999999999999,
+        "crowding_unwind": 0.0
+      },
+      "events": [
+        {
+          "date": "2026-06-19",
+          "title": "Piero Cipollone: The foundations of national sovereignty: the role of central bank money",
+          "event_type": "central_bank",
+          "asset": "",
+          "observed": null,
+          "threshold": null,
+          "direction": "risk_up",
+          "confidence": 0.98,
+          "severity": 0.6484000000000001,
+          "half_life_days": 15.0,
+          "region": "Euro Area",
+          "historical_anchor": "",
+          "source": "European Central Bank Press",
+          "source_url": "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp260619~53145e5a0b.en.html",
+          "affected_markets": [
+            "Euro Area"
+          ],
+          "regime_signal": "policy_intervention",
+          "dimensions": {
+            "policy_intervention": 0.6721
+          }
+        },
+        {
+          "date": "2026-06-18",
+          "title": "Minutes of the Monetary Policy Meeting on April 27 and 28, 2026",
+          "event_type": "central_bank",
+          "asset": "",
+          "observed": null,
+          "threshold": null,
+          "direction": "risk_up",
+          "confidence": 0.98,
+          "severity": 0.6484000000000001,
+          "half_life_days": 15.0,
+          "region": "Japan",
+          "historical_anchor": "",
+          "source": "Bank of Japan News",
+          "source_url": "http://www.boj.or.jp/en/mopo/mpmsche_minu/minu_2026/g260428.pdf",
+          "affected_markets": [
+            "Japan"
+          ],
+          "regime_signal": "policy_intervention",
+          "dimensions": {
+            "policy_intervention": 0.6721
+          }
+        }
+      ]
+    },
+    {
+      "key": "geopolitical:global:geopolitical_stress",
+      "label": "geopolitical_stress",
+      "score": 1.0,
+      "confidence": 0.82,
+      "event_count": 2,
+      "latest_date": "2026-06-20",
+      "dimensions": {
+        "currency_stress": 0.0,
+        "rate_stress": 0.0,
+        "liquidity_stress": 0.35,
+        "geopolitical_stress": 1.0,
+        "credit_stress": 0.0,
+        "commodity_stress": 0.44999999999999996,
+        "policy_intervention": 0.0,
+        "crowding_unwind": 0.0
+      },
+      "events": [
+        {
+          "date": "2026-06-20",
+          "title": "Rahm Emanuel says Trump ‘got schooled’ by Iran in bad ceasefire deal",
+          "event_type": "geopolitical",
+          "asset": "",
+          "observed": null,
+          "threshold": null,
+          "direction": "risk_up",
+          "confidence": 0.82,
+          "severity": 0.7856,
+          "half_life_days": 30.0,
+          "region": "Global",
+          "historical_anchor": "",
+          "source": "Financial Times Markets",
+          "source_url": "https://www.ft.com/content/3be5a96f-f22e-4b8e-898f-fe10c2f84058",
+          "affected_markets": [],
+          "regime_signal": "geopolitical_stress",
+          "dimensions": {
+            "geopolitical_stress": 0.7064
+          }
+        },
+        {
+          "date": "2026-06-20",
+          "title": "Iran closes Strait of Hormuz after Israel and Hizbollah exchange fire",
+          "event_type": "geopolitical",
+          "asset": "",
+          "observed": null,
+          "threshold": null,
+          "direction": "risk_up",
+          "confidence": 0.82,
+          "severity": 0.7856,
+          "half_life_days": 30.0,
+          "region": "Global",
+          "historical_anchor": "",
+          "source": "Financial Times Markets",
+          "source_url": "https://www.ft.com/content/fad77f6e-b1db-460a-a0c8-c2fd132932f5",
+          "affected_markets": [],
+          "regime_signal": "geopolitical_stress",
+          "dimensions": {
+            "geopolitical_stress": 0.7064
+          }
+        }
+      ]
+    },
+    {
+      "key": "market_break:global:liquidity_stress",
+      "label": "liquidity_stress",
+      "score": 1.0,
+      "confidence": 0.92,
+      "event_count": 2,
+      "latest_date": "2026-06-18",
+      "dimensions": {
+        "currency_stress": 0.0,
+        "rate_stress": 0.0,
+        "liquidity_stress": 0.55,
+        "geopolitical_stress": 0.0,
+        "credit_stress": 0.25,
+        "commodity_stress": 0.0,
+        "policy_intervention": 0.0,
+        "crowding_unwind": 0.8
+      },
+      "events": [
+        {
+          "date": "2026-06-18",
+          "title": "SEC, CFTC Seek Public Input on Data Reporting Frameworks for Security-Based Swap and Swap Markets",
+          "event_type": "market_break",
+          "asset": "",
+          "observed": null,
+          "threshold": null,
+          "direction": "risk_up",
+          "confidence": 0.92,
+          "severity": 0.6836,
+          "half_life_days": 10.0,
+          "region": "United States",
+          "historical_anchor": "",
+          "source": "US Securities and Exchange Commission",
+          "source_url": "https://www.sec.gov/newsroom/press-releases/2026-56-sec-cftc-seek-public-input-data-reporting-frameworks-security-based-swap-swap-markets",
+          "affected_markets": [
+            "United States"
+          ],
+          "regime_signal": "liquidity_stress",
+          "dimensions": {
+            "liquidity_stress": 0.52,
+            "crowding_unwind": 0.48
+          }
+        },
+        {
+          "date": "2026-06-18",
+          "title": "SEC, CFTC Seek Public Comment to Further Clarify and Harmonize Derivatives Product Definitions",
+          "event_type": "market_break",
+          "asset": "",
+          "observed": null,
+          "threshold": null,
+          "direction": "risk_up",
+          "confidence": 0.92,
+          "severity": 0.6836,
+          "half_life_days": 10.0,
+          "region": "United States",
+          "historical_anchor": "",
+          "source": "US Securities and Exchange Commission",
+          "source_url": "https://www.sec.gov/newsroom/press-releases/2026-57-sec-cftc-seek-public-comment-further-clarify-harmonize-derivatives-product-definitions",
+          "affected_markets": [
+            "United States"
+          ],
+          "regime_signal": "liquidity_stress",
+          "dimensions": {
+            "liquidity_stress": 0.52,
+            "crowding_unwind": 0.48
+          }
+        }
+      ]
+    },
+    {
+      "key": "commodity:global:commodity_stress",
+      "label": "commodity_stress",
+      "score": 0.9724031588269451,
+      "confidence": 0.91,
+      "event_count": 2,
+      "latest_date": "2026-06-18",
+      "dimensions": {
+        "currency_stress": 0.35,
+        "rate_stress": 0.0,
+        "liquidity_stress": 0.2,
+        "geopolitical_stress": 0.0,
+        "credit_stress": 0.0,
+        "commodity_stress": 1.0,
+        "policy_intervention": 0.0,
+        "crowding_unwind": 0.0
+      },
+      "events": [
+        {
+          "date": "2026-06-18",
+          "title": "Permian natural gas production increased faster than crude oil",
+          "event_type": "commodity",
+          "asset": "",
+          "observed": null,
+          "threshold": null,
+          "direction": "risk_up",
+          "confidence": 0.91,
+          "severity": 0.6228,
+          "half_life_days": 18.0,
+          "region": "United States",
+          "historical_anchor": "",
+          "source": "US Energy Information Administration",
+          "source_url": "https://www.eia.gov/todayinenergy/detail.php?id=67785",
+          "affected_markets": [
+            "energy"
+          ],
+          "regime_signal": "commodity_stress",
+          "dimensions": {
+            "commodity_stress": 0.9857
+          }
+        },
+        {
+          "date": "2026-06-16",
+          "title": "Solar generation in CAISO surpassed natural gas in the first five months of 2026",
+          "event_type": "commodity",
+          "asset": "",
+          "observed": null,
+          "threshold": null,
+          "direction": "risk_up",
+          "confidence": 0.91,
+          "severity": 0.6228,
+          "half_life_days": 18.0,
+          "region": "United States",
+          "historical_anchor": "",
+          "source": "US Energy Information Administration",
+          "source_url": "https://www.eia.gov/todayinenergy/detail.php?id=67784",
+          "affected_markets": [
+            "energy"
+          ],
+          "regime_signal": "commodity_stress",
+          "dimensions": {
+            "commodity_stress": 0.6657
+          }
+        }
+      ]
+    },
+    {
+      "key": "fx_breakout:global:currency_stress",
+      "label": "currency_stress",
+      "score": 0.6294539131464595,
+      "confidence": 0.98,
+      "event_count": 1,
+      "latest_date": "2026-06-19",
+      "dimensions": {
+        "currency_stress": 1.0,
+        "rate_stress": 0.0,
+        "liquidity_stress": 0.3,
+        "geopolitical_stress": 0.0,
+        "credit_stress": 0.0,
+        "commodity_stress": 0.0,
+        "policy_intervention": 0.65,
+        "crowding_unwind": 0.55
+      },
+      "events": [
+        {
+          "date": "2026-06-19",
+          "title": "Statement by Deputy Governor HIMINO concerning the Bank's Semiannual Report on Currency and Monetary Control (Committee on Financial Affairs, House of Representatives)",
+          "event_type": "fx_breakout",
+          "asset": "",
+          "observed": null,
+          "threshold": null,
+          "direction": "risk_up",
+          "confidence": 0.98,
+          "severity": 0.6884,
+          "half_life_days": 20.0,
+          "region": "Japan",
+          "historical_anchor": "",
+          "source": "Bank of Japan News",
+          "source_url": "http://www.boj.or.jp/en/mopo/diet/d_state/dst260619a.htm",
+          "affected_markets": [
+            "Japan"
+          ],
+          "regime_signal": "currency_stress",
+          "dimensions": {
+            "currency_stress": 0.6821
+          }
+        }
+      ]
+    },
+    {
+      "key": "credit:global:credit_stress",
+      "label": "credit_stress",
+      "score": 0.6145013130872916,
+      "confidence": 0.9,
+      "event_count": 1,
+      "latest_date": "2026-06-18",
+      "dimensions": {
+        "currency_stress": 0.0,
+        "rate_stress": 0.0,
+        "liquidity_stress": 0.55,
+        "geopolitical_stress": 0.0,
+        "credit_stress": 1.0,
+        "commodity_stress": 0.0,
+        "policy_intervention": 0.0,
+        "crowding_unwind": 0.35
+      },
+      "events": [
+        {
+          "date": "2026-06-18",
+          "title": "Eastern Africa Set to Gain More Reliable, Affordable Power with World Bank Group Support",
+          "event_type": "credit",
+          "asset": "",
+          "observed": null,
+          "threshold": null,
+          "direction": "risk_up",
+          "confidence": 0.9,
+          "severity": 0.742,
+          "half_life_days": 25.0,
+          "region": "Africa",
+          "historical_anchor": "",
+          "source": "World Bank News",
+          "source_url": "http://www.worldbank.org/en/news/press-release/2026/06/18/-eastern-africa-set-to-gain-more-reliable-affordable-power-with-world-bank-group-support",
+          "affected_markets": [
+            "Africa"
+          ],
+          "regime_signal": "credit_stress",
+          "dimensions": {
+            "credit_stress": 0.7
+          }
+        }
+      ]
+    },
+    {
+      "key": "credit:global:policy_intervention",
+      "label": "policy_intervention",
+      "score": 0.6145013130872916,
+      "confidence": 0.9,
+      "event_count": 1,
+      "latest_date": "2026-06-18",
+      "dimensions": {
+        "currency_stress": 0.0,
+        "rate_stress": 0.0,
+        "liquidity_stress": 0.55,
+        "geopolitical_stress": 0.0,
+        "credit_stress": 1.0,
+        "commodity_stress": 0.0,
+        "policy_intervention": 0.6955,
+        "crowding_unwind": 0.35
+      },
+      "events": [
+        {
+          "date": "2026-06-18",
+          "title": "World Bank Group Provides New Financing in Support of India’s Reform Program to Boost Growth and Jobs",
+          "event_type": "credit",
+          "asset": "",
+          "observed": null,
+          "threshold": null,
+          "direction": "risk_up",
+          "confidence": 0.9,
+          "severity": 0.742,
+          "half_life_days": 25.0,
+          "region": "South Asia",
+          "historical_anchor": "",
+          "source": "World Bank News",
+          "source_url": "http://www.worldbank.org/en/news/press-release/2026/06/18/world-bank-group-provides-new-financing-in-support-of-india-s-reform-program-to-boost-growth-and-jobs",
+          "affected_markets": [
+            "South Asia"
+          ],
+          "regime_signal": "policy_intervention",
+          "dimensions": {
+            "policy_intervention": 0.6955
+          }
+        }
+      ]
+    },
+    {
+      "key": "central_bank:global:rate_stress",
+      "label": "rate_stress",
+      "score": 0.579337644349525,
+      "confidence": 0.98,
+      "event_count": 1,
+      "latest_date": "2026-06-19",
+      "dimensions": {
+        "currency_stress": 0.35,
+        "rate_stress": 0.85,
+        "liquidity_stress": 0.25,
+        "geopolitical_stress": 0.0,
+        "credit_stress": 0.0,
+        "commodity_stress": 0.0,
+        "policy_intervention": 0.8,
+        "crowding_unwind": 0.0
+      },
+      "events": [
+        {
+          "date": "2026-06-19",
+          "title": "Frank Elderson: Fireside chat",
+          "event_type": "central_bank",
+          "asset": "",
+          "observed": null,
+          "threshold": null,
+          "direction": "risk_up",
+          "confidence": 0.98,
+          "severity": 0.6484000000000001,
+          "half_life_days": 15.0,
+          "region": "Euro Area",
+          "historical_anchor": "",
+          "source": "European Central Bank Press",
+          "source_url": "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp260619_1~09441a4cbe.en.html",
+          "affected_markets": [
+            "Euro Area"
+          ],
+          "regime_signal": "rate_stress",
+          "dimensions": {
+            "rate_stress": 0.6,
+            "policy_intervention": 0.5
+          }
+        }
+      ]
+    },
     {
       "key": "fx_breakout:usdjpy:currency_stress",
       "label": "USDJPY currency_stress",
@@ -79,6 +514,281 @@
     }
   ],
   "events": [
+    {
+      "date": "2026-06-16",
+      "title": "Solar generation in CAISO surpassed natural gas in the first five months of 2026",
+      "event_type": "commodity",
+      "asset": "",
+      "observed": null,
+      "threshold": null,
+      "direction": "risk_up",
+      "confidence": 0.91,
+      "severity": 0.6228,
+      "half_life_days": 18.0,
+      "region": "United States",
+      "historical_anchor": "",
+      "source": "US Energy Information Administration",
+      "source_url": "https://www.eia.gov/todayinenergy/detail.php?id=67784",
+      "affected_markets": [
+        "energy"
+      ],
+      "regime_signal": "commodity_stress",
+      "dimensions": {
+        "commodity_stress": 0.6657
+      }
+    },
+    {
+      "date": "2026-06-18",
+      "title": "Eastern Africa Set to Gain More Reliable, Affordable Power with World Bank Group Support",
+      "event_type": "credit",
+      "asset": "",
+      "observed": null,
+      "threshold": null,
+      "direction": "risk_up",
+      "confidence": 0.9,
+      "severity": 0.742,
+      "half_life_days": 25.0,
+      "region": "Africa",
+      "historical_anchor": "",
+      "source": "World Bank News",
+      "source_url": "http://www.worldbank.org/en/news/press-release/2026/06/18/-eastern-africa-set-to-gain-more-reliable-affordable-power-with-world-bank-group-support",
+      "affected_markets": [
+        "Africa"
+      ],
+      "regime_signal": "credit_stress",
+      "dimensions": {
+        "credit_stress": 0.7
+      }
+    },
+    {
+      "date": "2026-06-18",
+      "title": "Minutes of the Monetary Policy Meeting on April 27 and 28, 2026",
+      "event_type": "central_bank",
+      "asset": "",
+      "observed": null,
+      "threshold": null,
+      "direction": "risk_up",
+      "confidence": 0.98,
+      "severity": 0.6484000000000001,
+      "half_life_days": 15.0,
+      "region": "Japan",
+      "historical_anchor": "",
+      "source": "Bank of Japan News",
+      "source_url": "http://www.boj.or.jp/en/mopo/mpmsche_minu/minu_2026/g260428.pdf",
+      "affected_markets": [
+        "Japan"
+      ],
+      "regime_signal": "policy_intervention",
+      "dimensions": {
+        "policy_intervention": 0.6721
+      }
+    },
+    {
+      "date": "2026-06-18",
+      "title": "Permian natural gas production increased faster than crude oil",
+      "event_type": "commodity",
+      "asset": "",
+      "observed": null,
+      "threshold": null,
+      "direction": "risk_up",
+      "confidence": 0.91,
+      "severity": 0.6228,
+      "half_life_days": 18.0,
+      "region": "United States",
+      "historical_anchor": "",
+      "source": "US Energy Information Administration",
+      "source_url": "https://www.eia.gov/todayinenergy/detail.php?id=67785",
+      "affected_markets": [
+        "energy"
+      ],
+      "regime_signal": "commodity_stress",
+      "dimensions": {
+        "commodity_stress": 0.9857
+      }
+    },
+    {
+      "date": "2026-06-18",
+      "title": "SEC, CFTC Seek Public Comment to Further Clarify and Harmonize Derivatives Product Definitions",
+      "event_type": "market_break",
+      "asset": "",
+      "observed": null,
+      "threshold": null,
+      "direction": "risk_up",
+      "confidence": 0.92,
+      "severity": 0.6836,
+      "half_life_days": 10.0,
+      "region": "United States",
+      "historical_anchor": "",
+      "source": "US Securities and Exchange Commission",
+      "source_url": "https://www.sec.gov/newsroom/press-releases/2026-57-sec-cftc-seek-public-comment-further-clarify-harmonize-derivatives-product-definitions",
+      "affected_markets": [
+        "United States"
+      ],
+      "regime_signal": "liquidity_stress",
+      "dimensions": {
+        "liquidity_stress": 0.52,
+        "crowding_unwind": 0.48
+      }
+    },
+    {
+      "date": "2026-06-18",
+      "title": "SEC, CFTC Seek Public Input on Data Reporting Frameworks for Security-Based Swap and Swap Markets",
+      "event_type": "market_break",
+      "asset": "",
+      "observed": null,
+      "threshold": null,
+      "direction": "risk_up",
+      "confidence": 0.92,
+      "severity": 0.6836,
+      "half_life_days": 10.0,
+      "region": "United States",
+      "historical_anchor": "",
+      "source": "US Securities and Exchange Commission",
+      "source_url": "https://www.sec.gov/newsroom/press-releases/2026-56-sec-cftc-seek-public-input-data-reporting-frameworks-security-based-swap-swap-markets",
+      "affected_markets": [
+        "United States"
+      ],
+      "regime_signal": "liquidity_stress",
+      "dimensions": {
+        "liquidity_stress": 0.52,
+        "crowding_unwind": 0.48
+      }
+    },
+    {
+      "date": "2026-06-18",
+      "title": "World Bank Group Provides New Financing in Support of India’s Reform Program to Boost Growth and Jobs",
+      "event_type": "credit",
+      "asset": "",
+      "observed": null,
+      "threshold": null,
+      "direction": "risk_up",
+      "confidence": 0.9,
+      "severity": 0.742,
+      "half_life_days": 25.0,
+      "region": "South Asia",
+      "historical_anchor": "",
+      "source": "World Bank News",
+      "source_url": "http://www.worldbank.org/en/news/press-release/2026/06/18/world-bank-group-provides-new-financing-in-support-of-india-s-reform-program-to-boost-growth-and-jobs",
+      "affected_markets": [
+        "South Asia"
+      ],
+      "regime_signal": "policy_intervention",
+      "dimensions": {
+        "policy_intervention": 0.6955
+      }
+    },
+    {
+      "date": "2026-06-19",
+      "title": "Frank Elderson: Fireside chat",
+      "event_type": "central_bank",
+      "asset": "",
+      "observed": null,
+      "threshold": null,
+      "direction": "risk_up",
+      "confidence": 0.98,
+      "severity": 0.6484000000000001,
+      "half_life_days": 15.0,
+      "region": "Euro Area",
+      "historical_anchor": "",
+      "source": "European Central Bank Press",
+      "source_url": "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp260619_1~09441a4cbe.en.html",
+      "affected_markets": [
+        "Euro Area"
+      ],
+      "regime_signal": "rate_stress",
+      "dimensions": {
+        "rate_stress": 0.6,
+        "policy_intervention": 0.5
+      }
+    },
+    {
+      "date": "2026-06-19",
+      "title": "Piero Cipollone: The foundations of national sovereignty: the role of central bank money",
+      "event_type": "central_bank",
+      "asset": "",
+      "observed": null,
+      "threshold": null,
+      "direction": "risk_up",
+      "confidence": 0.98,
+      "severity": 0.6484000000000001,
+      "half_life_days": 15.0,
+      "region": "Euro Area",
+      "historical_anchor": "",
+      "source": "European Central Bank Press",
+      "source_url": "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp260619~53145e5a0b.en.html",
+      "affected_markets": [
+        "Euro Area"
+      ],
+      "regime_signal": "policy_intervention",
+      "dimensions": {
+        "policy_intervention": 0.6721
+      }
+    },
+    {
+      "date": "2026-06-19",
+      "title": "Statement by Deputy Governor HIMINO concerning the Bank's Semiannual Report on Currency and Monetary Control (Committee on Financial Affairs, House of Representatives)",
+      "event_type": "fx_breakout",
+      "asset": "",
+      "observed": null,
+      "threshold": null,
+      "direction": "risk_up",
+      "confidence": 0.98,
+      "severity": 0.6884,
+      "half_life_days": 20.0,
+      "region": "Japan",
+      "historical_anchor": "",
+      "source": "Bank of Japan News",
+      "source_url": "http://www.boj.or.jp/en/mopo/diet/d_state/dst260619a.htm",
+      "affected_markets": [
+        "Japan"
+      ],
+      "regime_signal": "currency_stress",
+      "dimensions": {
+        "currency_stress": 0.6821
+      }
+    },
+    {
+      "date": "2026-06-20",
+      "title": "Iran closes Strait of Hormuz after Israel and Hizbollah exchange fire",
+      "event_type": "geopolitical",
+      "asset": "",
+      "observed": null,
+      "threshold": null,
+      "direction": "risk_up",
+      "confidence": 0.82,
+      "severity": 0.7856,
+      "half_life_days": 30.0,
+      "region": "Global",
+      "historical_anchor": "",
+      "source": "Financial Times Markets",
+      "source_url": "https://www.ft.com/content/fad77f6e-b1db-460a-a0c8-c2fd132932f5",
+      "affected_markets": [],
+      "regime_signal": "geopolitical_stress",
+      "dimensions": {
+        "geopolitical_stress": 0.7064
+      }
+    },
+    {
+      "date": "2026-06-20",
+      "title": "Rahm Emanuel says Trump ‘got schooled’ by Iran in bad ceasefire deal",
+      "event_type": "geopolitical",
+      "asset": "",
+      "observed": null,
+      "threshold": null,
+      "direction": "risk_up",
+      "confidence": 0.82,
+      "severity": 0.7856,
+      "half_life_days": 30.0,
+      "region": "Global",
+      "historical_anchor": "",
+      "source": "Financial Times Markets",
+      "source_url": "https://www.ft.com/content/3be5a96f-f22e-4b8e-898f-fe10c2f84058",
+      "affected_markets": [],
+      "regime_signal": "geopolitical_stress",
+      "dimensions": {
+        "geopolitical_stress": 0.7064
+      }
+    },
     {
       "date": "2026-06-20",
       "title": "USDJPY trades near 161 after breaking the 160 stress zone",

@@ -1,0 +1,785 @@
+{
+  "as_of": "2026-06-21",
+  "generated_at": "2026-06-20T18:17:19+00:00",
+  "coverage": {
+    "source_count": 28,
+    "enabled_source_count": 28,
+    "feed_enabled_count": 10,
+    "official_source_count": 24,
+    "regions": {
+      "Global": 7,
+      "United States": 7,
+      "China": 3,
+      "Euro Area": 2,
+      "Japan": 2,
+      "Asia": 1,
+      "Australia": 1,
+      "Europe": 1,
+      "Middle East": 1,
+      "Singapore": 1,
+      "Switzerland": 1,
+      "United Kingdom": 1
+    },
+    "categories": {
+      "central_bank": 8,
+      "multilateral": 4,
+      "statistics": 4,
+      "news": 3,
+      "energy": 2,
+      "finance_ministry": 2,
+      "geopolitical": 2,
+      "regulation": 2,
+      "newswire": 1
+    },
+    "tiers": {
+      "official": 24,
+      "regional_media": 2,
+      "newswire": 1,
+      "premium_media": 1
+    },
+    "average_credibility": 0.9121428571428571,
+    "sources": [
+      {
+        "source_id": "fed_press",
+        "name": "Federal Reserve Press Releases",
+        "region": "United States",
+        "category": "central_bank",
+        "tier": "official",
+        "url": "https://www.federalreserve.gov/newsevents/pressreleases.htm",
+        "feed_url": "https://www.federalreserve.gov/feeds/press_all.xml",
+        "credibility": 0.98,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "rates",
+          "liquidity",
+          "usd"
+        ]
+      },
+      {
+        "source_id": "ecb_press",
+        "name": "European Central Bank Press",
+        "region": "Euro Area",
+        "category": "central_bank",
+        "tier": "official",
+        "url": "https://www.ecb.europa.eu/press/html/index.en.html",
+        "feed_url": "https://www.ecb.europa.eu/rss/press.html",
+        "credibility": 0.98,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "rates",
+          "euro",
+          "liquidity"
+        ]
+      },
+      {
+        "source_id": "boj_news",
+        "name": "Bank of Japan News",
+        "region": "Japan",
+        "category": "central_bank",
+        "tier": "official",
+        "url": "https://www.boj.or.jp/en/",
+        "feed_url": "https://www.boj.or.jp/en/rss/whatsnew.xml",
+        "credibility": 0.98,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "jpy",
+          "rates",
+          "policy_intervention"
+        ]
+      },
+      {
+        "source_id": "boe_news",
+        "name": "Bank of England News",
+        "region": "United Kingdom",
+        "category": "central_bank",
+        "tier": "official",
+        "url": "https://www.bankofengland.co.uk/news",
+        "feed_url": "",
+        "credibility": 0.96,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "gbp",
+          "rates",
+          "liquidity"
+        ]
+      },
+      {
+        "source_id": "rba_news",
+        "name": "Reserve Bank of Australia",
+        "region": "Australia",
+        "category": "central_bank",
+        "tier": "official",
+        "url": "https://www.rba.gov.au/media-releases/",
+        "feed_url": "",
+        "credibility": 0.95,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "aud",
+          "rates",
+          "asia_pacific"
+        ]
+      },
+      {
+        "source_id": "snb_news",
+        "name": "Swiss National Bank",
+        "region": "Switzerland",
+        "category": "central_bank",
+        "tier": "official",
+        "url": "https://www.snb.ch/en/publications/communication/press-releases",
+        "feed_url": "",
+        "credibility": 0.95,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "chf",
+          "rates",
+          "fx"
+        ]
+      },
+      {
+        "source_id": "imf_news",
+        "name": "International Monetary Fund News",
+        "region": "Global",
+        "category": "multilateral",
+        "tier": "official",
+        "url": "https://www.imf.org/en/News",
+        "feed_url": "https://www.imf.org/en/News/RSS",
+        "credibility": 0.93,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "global",
+          "credit",
+          "fx",
+          "sovereign"
+        ]
+      },
+      {
+        "source_id": "world_bank_news",
+        "name": "World Bank News",
+        "region": "Global",
+        "category": "multilateral",
+        "tier": "official",
+        "url": "https://www.worldbank.org/en/news",
+        "feed_url": "https://search.worldbank.org/api/v2/news?format=json&rows=20&fct=displayconttype_exact,topic_exact,lang_exact,count_exact,admreg_exact&src=cq55&apilang=en&lang_exact=English&displayconttype_exact=Press%20Release&os=0",
+        "credibility": 0.9,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "global",
+          "growth",
+          "emerging_markets"
+        ]
+      },
+      {
+        "source_id": "bis_news",
+        "name": "Bank for International Settlements",
+        "region": "Global",
+        "category": "multilateral",
+        "tier": "official",
+        "url": "https://www.bis.org/",
+        "feed_url": "https://www.bis.org/doclist/all_pressrels.rss",
+        "credibility": 0.93,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "banking",
+          "liquidity",
+          "credit"
+        ]
+      },
+      {
+        "source_id": "oecd_news",
+        "name": "OECD Newsroom",
+        "region": "Global",
+        "category": "multilateral",
+        "tier": "official",
+        "url": "https://www.oecd.org/newsroom/",
+        "feed_url": "",
+        "credibility": 0.9,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "growth",
+          "inflation",
+          "trade"
+        ]
+      },
+      {
+        "source_id": "un_news",
+        "name": "United Nations News",
+        "region": "Global",
+        "category": "geopolitical",
+        "tier": "official",
+        "url": "https://news.un.org/en/",
+        "feed_url": "https://news.un.org/feed/subscribe/en/news/all/rss.xml",
+        "credibility": 0.86,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "geopolitical",
+          "conflict",
+          "humanitarian"
+        ]
+      },
+      {
+        "source_id": "boj_mof_fx",
+        "name": "Japan Ministry of Finance",
+        "region": "Japan",
+        "category": "finance_ministry",
+        "tier": "official",
+        "url": "https://www.mof.go.jp/english/",
+        "feed_url": "",
+        "credibility": 0.96,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "jpy",
+          "fx_intervention",
+          "fiscal"
+        ]
+      },
+      {
+        "source_id": "pbc_news",
+        "name": "People's Bank of China",
+        "region": "China",
+        "category": "central_bank",
+        "tier": "official",
+        "url": "https://www.pbc.gov.cn/en/3688110/index.html",
+        "feed_url": "",
+        "credibility": 0.96,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "cny",
+          "liquidity",
+          "rates"
+        ]
+      },
+      {
+        "source_id": "nbs_china",
+        "name": "National Bureau of Statistics of China",
+        "region": "China",
+        "category": "statistics",
+        "tier": "official",
+        "url": "https://www.stats.gov.cn/english/",
+        "feed_url": "",
+        "credibility": 0.9,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "china",
+          "cpi",
+          "pmi",
+          "growth"
+        ]
+      },
+      {
+        "source_id": "bls_news",
+        "name": "US Bureau of Labor Statistics",
+        "region": "United States",
+        "category": "statistics",
+        "tier": "official",
+        "url": "https://www.bls.gov/news.release/",
+        "feed_url": "",
+        "credibility": 0.94,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "jobs",
+          "inflation",
+          "wages"
+        ]
+      },
+      {
+        "source_id": "bea_news",
+        "name": "US Bureau of Economic Analysis",
+        "region": "United States",
+        "category": "statistics",
+        "tier": "official",
+        "url": "https://www.bea.gov/news",
+        "feed_url": "",
+        "credibility": 0.94,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "gdp",
+          "pce",
+          "growth"
+        ]
+      },
+      {
+        "source_id": "eurostat",
+        "name": "Eurostat",
+        "region": "Euro Area",
+        "category": "statistics",
+        "tier": "official",
+        "url": "https://ec.europa.eu/eurostat/news/news-releases",
+        "feed_url": "",
+        "credibility": 0.92,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "euro",
+          "cpi",
+          "growth"
+        ]
+      },
+      {
+        "source_id": "treasury_news",
+        "name": "US Treasury",
+        "region": "United States",
+        "category": "finance_ministry",
+        "tier": "official",
+        "url": "https://home.treasury.gov/news/press-releases",
+        "feed_url": "",
+        "credibility": 0.95,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "fiscal",
+          "sanctions",
+          "debt",
+          "usd"
+        ]
+      },
+      {
+        "source_id": "sec_news",
+        "name": "US Securities and Exchange Commission",
+        "region": "United States",
+        "category": "regulation",
+        "tier": "official",
+        "url": "https://www.sec.gov/newsroom/press-releases",
+        "feed_url": "https://www.sec.gov/news/pressreleases.rss",
+        "credibility": 0.92,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "regulation",
+          "equities",
+          "market_structure"
+        ]
+      },
+      {
+        "source_id": "cftc_news",
+        "name": "US Commodity Futures Trading Commission",
+        "region": "United States",
+        "category": "regulation",
+        "tier": "official",
+        "url": "https://www.cftc.gov/PressRoom/PressReleases/index.htm",
+        "feed_url": "",
+        "credibility": 0.91,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "derivatives",
+          "commodities",
+          "market_structure"
+        ]
+      },
+      {
+        "source_id": "reuters_markets",
+        "name": "Reuters Markets",
+        "region": "Global",
+        "category": "newswire",
+        "tier": "newswire",
+        "url": "https://www.reuters.com/markets/",
+        "feed_url": "",
+        "credibility": 0.84,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "markets",
+          "fx",
+          "commodities",
+          "equities"
+        ]
+      },
+      {
+        "source_id": "ft_markets",
+        "name": "Financial Times Markets",
+        "region": "Global",
+        "category": "news",
+        "tier": "premium_media",
+        "url": "https://www.ft.com/markets",
+        "feed_url": "https://www.ft.com/rss/home",
+        "credibility": 0.82,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "markets",
+          "policy",
+          "credit"
+        ]
+      },
+      {
+        "source_id": "nikkei_markets",
+        "name": "Nikkei Asia",
+        "region": "Asia",
+        "category": "news",
+        "tier": "regional_media",
+        "url": "https://asia.nikkei.com/",
+        "feed_url": "",
+        "credibility": 0.8,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "asia",
+          "japan",
+          "geopolitical"
+        ]
+      },
+      {
+        "source_id": "caixin_global",
+        "name": "Caixin Global",
+        "region": "China",
+        "category": "news",
+        "tier": "regional_media",
+        "url": "https://www.caixinglobal.com/",
+        "feed_url": "",
+        "credibility": 0.78,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "china",
+          "credit",
+          "policy"
+        ]
+      },
+      {
+        "source_id": "eia_news",
+        "name": "US Energy Information Administration",
+        "region": "United States",
+        "category": "energy",
+        "tier": "official",
+        "url": "https://www.eia.gov/todayinenergy/",
+        "feed_url": "https://www.eia.gov/rss/todayinenergy.xml",
+        "credibility": 0.91,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "oil",
+          "gas",
+          "energy"
+        ]
+      },
+      {
+        "source_id": "opec_news",
+        "name": "OPEC News",
+        "region": "Middle East",
+        "category": "energy",
+        "tier": "official",
+        "url": "https://www.opec.org/opec_web/en/press_room/news.htm",
+        "feed_url": "",
+        "credibility": 0.88,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "oil",
+          "commodity",
+          "middle_east"
+        ]
+      },
+      {
+        "source_id": "nato_news",
+        "name": "NATO News",
+        "region": "Europe",
+        "category": "geopolitical",
+        "tier": "official",
+        "url": "https://www.nato.int/cps/en/natohq/news.htm",
+        "feed_url": "",
+        "credibility": 0.86,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "geopolitical",
+          "europe",
+          "military"
+        ]
+      },
+      {
+        "source_id": "mas_news",
+        "name": "Monetary Authority of Singapore",
+        "region": "Singapore",
+        "category": "central_bank",
+        "tier": "official",
+        "url": "https://www.mas.gov.sg/news",
+        "feed_url": "",
+        "credibility": 0.93,
+        "enabled": true,
+        "language": "en",
+        "update_frequency_hours": 24.0,
+        "tags": [
+          "sgd",
+          "asia",
+          "financial_stability"
+        ]
+      }
+    ]
+  },
+  "ingestion": {
+    "fetch_enabled": true,
+    "raw_item_count": 16,
+    "normalized_event_count": 12,
+    "new_event_count": 12,
+    "merged_event_count": 13,
+    "reports": [
+      {
+        "source_id": "fed_press",
+        "source_name": "Federal Reserve Press Releases",
+        "status": "ok",
+        "item_count": 2,
+        "message": ""
+      },
+      {
+        "source_id": "ecb_press",
+        "source_name": "European Central Bank Press",
+        "status": "ok",
+        "item_count": 2,
+        "message": ""
+      },
+      {
+        "source_id": "boj_news",
+        "source_name": "Bank of Japan News",
+        "status": "ok",
+        "item_count": 2,
+        "message": ""
+      },
+      {
+        "source_id": "boe_news",
+        "source_name": "Bank of England News",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "rba_news",
+        "source_name": "Reserve Bank of Australia",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "snb_news",
+        "source_name": "Swiss National Bank",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "imf_news",
+        "source_name": "International Monetary Fund News",
+        "status": "ok",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "world_bank_news",
+        "source_name": "World Bank News",
+        "status": "ok",
+        "item_count": 2,
+        "message": ""
+      },
+      {
+        "source_id": "bis_news",
+        "source_name": "Bank for International Settlements",
+        "status": "ok",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "oecd_news",
+        "source_name": "OECD Newsroom",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "un_news",
+        "source_name": "United Nations News",
+        "status": "ok",
+        "item_count": 2,
+        "message": ""
+      },
+      {
+        "source_id": "boj_mof_fx",
+        "source_name": "Japan Ministry of Finance",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "pbc_news",
+        "source_name": "People's Bank of China",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "nbs_china",
+        "source_name": "National Bureau of Statistics of China",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "bls_news",
+        "source_name": "US Bureau of Labor Statistics",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "bea_news",
+        "source_name": "US Bureau of Economic Analysis",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "eurostat",
+        "source_name": "Eurostat",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "treasury_news",
+        "source_name": "US Treasury",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "sec_news",
+        "source_name": "US Securities and Exchange Commission",
+        "status": "ok",
+        "item_count": 2,
+        "message": ""
+      },
+      {
+        "source_id": "cftc_news",
+        "source_name": "US Commodity Futures Trading Commission",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "reuters_markets",
+        "source_name": "Reuters Markets",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "ft_markets",
+        "source_name": "Financial Times Markets",
+        "status": "ok",
+        "item_count": 2,
+        "message": ""
+      },
+      {
+        "source_id": "nikkei_markets",
+        "source_name": "Nikkei Asia",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "caixin_global",
+        "source_name": "Caixin Global",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "eia_news",
+        "source_name": "US Energy Information Administration",
+        "status": "ok",
+        "item_count": 2,
+        "message": ""
+      },
+      {
+        "source_id": "opec_news",
+        "source_name": "OPEC News",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "nato_news",
+        "source_name": "NATO News",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      },
+      {
+        "source_id": "mas_news",
+        "source_name": "Monetary Authority of Singapore",
+        "status": "no_feed",
+        "item_count": 0,
+        "message": ""
+      }
+    ]
+  },
+  "model_mapping": {
+    "dimensions": [
+      "currency_stress",
+      "rate_stress",
+      "liquidity_stress",
+      "geopolitical_stress",
+      "credit_stress",
+      "commodity_stress",
+      "policy_intervention",
+      "crowding_unwind"
+    ],
+    "event_types": [
+      "fx_breakout",
+      "central_bank",
+      "geopolitical",
+      "credit",
+      "commodity",
+      "market_break"
+    ],
+    "scenario_priors": [
+      "currency_intervention",
+      "carry_unwind",
+      "liquidity_gap",
+      "policy_shock",
+      "geopolitical_tail",
+      "baseline"
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, CalendarDays, Gauge, RefreshCcw, ShieldAlert } from 'lucide-react';
+import { AlertTriangle, CalendarDays, Database, Gauge, Landmark, RadioTower, RefreshCcw, ShieldAlert } from 'lucide-react';
 import { useLocale } from '../../context/LocaleContext';
 
 type DigestEvent = {
@@ -52,6 +52,33 @@ type HistoryIndex = {
   items: HistoryItem[];
 };
 
+type SourceCoverage = {
+  as_of: string;
+  generated_at: string;
+  coverage: {
+    source_count: number;
+    enabled_source_count: number;
+    feed_enabled_count: number;
+    official_source_count: number;
+    average_credibility: number;
+    regions: Record<string, number>;
+    categories: Record<string, number>;
+    tiers: Record<string, number>;
+  };
+  ingestion?: {
+    fetch_enabled: boolean;
+    raw_item_count: number;
+    normalized_event_count: number;
+    new_event_count: number;
+    merged_event_count: number;
+  };
+  model_mapping?: {
+    dimensions: string[];
+    event_types: string[];
+    scenario_priors: string[];
+  };
+};
+
 const DIMENSION_LABELS: Record<string, { zh: string; en: string }> = {
   currency_stress: { zh: '汇率压力', en: 'Currency Stress' },
   rate_stress: { zh: '利率压力', en: 'Rate Stress' },
@@ -68,6 +95,7 @@ export default function MacroEventDigestPanel() {
   const isZh = locale === 'zh';
   const [digest, setDigest] = useState<MacroDigest | null>(null);
   const [history, setHistory] = useState<HistoryIndex | null>(null);
+  const [sourceCoverage, setSourceCoverage] = useState<SourceCoverage | null>(null);
   const [path, setPath] = useState('/quant/macro-events/latest.json');
   const [loading, setLoading] = useState(true);
 
@@ -89,6 +117,10 @@ export default function MacroEventDigestPanel() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setHistory(data))
       .catch(() => setHistory(null));
+    fetch(`/quant/macro-events/sources.json?t=${Date.now()}`, { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setSourceCoverage(data))
+      .catch(() => setSourceCoverage(null));
     load('/quant/macro-events/latest.json');
   }, []);
 
@@ -160,6 +192,8 @@ export default function MacroEventDigestPanel() {
             <MetricTile label={isZh ? '事件数量' : 'Event Count'} value={modelEffect.macro_event_count} raw />
           </div>
 
+          {sourceCoverage ? <SourceCoveragePanel coverage={sourceCoverage} isZh={isZh} /> : null}
+
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             <DigestBars title={isZh ? '压力维度' : 'Stress Dimensions'} rows={dimensions} labels={DIMENSION_LABELS} isZh={isZh} />
             <DigestBars title={isZh ? '情景权重' : 'Scenario Priors'} rows={scenarios} isZh={isZh} />
@@ -207,6 +241,50 @@ export default function MacroEventDigestPanel() {
   );
 }
 
+function SourceCoveragePanel({ coverage, isZh }: { coverage: SourceCoverage; isZh: boolean }) {
+  const regions = topCountEntries(coverage.coverage.regions, 6);
+  const categories = topCountEntries(coverage.coverage.categories, 6);
+  const ingestion = coverage.ingestion;
+  return (
+    <div className="border border-[#FDFCF9]/10">
+      <div className="px-5 py-3 border-b border-[#FDFCF9]/10 bg-[#FDFCF9]/5 flex flex-col md:flex-row md:items-center justify-between gap-2">
+        <span className="text-[10px] font-sans font-bold uppercase tracking-[0.22em] text-[#C4A35A]">
+          {isZh ? '全球信息源覆盖' : 'Global Source Coverage'}
+        </span>
+        <span className="text-[10px] font-mono text-[#FDFCF9]/40">
+          {coverage.as_of} · {isZh ? '覆盖诊断' : 'coverage audit'}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 border-b border-[#FDFCF9]/10">
+        <MetricTile label={isZh ? '启用源' : 'Enabled'} value={coverage.coverage.enabled_source_count} icon={Database} raw />
+        <MetricTile label={isZh ? '可抓取源' : 'Feed Ready'} value={coverage.coverage.feed_enabled_count} icon={RadioTower} raw />
+        <MetricTile label={isZh ? '官方源' : 'Official'} value={coverage.coverage.official_source_count} icon={Landmark} raw />
+        <MetricTile label={isZh ? '平均可信度' : 'Credibility'} value={coverage.coverage.average_credibility} />
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-0">
+        <CountList title={isZh ? '区域覆盖' : 'Regions'} rows={regions} />
+        <CountList title={isZh ? '来源类别' : 'Categories'} rows={categories} />
+        <div className="p-5 border-t xl:border-t-0 xl:border-l border-[#FDFCF9]/10">
+          <h3 className="text-sm font-serif font-semibold mb-5">{isZh ? '抓取状态' : 'Ingestion'}</h3>
+          <div className="grid grid-cols-2 gap-3">
+            <MiniStat label={isZh ? '原始条目' : 'Raw'} value={ingestion?.raw_item_count ?? 0} raw />
+            <MiniStat label={isZh ? '标准化事件' : 'Events'} value={ingestion?.normalized_event_count ?? 0} raw />
+            <MiniStat label={isZh ? '新增事件' : 'New'} value={ingestion?.new_event_count ?? 0} raw />
+            <MiniStat label={isZh ? '总事件库' : 'Merged'} value={ingestion?.merged_event_count ?? 0} raw />
+          </div>
+          <div className="mt-4 text-[10px] font-sans leading-relaxed text-[#FDFCF9]/40">
+            {isZh
+              ? '只把高可信、可归类、可去重的重大信息写入模型状态；未进入模型的文本只保留为覆盖诊断。'
+              : 'Only credible, classifiable, deduplicated macro items are promoted into model state; raw text remains diagnostic.'}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function MetricTile({ label, value, icon: Icon, raw = false }: { label: string; value?: number; icon?: any; raw?: boolean }) {
   return (
     <div className="p-5 border-r last:border-r-0 border-[#FDFCF9]/10">
@@ -215,6 +293,28 @@ function MetricTile({ label, value, icon: Icon, raw = false }: { label: string; 
         {Icon ? <Icon className="w-4 h-4 text-[#C4A35A]" /> : null}
       </div>
       <div className="mt-3 text-2xl font-mono font-semibold text-[#FDFCF9]">{raw ? Math.round(value ?? 0) : pct(value)}</div>
+    </div>
+  );
+}
+
+function CountList({ title, rows }: { title: string; rows: [string, number][] }) {
+  const max = Math.max(...rows.map(([, value]) => value), 1);
+  return (
+    <div className="p-5 border-t xl:border-t-0 xl:border-r border-[#FDFCF9]/10">
+      <h3 className="text-sm font-serif font-semibold mb-5">{title}</h3>
+      <div className="space-y-3">
+        {rows.map(([key, value]) => (
+          <div key={key}>
+            <div className="flex items-center justify-between gap-4 mb-1.5">
+              <span className="text-[10px] font-sans font-bold uppercase tracking-widest text-[#FDFCF9]/55">{key.replaceAll('_', ' ')}</span>
+              <span className="text-[10px] font-mono text-[#C4A35A]">{value}</span>
+            </div>
+            <div className="h-1.5 bg-[#FDFCF9]/8">
+              <div className="h-full bg-[#C4A35A]" style={{ width: `${Math.max(4, Math.min(100, (value / max) * 100))}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -263,6 +363,13 @@ function MiniStat({ label, value, raw = false }: { label: string; value?: number
 }
 
 function topEntries(values: Record<string, number>, limit: number): [string, number][] {
+  return Object.entries(values)
+    .filter(([, value]) => Number.isFinite(value))
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit);
+}
+
+function topCountEntries(values: Record<string, number>, limit: number): [string, number][] {
   return Object.entries(values)
     .filter(([, value]) => Number.isFinite(value))
     .sort((a, b) => b[1] - a[1])
