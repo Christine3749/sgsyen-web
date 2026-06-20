@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowRight, ArrowLeft, Calendar, Tag, Globe,
   ChevronDown, Loader2, Clock, Star, Search, X, Terminal, Copy, Check,
-  FileText, Download, Lock,
+  FileText, Download, Lock, Activity, BookMarked, GitCompare, Landmark, Route, ShieldAlert,
 } from 'lucide-react';
 import { research, Article, PolicyEvent } from '../lib/research';
 import { supabase } from '../lib/supabase';
@@ -31,14 +31,218 @@ const EVENT_TAG: Record<string, string> = {
   market:       'text-emerald-600 bg-emerald-50 border-emerald-200',
 };
 
+const FEATURED_EVENT_MIRROR = {
+  triggerZh: '美元兑日元进入 160 区域',
+  triggerEn: 'USD/JPY enters the 160 zone',
+  titleZh: '日元 160：不是单点价格，而是政策压力阈值',
+  titleEn: 'JPY 160: not one price, but a policy-pressure threshold',
+  anchorZh: '1985 年 Plaza Accord 后，日元快速升值；FRED 月度数据在 1986 年 7 月记录 USD/JPY 约 158.6。',
+  anchorEn: 'After the 1985 Plaza Accord, the yen strengthened sharply; FRED monthly data shows USD/JPY near 158.6 in July 1986.',
+  pathZh: ['利差交易拥挤', '进口通胀与央行压力', '外资回流与亚洲资产重定价'],
+  pathEn: ['Crowded carry trades', 'Import inflation and central-bank pressure', 'Capital repatriation and Asian asset repricing'],
+  modelZh: '进入事件层后，模型提高 FX / 利率 / 风险偏好权重，并下调高波动阶段的风险预算。',
+  modelEn: 'Once promoted into the event layer, the model raises FX, rates, and risk-appetite weights while cutting risk budget under volatility stress.',
+  sourceZh: '参考：Plaza Accord 签署日 1985-09-22；FRED EXJPUS 月度历史序列。',
+  sourceEn: 'Reference: Plaza Accord signed on 1985-09-22; FRED EXJPUS monthly history.',
+};
+
+const WEEKLY_FRAMEWORK = [
+  {
+    labelZh: '主事件',
+    labelEn: 'Lead Event',
+    textZh: '只选一件最能改变全球资金路径的事件。',
+    textEn: 'Pick the one event most likely to alter global capital paths.',
+  },
+  {
+    labelZh: '历史镜像',
+    labelEn: 'Historical Mirror',
+    textZh: '找上一次相似阈值、政策转向或资产重定价。',
+    textEn: 'Locate the last similar threshold, policy turn, or repricing.',
+  },
+  {
+    labelZh: '传导链',
+    labelEn: 'Transmission',
+    textZh: '写清楚它如何穿过汇率、利率、商品、股票与流动性。',
+    textEn: 'Map how it moves through FX, rates, commodities, equities, and liquidity.',
+  },
+  {
+    labelZh: '模型动作',
+    labelEn: 'Model Action',
+    textZh: '说明哪些因子加权、哪些风险预算收缩。',
+    textEn: 'State which factors get reweighted and which risk budgets shrink.',
+  },
+];
+
 function fmtDate(iso?: string) {
   if (!iso) return '';
   return iso.slice(0, 10);
 }
 
+function eventLens(ev: PolicyEvent, isZh: boolean) {
+  const type = (ev.event_type || '').toLowerCase();
+  if (type === 'crisis') {
+    return isZh
+      ? '冲击链：尾部压力 → 波动率抬升 → 降低风险预算与杠杆上限'
+      : 'Path: tail stress -> higher volatility -> lower risk budget and leverage cap';
+  }
+  if (type === 'policy') {
+    return isZh
+      ? '冲击链：政策预期 → 利率曲线 → 风格轮动与久期暴露'
+      : 'Path: policy expectations -> rates curve -> style rotation and duration exposure';
+  }
+  if (type === 'geopolitical') {
+    return isZh
+      ? '冲击链：地缘溢价 → 商品/汇率 → 避险资产与区域仓位切换'
+      : 'Path: geopolitical premium -> commodities/FX -> haven assets and regional positioning';
+  }
+  if (type === 'regulation') {
+    return isZh
+      ? '冲击链：规则变化 → 行业盈利假设 → 估值折价与流动性折扣'
+      : 'Path: rule change -> sector earnings assumptions -> valuation and liquidity discount';
+  }
+  if (type === 'market') {
+    return isZh
+      ? '冲击链：价格阈值 → 拥挤交易 → 动量、反转与止损踩踏'
+      : 'Path: price threshold -> crowded trade -> momentum, reversal, and stop-loss cascade';
+  }
+  return isZh
+    ? '冲击链：事件确认 → 市场状态切换 → 因子权重与回撤约束调整'
+    : 'Path: event confirmation -> regime switch -> factor weights and drawdown constraints';
+}
+
+function modelAction(ev: PolicyEvent, isZh: boolean) {
+  const highImpact = Number(ev.impact_level ?? 0) >= 4;
+  if (highImpact) {
+    return isZh
+      ? '模型动作：进入周评候选，提升尾部情景权重，触发路径稳定检查。'
+      : 'Model action: nominate for weekly memo, raise tail-scenario weight, run path-stability checks.';
+  }
+  return isZh
+    ? '模型动作：作为辅助状态变量，参与 regime 概率和行业暴露微调。'
+    : 'Model action: use as an auxiliary state variable for regime probability and sector exposure tuning.';
+}
+
+function WeeklyEventFrame({ latestArticle, isZh }: { latestArticle?: Article; isZh: boolean }) {
+  return (
+    <section id="weekly-event-frame" className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10 bg-[#FAF9F5]">
+      <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] border border-[#1D1D1B]/10 bg-[#FDFCF9]">
+        <div className="p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-[#1D1D1B]/10">
+          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#A58261] flex items-center gap-2">
+            <BookMarked className="w-3.5 h-3.5" />
+            {isZh ? '每周评论 · WEEKLY MEMO' : 'WEEKLY MEMO'}
+          </span>
+          <h2 className="mt-4 text-2xl md:text-3xl font-serif font-semibold leading-tight">
+            {isZh ? '每周只写一篇核心研判' : 'One core research note per week'}
+          </h2>
+          <p className="mt-4 text-xs md:text-sm font-sans leading-[1.9] text-stone-500">
+            {isZh
+              ? '页面上不堆新闻，而是每周从全球事件中筛出一个最重要的变量，写成“事件-历史镜像-传导链-模型动作”的完整评论。'
+              : 'The page should not pile up news. Each week it selects the most important global variable and turns it into an event, mirror, transmission, and model-action note.'}
+          </p>
+
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {WEEKLY_FRAMEWORK.map(item => (
+              <div key={item.labelEn} className="border border-[#1D1D1B]/10 bg-white p-4">
+                <div className="text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261]">
+                  {isZh ? item.labelZh : item.labelEn}
+                </div>
+                <p className="mt-2 text-[11px] font-sans leading-relaxed text-stone-500">
+                  {isZh ? item.textZh : item.textEn}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 border-t border-[#1D1D1B]/10 pt-5">
+            <div className="text-[9px] font-sans font-bold uppercase tracking-widest text-stone-400">
+              {isZh ? '最新周评入口' : 'Latest weekly entry'}
+            </div>
+            <div className="mt-2 flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <div className="text-sm font-serif font-semibold leading-snug truncate">
+                  {latestArticle
+                    ? (isZh ? latestArticle.title : (latestArticle.title_en || latestArticle.title))
+                    : (isZh ? '等待本周核心事件确认' : 'Waiting for this week’s lead event')}
+                </div>
+                <div className="mt-1 text-[10px] font-sans text-stone-400">
+                  {latestArticle?.published_at ? fmtDate(latestArticle.published_at) : (isZh ? '周度节奏：每周一篇' : 'Cadence: one note per week')}
+                </div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-[#A58261] shrink-0" />
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 md:p-8">
+          <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#A58261] flex items-center gap-2">
+            <GitCompare className="w-3.5 h-3.5" />
+            {isZh ? '历史镜像样例 · EVENT MIRROR' : 'EVENT MIRROR'}
+          </span>
+          <h3 className="mt-4 text-2xl md:text-3xl font-serif font-semibold leading-tight">
+            {isZh ? FEATURED_EVENT_MIRROR.titleZh : FEATURED_EVENT_MIRROR.titleEn}
+          </h3>
+
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <EventMirrorField
+              icon={<ShieldAlert className="w-4 h-4" />}
+              label={isZh ? '触发阈值' : 'Trigger'}
+              value={isZh ? FEATURED_EVENT_MIRROR.triggerZh : FEATURED_EVENT_MIRROR.triggerEn}
+            />
+            <EventMirrorField
+              icon={<Landmark className="w-4 h-4" />}
+              label={isZh ? '历史参照' : 'Historical Anchor'}
+              value={isZh ? FEATURED_EVENT_MIRROR.anchorZh : FEATURED_EVENT_MIRROR.anchorEn}
+            />
+            <EventMirrorField
+              icon={<Route className="w-4 h-4" />}
+              label={isZh ? '影响路径' : 'Impact Path'}
+              value={(isZh ? FEATURED_EVENT_MIRROR.pathZh : FEATURED_EVENT_MIRROR.pathEn).join(' / ')}
+            />
+            <EventMirrorField
+              icon={<Activity className="w-4 h-4" />}
+              label={isZh ? '模型消化' : 'Model Digestion'}
+              value={isZh ? FEATURED_EVENT_MIRROR.modelZh : FEATURED_EVENT_MIRROR.modelEn}
+            />
+          </div>
+
+          <p className="mt-5 text-[10px] font-sans leading-relaxed text-stone-400">
+            {isZh ? FEATURED_EVENT_MIRROR.sourceZh : FEATURED_EVENT_MIRROR.sourceEn}
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function EventMirrorField({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="border border-[#1D1D1B]/10 bg-white p-4 min-w-0">
+      <div className="flex items-center gap-2 text-[#A58261]">
+        {icon}
+        <span className="text-[9px] font-sans font-bold uppercase tracking-widest">{label}</span>
+      </div>
+      <p className="mt-2 text-[11px] font-sans leading-relaxed text-stone-500">{value}</p>
+    </div>
+  );
+}
+
+function EventImpactNote({ event, isZh }: { event: PolicyEvent; isZh: boolean }) {
+  return (
+    <div className="mt-3 space-y-1 border-l border-[#A58261]/30 pl-3">
+      <div className="text-[10px] font-sans text-stone-500 leading-relaxed">
+        {eventLens(event, isZh)}
+      </div>
+      <div className="text-[10px] font-sans text-[#A58261] leading-relaxed">
+        {modelAction(event, isZh)}
+      </div>
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────
 export default function ResearchPage() {
   const navigate   = useNavigate();
+  const location   = useLocation();
   const { locale } = useLocale();
   const isZh       = locale === 'zh';
 
@@ -75,6 +279,15 @@ export default function ResearchPage() {
   const [dlMsg,        setDlMsg]        = useState<string | null>(null);
   const { authorizedEmail, setShowLoginModal } = useLocale();
   const isMember = !!authorizedEmail;
+
+  useEffect(() => {
+    if (!location.hash) return;
+    const targetId = location.hash.replace('#', '');
+    const timer = window.setTimeout(() => {
+      document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 450);
+    return () => window.clearTimeout(timer);
+  }, [location.hash]);
 
   const handleDownload = async (slug: string) => {
     if (!isMember) { setShowLoginModal(true); return; }
@@ -297,6 +510,7 @@ export default function ResearchPage() {
                   : (isZh ? '— 宏观数据点' : '— macro data pts')}
               </span>
               <span>43 重大事件</span>
+              <span>{isZh ? '每周 1 篇评论' : '1 weekly memo'}</span>
               <span>{artTotal > 0 ? artTotal : '—'} 篇深度报告</span>
             </div>
           </div>
@@ -305,6 +519,8 @@ export default function ResearchPage() {
         <MacroEventDigestPanel />
 
         <QuantComparisonPanel />
+
+        <WeeklyEventFrame latestArticle={articles[0]} isZh={isZh} />
 
         {/* ── Event Timeline ───────────────────────────────── */}
         <section className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10">
@@ -345,6 +561,7 @@ export default function ResearchPage() {
                       <div className="text-[9px] font-sans text-stone-400 mt-0.5 flex items-center gap-1">
                         <Globe className="w-2.5 h-2.5" />{ev.region} · 影响 {ev.impact_level}/5
                       </div>
+                      <EventImpactNote event={ev} isZh={isZh} />
                     </div>
                   </div>
                 ))}
@@ -375,6 +592,7 @@ export default function ResearchPage() {
                           {ev.description}
                         </div>
                       )}
+                      <EventImpactNote event={ev} isZh={isZh} />
                     </div>
                   </div>
                 ))}
