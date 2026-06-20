@@ -1,0 +1,113 @@
+{
+  "as_of": "2026-06-21",
+  "generated_at": "2026-06-20T17:34:36+00:00",
+  "dimensions": {
+    "currency_stress": 0.6321205588285577,
+    "rate_stress": 0.0,
+    "liquidity_stress": 0.29531191028128656,
+    "geopolitical_stress": 0.0,
+    "credit_stress": 0.0,
+    "commodity_stress": 0.0,
+    "policy_intervention": 0.5276334472589853,
+    "crowding_unwind": 0.47795422323898396
+  },
+  "scenario_priors": {
+    "currency_intervention": 0.5798770030437714,
+    "carry_unwind": 0.5550373910337708,
+    "liquidity_gap": 0.14765595514064328,
+    "policy_shock": 0.26381672362949266,
+    "geopolitical_tail": 0.0,
+    "baseline": 0.42012299695622857
+  },
+  "model_effect": {
+    "regime_stress": 0.6321205588285577,
+    "scenario_tail_weight": 0.5798770030437714,
+    "risk_budget_multiplier": 0.7787578044100049,
+    "drawdown_brake_pressure": 0.5781623413722068,
+    "macro_event_count": 1.0
+  },
+  "clusters": [
+    {
+      "key": "fx_breakout:usdjpy:currency_stress",
+      "label": "USDJPY currency_stress",
+      "score": 0.5650727524210346,
+      "confidence": 0.75,
+      "event_count": 1,
+      "latest_date": "2026-06-20",
+      "dimensions": {
+        "currency_stress": 1.0,
+        "rate_stress": 0.0,
+        "liquidity_stress": 0.35,
+        "geopolitical_stress": 0.0,
+        "credit_stress": 0.0,
+        "commodity_stress": 0.0,
+        "policy_intervention": 0.75,
+        "crowding_unwind": 0.65
+      },
+      "events": [
+        {
+          "date": "2026-06-20",
+          "title": "USDJPY trades near 161 after breaking the 160 stress zone",
+          "event_type": "fx_breakout",
+          "asset": "USDJPY",
+          "observed": 161.3,
+          "threshold": 160.0,
+          "direction": "risk_up",
+          "confidence": 0.75,
+          "severity": 0.78,
+          "half_life_days": 20.0,
+          "region": "Japan",
+          "historical_anchor": "Post-Plaza 1986 USDJPY 160 zone",
+          "source": "Trading Economics / Wise / Toyota historical archive",
+          "source_url": "https://tradingeconomics.com/japan/currency",
+          "affected_markets": [
+            "JPY",
+            "Asia FX",
+            "Japan equities",
+            "gold",
+            "global carry"
+          ],
+          "regime_signal": "currency_stress",
+          "dimensions": {
+            "currency_stress": 1.0,
+            "policy_intervention": 0.75,
+            "crowding_unwind": 0.65,
+            "liquidity_stress": 0.35
+          }
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "date": "2026-06-20",
+      "title": "USDJPY trades near 161 after breaking the 160 stress zone",
+      "event_type": "fx_breakout",
+      "asset": "USDJPY",
+      "observed": 161.3,
+      "threshold": 160.0,
+      "direction": "risk_up",
+      "confidence": 0.75,
+      "severity": 0.78,
+      "half_life_days": 20.0,
+      "region": "Japan",
+      "historical_anchor": "Post-Plaza 1986 USDJPY 160 zone",
+      "source": "Trading Economics / Wise / Toyota historical archive",
+      "source_url": "https://tradingeconomics.com/japan/currency",
+      "affected_markets": [
+        "JPY",
+        "Asia FX",
+        "Japan equities",
+        "gold",
+        "global carry"
+      ],
+      "regime_signal": "currency_stress",
+      "dimensions": {
+        "currency_stress": 1.0,
+        "policy_intervention": 0.75,
+        "crowding_unwind": 0.65,
+        "liquidity_stress": 0.35
+      }
+    }
+  ]
+}

@@ -10,6 +10,7 @@ import { research, Article, PolicyEvent } from '../lib/research';
 import { supabase } from '../lib/supabase';
 import { useLocale } from '../context/LocaleContext';
 import MacroPulseBar from '../components/sgsyen/MacroPulseBar';
+import MacroEventDigestPanel from '../components/sgsyen/MacroEventDigestPanel';
 import QuantComparisonPanel from '../components/sgsyen/QuantComparisonPanel';
 
 const PAGE_SIZE = 8;
@@ -299,6 +300,8 @@ export default function ResearchPage() {
             </div>
           </div>
         </section>
+
+        <MacroEventDigestPanel />
 
         <QuantComparisonPanel />
 
