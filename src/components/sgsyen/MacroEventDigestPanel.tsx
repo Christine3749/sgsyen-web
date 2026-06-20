@@ -99,29 +99,53 @@ export default function MacroEventDigestPanel() {
   const [path, setPath] = useState('/quant/macro-events/latest.json');
   const [loading, setLoading] = useState(true);
 
-  const load = async (nextPath = path) => {
+  const fetchDigest = async (nextPath: string) => {
+    const res = await fetch(`${nextPath}?t=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json() as Promise<MacroDigest>;
+  };
+
+  const load = async (nextPath = path, fallbackPath = history?.latest?.path) => {
     setLoading(true);
     try {
-      const res = await fetch(`${nextPath}?t=${Date.now()}`, { cache: 'no-store' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setDigest(await res.json());
+      setDigest(await fetchDigest(nextPath));
     } catch {
-      setDigest(null);
+      if (fallbackPath && fallbackPath !== nextPath) {
+        try {
+          setDigest(await fetchDigest(fallbackPath));
+          setPath(fallbackPath);
+        } catch {
+          setDigest(null);
+        }
+      } else {
+        setDigest(null);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetch(`/quant/macro-events/history/index.json?t=${Date.now()}`, { cache: 'no-store' })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setHistory(data))
-      .catch(() => setHistory(null));
+    let cancelled = false;
+    const boot = async () => {
+      let historyData: HistoryIndex | null = null;
+      try {
+        const res = await fetch(`/quant/macro-events/history/index.json?t=${Date.now()}`, { cache: 'no-store' });
+        historyData = res.ok ? await res.json() : null;
+        if (!cancelled) setHistory(historyData);
+      } catch {
+        if (!cancelled) setHistory(null);
+      }
+      if (!cancelled) load('/quant/macro-events/latest.json', historyData?.latest?.path);
+    };
     fetch(`/quant/macro-events/sources.json?t=${Date.now()}`, { cache: 'no-store' })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setSourceCoverage(data))
       .catch(() => setSourceCoverage(null));
-    load('/quant/macro-events/latest.json');
+    boot();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -132,18 +156,19 @@ export default function MacroEventDigestPanel() {
   const dimensions = useMemo(() => topEntries(digest?.dimensions ?? {}, 8), [digest]);
   const scenarios = useMemo(() => topEntries(digest?.scenario_priors ?? {}, 5), [digest]);
   const modelEffect = digest?.model_effect ?? {};
+  const summary = useMemo(() => buildDigestSummary(digest, isZh), [digest, isZh]);
 
   return (
-    <section className="px-6 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#111110] text-[#FDFCF9]">
+    <section className="px-5 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#111110] text-[#FDFCF9] overflow-hidden">
       <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 mb-8">
-        <div>
+        <div className="min-w-0">
           <span className="text-[10px] font-sans font-bold uppercase tracking-[0.24em] text-[#C4A35A]">
             SGSYEN EVENT DIGEST · MODEL STATE
           </span>
-          <h2 className="mt-3 text-3xl md:text-5xl font-serif font-semibold leading-tight">
+          <h2 className="mt-3 text-2xl sm:text-3xl md:text-5xl font-serif font-semibold leading-tight break-words">
             {isZh ? '全网重大事件消化层' : 'Macro Event Digestion Layer'}
           </h2>
-          <p className="mt-3 max-w-2xl text-xs md:text-sm font-sans leading-relaxed text-[#FDFCF9]/55">
+          <p className="mt-3 max-w-2xl text-xs md:text-sm font-sans leading-relaxed text-[#FDFCF9]/55 break-all [overflow-wrap:anywhere]">
             {isZh
               ? '把每日重大资讯压缩为 regime、情景权重与风险预算信号，供量化模型和研究复盘共同使用。'
               : 'Compresses daily macro narratives into regime, scenario, and risk-budget signals for model conditioning.'}
@@ -185,11 +210,33 @@ export default function MacroEventDigestPanel() {
 
       {digest ? (
         <div className="space-y-6">
+          <TodayConclusion digest={digest} summary={summary} isZh={isZh} />
+
           <div className="grid grid-cols-2 lg:grid-cols-4 border border-[#FDFCF9]/10">
-            <MetricTile label={isZh ? 'Regime 压力' : 'Regime Stress'} value={modelEffect.regime_stress} icon={AlertTriangle} />
-            <MetricTile label={isZh ? '尾部情景权重' : 'Tail Scenario'} value={modelEffect.scenario_tail_weight} icon={ShieldAlert} />
-            <MetricTile label={isZh ? '风险预算倍率' : 'Risk Budget'} value={modelEffect.risk_budget_multiplier} icon={Gauge} />
-            <MetricTile label={isZh ? '事件数量' : 'Event Count'} value={modelEffect.macro_event_count} raw />
+            <MetricTile
+              label={isZh ? 'Regime 压力' : 'Regime Stress'}
+              value={modelEffect.regime_stress}
+              icon={AlertTriangle}
+              hint={isZh ? '越高代表重大事件越容易切换市场状态。' : 'Higher means events are more likely to shift market regimes.'}
+            />
+            <MetricTile
+              label={isZh ? '尾部情景权重' : 'Tail Scenario'}
+              value={modelEffect.scenario_tail_weight}
+              icon={ShieldAlert}
+              hint={isZh ? '模型对极端情景的当前先验权重。' : 'Current prior weight assigned to tail scenarios.'}
+            />
+            <MetricTile
+              label={isZh ? '风险预算倍率' : 'Risk Budget'}
+              value={modelEffect.risk_budget_multiplier}
+              icon={Gauge}
+              hint={isZh ? '55% 表示事件层把风险暴露压到防守档。' : 'A lower value means the event layer cuts risk exposure defensively.'}
+            />
+            <MetricTile
+              label={isZh ? '事件数量' : 'Event Count'}
+              value={modelEffect.macro_event_count}
+              raw
+              hint={isZh ? '已进入模型状态的结构化事件数量。' : 'Structured events currently promoted into model state.'}
+            />
           </div>
 
           {sourceCoverage ? <SourceCoveragePanel coverage={sourceCoverage} isZh={isZh} /> : null}
@@ -222,7 +269,7 @@ export default function MacroEventDigestPanel() {
                       </div>
                     ) : null}
                   </div>
-                  <div className="grid grid-cols-3 gap-3 min-w-[260px]">
+                  <div className="grid grid-cols-3 gap-3 md:min-w-[260px]">
                     <MiniStat label={isZh ? '强度' : 'Score'} value={cluster.score} />
                     <MiniStat label={isZh ? '置信' : 'Confidence'} value={cluster.confidence} />
                     <MiniStat label={isZh ? '条数' : 'Events'} value={cluster.event_count} raw />
@@ -233,11 +280,31 @@ export default function MacroEventDigestPanel() {
           </div>
         </div>
       ) : (
-        <div className="border border-[#FDFCF9]/10 bg-[#FDFCF9]/5 p-10 text-center text-xs font-sans text-[#FDFCF9]/45">
-          {isZh ? '等待重大事件消化数据。' : 'Waiting for macro event digest data.'}
-        </div>
+        <DataFallback coverage={sourceCoverage} loading={loading} isZh={isZh} />
       )}
     </section>
+  );
+}
+
+function TodayConclusion({ digest, summary, isZh }: { digest: MacroDigest; summary: string; isZh: boolean }) {
+  const modelEffect = digest.model_effect ?? {};
+  return (
+    <div className="border border-[#C4A35A]/25 bg-[#C4A35A]/8 px-5 py-4 max-w-full overflow-hidden">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+        <div className="min-w-0">
+          <div className="text-[10px] font-sans font-bold uppercase tracking-[0.22em] text-[#C4A35A]">
+            {isZh ? '今日系统结论' : 'Today System Read'}
+          </div>
+          <p className="mt-2 text-sm md:text-base font-serif leading-relaxed text-[#FDFCF9] break-all [overflow-wrap:anywhere]">{summary}</p>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-2 gap-2 w-full xl:w-[340px] xl:shrink-0">
+          <MiniStat label={isZh ? '事件压力' : 'Stress'} value={modelEffect.regime_stress} />
+          <MiniStat label={isZh ? '风险预算' : 'Budget'} value={modelEffect.risk_budget_multiplier} />
+          <MiniStat label={isZh ? '尾部权重' : 'Tail'} value={modelEffect.scenario_tail_weight} />
+          <MiniStat label={isZh ? '更新时间' : 'As Of'} value={Number.NaN} text={digest.as_of} />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -285,14 +352,55 @@ function SourceCoveragePanel({ coverage, isZh }: { coverage: SourceCoverage; isZ
   );
 }
 
-function MetricTile({ label, value, icon: Icon, raw = false }: { label: string; value?: number; icon?: any; raw?: boolean }) {
+function DataFallback({ coverage, loading, isZh }: { coverage: SourceCoverage | null; loading: boolean; isZh: boolean }) {
   return (
-    <div className="p-5 border-r last:border-r-0 border-[#FDFCF9]/10">
+    <div className="border border-[#FDFCF9]/10 bg-[#FDFCF9]/5 p-8 text-xs font-sans text-[#FDFCF9]/55">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#C4A35A]">
+            {isZh ? '等待模型快照' : 'Waiting For Model Snapshot'}
+          </div>
+          <p className="mt-2 leading-relaxed">
+            {isZh
+              ? '数据层会优先读取最新快照，若失败会自动回落到最近历史快照。'
+              : 'The panel first loads the latest snapshot and falls back to the most recent historical snapshot when needed.'}
+          </p>
+        </div>
+        {coverage ? (
+          <div className="grid grid-cols-3 gap-2 md:min-w-[300px]">
+            <MiniStat label={isZh ? '源' : 'Sources'} value={coverage.coverage.enabled_source_count} raw />
+            <MiniStat label={isZh ? '官方' : 'Official'} value={coverage.coverage.official_source_count} raw />
+            <MiniStat label={isZh ? '事件库' : 'Events'} value={coverage.ingestion?.merged_event_count ?? 0} raw />
+          </div>
+        ) : (
+          <RefreshCcw className={`w-4 h-4 text-[#C4A35A] ${loading ? 'animate-spin' : ''}`} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MetricTile({
+  label,
+  value,
+  icon: Icon,
+  raw = false,
+  hint,
+}: {
+  label: string;
+  value?: number;
+  icon?: any;
+  raw?: boolean;
+  hint?: string;
+}) {
+  return (
+    <div className="p-5 border-r last:border-r-0 border-[#FDFCF9]/10 min-w-0">
       <div className="flex items-center justify-between gap-3">
         <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-[#FDFCF9]/40">{label}</span>
         {Icon ? <Icon className="w-4 h-4 text-[#C4A35A]" /> : null}
       </div>
       <div className="mt-3 text-2xl font-mono font-semibold text-[#FDFCF9]">{raw ? Math.round(value ?? 0) : pct(value)}</div>
+      {hint ? <div className="mt-2 text-[10px] font-sans leading-relaxed text-[#FDFCF9]/35 break-all [overflow-wrap:anywhere]">{hint}</div> : null}
     </div>
   );
 }
@@ -353,11 +461,11 @@ function DigestBars({
   );
 }
 
-function MiniStat({ label, value, raw = false }: { label: string; value?: number; raw?: boolean }) {
+function MiniStat({ label, value, raw = false, text }: { label: string; value?: number; raw?: boolean; text?: string }) {
   return (
-    <div className="border border-[#FDFCF9]/10 px-3 py-2">
+    <div className="border border-[#FDFCF9]/10 px-3 py-2 min-w-0">
       <div className="text-[8px] font-sans font-bold uppercase tracking-widest text-[#FDFCF9]/35">{label}</div>
-      <div className="mt-1 text-sm font-mono text-[#FDFCF9]">{raw ? Math.round(value ?? 0) : pct(value)}</div>
+      <div className="mt-1 text-sm font-mono text-[#FDFCF9]">{text ?? (raw ? Math.round(value ?? 0) : pct(value))}</div>
     </div>
   );
 }
@@ -379,6 +487,32 @@ function topCountEntries(values: Record<string, number>, limit: number): [string
 function pct(value?: number) {
   if (typeof value !== 'number' || !Number.isFinite(value)) return '-';
   return `${(value * 100).toFixed(1)}%`;
+}
+
+function buildDigestSummary(digest: MacroDigest | null, isZh: boolean) {
+  if (!digest) return '';
+  const dimensions = topEntries(digest.dimensions ?? {}, 4);
+  const effect = digest.model_effect ?? {};
+  const labels = dimensions.map(([key]) => (DIMENSION_LABELS[key] ? (isZh ? DIMENSION_LABELS[key].zh : DIMENSION_LABELS[key].en) : key.replaceAll('_', ' ')));
+  const riskBudget = pct(effect.risk_budget_multiplier);
+  const tail = pct(effect.scenario_tail_weight);
+  if (isZh) {
+    return `当前全球事件压力处于${riskLevel(effect.regime_stress, true)}，主要来自${joinList(labels, true)}。模型风险预算降至 ${riskBudget}，尾部情景权重升至 ${tail}，当前更偏防守与路径稳定。`;
+  }
+  return `Global event pressure is ${riskLevel(effect.regime_stress, false)}, led by ${joinList(labels, false)}. Risk budget is reduced to ${riskBudget}, tail-scenario weight is ${tail}, and the model is biased toward path stability.`;
+}
+
+function riskLevel(value?: number, isZh = true) {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return isZh ? '未知' : 'unknown';
+  if (value >= 0.75) return isZh ? '高位' : 'high';
+  if (value >= 0.45) return isZh ? '中高位' : 'elevated';
+  return isZh ? '温和区间' : 'moderate';
+}
+
+function joinList(values: string[], isZh: boolean) {
+  if (!values.length) return '-';
+  if (values.length === 1) return values[0];
+  return isZh ? `${values.slice(0, -1).join('、')}与${values[values.length - 1]}` : `${values.slice(0, -1).join(', ')} and ${values[values.length - 1]}`;
 }
 
 function fmtTime(value?: string) {

@@ -198,17 +198,17 @@ export default function ResearchPage() {
 
   // ─────────────────────────────────────────────────────────
   return (
-    <div className="w-full bg-[#FDFCF9] text-[#1D1D1B] min-h-screen font-serif antialiased">
+    <div className="research-page w-full bg-[#FDFCF9] text-[#1D1D1B] min-h-screen font-serif antialiased overflow-x-hidden">
 
       {/* Top ticker */}
-      <div className="bg-[#1D1D1B] text-[#FDFCF9] py-2 px-6 text-center text-[9px] tracking-[0.25em] font-sans font-bold uppercase select-none">
+      <div className="bg-[#1D1D1B] text-[#FDFCF9] py-2 px-4 text-center text-[9px] tracking-[0.18em] md:tracking-[0.25em] font-sans font-bold uppercase select-none whitespace-nowrap overflow-hidden text-ellipsis">
         🏛️ SGSYEN 独立研判系统研究终端 · 全球宏观情报 · 事件驱动分析
       </div>
 
       <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10">
 
         {/* ── Breadcrumb ────────────────────────────────────── */}
-        <div className="relative flex items-center px-6 md:px-10 lg:px-16 py-3 border-b border-[#1D1D1B]/10 bg-[#FAF9F5] select-none min-h-[52px]">
+        <div className="relative flex items-center px-4 md:px-10 lg:px-16 py-3 border-b border-[#1D1D1B]/10 bg-[#FAF9F5] select-none min-h-[52px] overflow-hidden">
 
           {/* Left: back button */}
           <button
@@ -219,7 +219,7 @@ export default function ResearchPage() {
           </button>
 
           {/* Center: regime signal — true centered via absolute */}
-          <div className="absolute inset-x-0 flex justify-center pointer-events-none">
+          <div className="absolute inset-x-0 hidden md:flex justify-center pointer-events-none">
             {regime ? (
               <div className="flex items-center gap-2.5 md:gap-4 pointer-events-auto">
                 <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse" />
@@ -249,16 +249,17 @@ export default function ResearchPage() {
           </div>
 
           {/* Right: archive label + API button */}
-          <div className="ml-auto flex items-center gap-4 shrink-0 z-10">
+          <div className="ml-auto flex items-center gap-2 md:gap-4 shrink-0 z-10">
             <span className="text-[10px] font-mono text-[#A58261] tracking-widest uppercase font-bold hidden sm:block">
               {isZh ? '观点与研究 · 全库' : 'Research Hub · Full Archive'}
             </span>
             <button
               onClick={() => setShowApi(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] hover:bg-[#A58261] hover:text-white transition-colors cursor-pointer rounded"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] hover:bg-[#A58261] hover:text-white transition-colors cursor-pointer rounded"
             >
               <Terminal className="w-3 h-3" />
-              {isZh ? '研究员 API 接入' : 'Researcher API'}
+              <span className="hidden sm:inline">{isZh ? '研究员 API 接入' : 'Researcher API'}</span>
+              <span className="sm:hidden">API</span>
             </button>
           </div>
         </div>
@@ -283,7 +284,7 @@ export default function ResearchPage() {
               style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
               {isZh ? '观点与研究' : 'Viewpoints & Research'}
             </h1>
-            <p className="mt-6 font-sans text-sm text-[#FDFCF9]/50 leading-relaxed max-w-xl">
+            <p className="mt-6 font-sans text-sm text-[#FDFCF9]/50 leading-relaxed max-w-xl break-all [overflow-wrap:anywhere]">
               {isZh
                 ? '基于全球20年宏观时序数据、重大政策事件标注与量化情景预测的独立研判体系。数据驱动，事件锚定，叙事穿透。'
                 : 'Independent analysis built on 20 years of global macro data, annotated policy events, and scenario-based forecasting.'}

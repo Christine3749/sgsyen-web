@@ -68,26 +68,49 @@ export default function QuantComparisonPanel() {
   const [snapshotPath, setSnapshotPath] = useState('/quant/latest-comparison.json');
   const [loading, setLoading] = useState(true);
 
-  const load = async (path = snapshotPath) => {
+  const fetchPayload = async (path: string) => {
+    const res = await fetch(`${path}?t=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json() as Promise<QuantPayload>;
+  };
+
+  const load = async (path = snapshotPath, fallbackPath = history?.latest?.path) => {
     setLoading(true);
     try {
-      const res = await fetch(`${path}?t=${Date.now()}`, { cache: 'no-store' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      setPayload(data);
+      setPayload(await fetchPayload(path));
     } catch {
-      setPayload(null);
+      if (fallbackPath && fallbackPath !== path) {
+        try {
+          setPayload(await fetchPayload(fallbackPath));
+          setSnapshotPath(fallbackPath);
+        } catch {
+          setPayload(null);
+        }
+      } else {
+        setPayload(null);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetch(`/quant/history/index.json?t=${Date.now()}`, { cache: 'no-store' })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setHistory(data))
-      .catch(() => setHistory(null));
-    load('/quant/latest-comparison.json');
+    let cancelled = false;
+    const boot = async () => {
+      let historyData: QuantHistoryIndex | null = null;
+      try {
+        const res = await fetch(`/quant/history/index.json?t=${Date.now()}`, { cache: 'no-store' });
+        historyData = res.ok ? await res.json() : null;
+        if (!cancelled) setHistory(historyData);
+      } catch {
+        if (!cancelled) setHistory(null);
+      }
+      if (!cancelled) load('/quant/latest-comparison.json', historyData?.latest?.path);
+    };
+    boot();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -101,6 +124,8 @@ export default function QuantComparisonPanel() {
   const dateOptionsKey = dateOptions.join('|');
   const visibleRows = selectedDate ? rows.filter((row) => row.date <= selectedDate) : rows;
   const selectedRow = visibleRows[visibleRows.length - 1];
+  const highflyerSummary = current?.highflyer?.summary;
+  const aqrSummary = current?.aqr?.summary;
 
   useEffect(() => {
     if (!dateOptions.length) {
@@ -134,7 +159,7 @@ export default function QuantComparisonPanel() {
         tone: 'text-blue-600',
       },
       {
-        label: isZh ? '最大回撤' : 'Max DD',
+        label: isZh ? '当前回撤' : 'Drawdown',
         value: pctPoint(selectedRow.model_drawdown_pct),
         icon: ShieldCheck,
         tone: 'text-[#C83E3E]',
@@ -143,16 +168,16 @@ export default function QuantComparisonPanel() {
   }, [current, isZh, payload?.aqr_ticker, selectedRow]);
 
   return (
-    <section className="px-6 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#F5F2EA]">
+    <section className="px-5 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#F5F2EA] overflow-hidden">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
-        <div>
+        <div className="min-w-0">
           <span className="text-[10px] font-sans font-bold uppercase tracking-[0.24em] text-[#A58261]">
             DGWM QUANT · LIVE BENCHMARK
           </span>
-          <h2 className="mt-3 text-3xl md:text-5xl font-serif font-semibold text-[#1D1D1B] leading-tight">
+          <h2 className="mt-3 text-2xl sm:text-3xl md:text-5xl font-serif font-semibold text-[#1D1D1B] leading-tight break-words">
             {isZh ? '未来世界模型 · 实时量化对比' : 'Future World Model · Live Quant Comparison'}
           </h2>
-          <p className="mt-3 max-w-2xl text-xs md:text-sm font-sans leading-relaxed text-stone-500">
+          <p className="mt-3 max-w-2xl text-xs md:text-sm font-sans leading-relaxed text-stone-500 break-all [overflow-wrap:anywhere]">
             {isZh
               ? '同周期对比当前模型、幻方公开净值与 AQR 公开基金代理净值，展示收益路径和回撤路径。'
               : 'Same-period comparison across the current model, public High-Flyer NAV, and an AQR public-fund proxy.'}
@@ -221,6 +246,17 @@ export default function QuantComparisonPanel() {
 
       {current ? (
         <div className="space-y-8">
+          {highflyerSummary ? (
+            <QuantDecisionSummary
+              label={current.label}
+              selectedRow={selectedRow}
+              highflyerSummary={highflyerSummary}
+              aqrSummary={aqrSummary}
+              aqrTicker={payload?.aqr_ticker}
+              isZh={isZh}
+            />
+          ) : null}
+
           <div className="grid grid-cols-2 lg:grid-cols-4 border border-[#1D1D1B]/10 bg-[#FDFCF9]">
             {stats.map((item, index) => {
               const Icon = item.icon;
@@ -231,6 +267,9 @@ export default function QuantComparisonPanel() {
                     <Icon className={`w-4 h-4 ${item.tone}`} />
                   </div>
                   <div className={`mt-3 text-2xl font-mono font-semibold ${item.tone}`}>{item.value}</div>
+                  <div className="mt-2 text-[10px] font-sans leading-relaxed text-stone-400 break-all [overflow-wrap:anywhere]">
+                    {metricHint(item.label, isZh)}
+                  </div>
                 </div>
               );
             })}
@@ -266,13 +305,101 @@ export default function QuantComparisonPanel() {
               {isZh ? '刷新' : 'Updated'} {fmtTime(payload?.generated_at)}
             </span>
           </div>
+          <div className="text-[10px] font-sans leading-relaxed text-stone-400 border-l-2 border-[#A58261]/30 pl-3">
+            {isZh
+              ? `AQR 使用 ${payload?.aqr_ticker ?? '公开基金'} 的公开基金净值作为代理值，不等同于 AQR 私募策略真实账本。`
+              : `AQR uses ${payload?.aqr_ticker ?? 'a public fund'} adjusted NAV as a public proxy, not a disclosed private-strategy book.`}
+          </div>
         </div>
       ) : (
-        <div className="border border-[#1D1D1B]/10 bg-[#FDFCF9] p-10 text-center text-xs font-sans text-stone-400">
-          {isZh ? '正在等待量化对比数据生成。' : 'Waiting for quant comparison data.'}
-        </div>
+        <QuantFallback loading={loading} isZh={isZh} />
       )}
     </section>
+  );
+}
+
+function QuantDecisionSummary({
+  label,
+  selectedRow,
+  highflyerSummary,
+  aqrSummary,
+  aqrTicker,
+  isZh,
+}: {
+  label: string;
+  selectedRow?: QuantRow;
+  highflyerSummary: QuantSummary;
+  aqrSummary?: QuantSummary;
+  aqrTicker?: string;
+  isZh: boolean;
+}) {
+  const modelReturn = highflyerSummary.model_cumulative_return * 100;
+  const highflyerReturn = highflyerSummary.reference_cumulative_return * 100;
+  const excess = highflyerSummary.excess_return * 100;
+  const modelMdd = highflyerSummary.model_max_drawdown * 100;
+  const highflyerMdd = highflyerSummary.reference_max_drawdown * 100;
+  const aqrExcess = aqrSummary ? aqrSummary.excess_return * 100 : null;
+  const conclusion = isZh
+    ? `${label} 当前模型累计收益 ${modelReturn.toFixed(2)}%，较幻方公开净值超额 ${excess.toFixed(2)}%；最大回撤 ${modelMdd.toFixed(2)}%，低于幻方 ${highflyerMdd.toFixed(2)}%。`
+    : `${label} model return is ${modelReturn.toFixed(2)}%, with ${excess.toFixed(2)}% excess versus public High-Flyer NAV; max drawdown is ${modelMdd.toFixed(2)}% versus ${highflyerMdd.toFixed(2)}%.`;
+  return (
+    <div className="border border-[#A58261]/25 bg-[#A58261]/8 px-5 py-4 max-w-full overflow-hidden">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+        <div className="min-w-0">
+          <div className="text-[10px] font-sans font-bold uppercase tracking-[0.22em] text-[#A58261]">
+            {isZh ? '当前量化结论' : 'Current Quant Read'}
+          </div>
+          <p className="mt-2 text-sm md:text-base font-serif leading-relaxed text-[#1D1D1B] break-all [overflow-wrap:anywhere]">{conclusion}</p>
+          {aqrExcess !== null ? (
+            <p className="mt-2 text-[10px] font-sans leading-relaxed text-stone-500 break-all [overflow-wrap:anywhere]">
+              {isZh
+                ? `相对 AQR ${aqrTicker ?? ''} 公开基金代理值，当前超额为 ${aqrExcess.toFixed(2)}%。`
+                : `Versus AQR ${aqrTicker ?? ''} public-fund proxy, current excess is ${aqrExcess.toFixed(2)}%.`}
+            </p>
+          ) : null}
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-2 gap-2 w-full xl:w-[360px] xl:shrink-0">
+          <SummaryStat label={isZh ? '模型收益' : 'Model'} value={`${modelReturn.toFixed(2)}%`} />
+          <SummaryStat label={isZh ? '幻方收益' : 'High-Flyer'} value={`${highflyerReturn.toFixed(2)}%`} />
+          <SummaryStat label={isZh ? '模型回撤' : 'Model DD'} value={`${modelMdd.toFixed(2)}%`} />
+          <SummaryStat label={isZh ? '领先率' : 'Lead Rate'} value={`${(highflyerSummary.model_leading_rate * 100).toFixed(1)}%`} />
+        </div>
+      </div>
+      {selectedRow ? (
+        <div className="mt-3 text-[10px] font-mono uppercase tracking-widest text-stone-400">
+          {isZh ? '当前交易日' : 'Trading Date'} {selectedRow.date}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function SummaryStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border border-[#1D1D1B]/10 bg-[#FDFCF9]/70 px-3 py-2 min-w-0">
+      <div className="text-[8px] font-sans font-bold uppercase tracking-widest text-stone-400">{label}</div>
+      <div className="mt-1 text-sm font-mono font-semibold text-[#1D1D1B]">{value}</div>
+    </div>
+  );
+}
+
+function QuantFallback({ loading, isZh }: { loading: boolean; isZh: boolean }) {
+  return (
+    <div className="border border-[#1D1D1B]/10 bg-[#FDFCF9] p-8 text-xs font-sans text-stone-500">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#A58261]">
+            {isZh ? '等待量化快照' : 'Waiting For Quant Snapshot'}
+          </div>
+          <p className="mt-2 leading-relaxed">
+            {isZh
+              ? '系统会优先读取最新量化对比，若失败会自动回落到最近历史快照。'
+              : 'The panel loads the latest quant comparison first and falls back to the most recent historical snapshot when needed.'}
+          </p>
+        </div>
+        <RefreshCcw className={`w-4 h-4 text-[#A58261] ${loading ? 'animate-spin' : ''}`} />
+      </div>
+    </div>
   );
 }
 
@@ -344,6 +471,13 @@ function QuantSvgChart({
 function pctPoint(value?: number | null) {
   if (typeof value !== 'number' || !Number.isFinite(value)) return '-';
   return `${value.toFixed(2)}%`;
+}
+
+function metricHint(label: string, isZh: boolean) {
+  if (label.includes('High-Flyer')) return isZh ? '幻方公开净值代理路径。' : 'Public High-Flyer NAV proxy path.';
+  if (label.includes('AQR')) return isZh ? 'AQR 公开基金代理值。' : 'AQR public-fund proxy.';
+  if (label.includes('回撤') || label.includes('Max DD')) return isZh ? '当前显示交易日的模型回撤。' : 'Model drawdown on the selected trading date.';
+  return isZh ? '当前模型在所选日期的累计收益。' : 'Current model cumulative return on the selected date.';
 }
 
 function fmtDate(value?: string) {
