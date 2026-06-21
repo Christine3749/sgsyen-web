@@ -90,6 +90,17 @@ const LATEST_WEEKLY_MEMO = {
 const WEEKLY_MEMO_NO = 8;
 const WEEKLY_MEMO_CATEGORY = '全球格局';
 const WEEKLY_MEMO_TAGS = ['全球事件', '量化研究', '日元160', '风险预算', '世界模型'];
+const QUANT_MODEL_CATEGORY = 'GSYEN-Quant';
+const QUANT_MODEL_TAGS = ['GSYEN-Quant', '模型日志', 'Pre-Chaos', 'CUDA', 'Adaptive Rank'];
+const QUANT_MODEL_RELEASE = {
+  version: 'v0.7.2',
+  date: '2026-06-18',
+  titleZh: 'GSYEN-Quant 模型日志 001：从未来混沌到真实交易日 validation',
+  titleEn: 'GSYEN-Quant Model Log 001: From Pre-Chaos to Real Trading-Day Validation',
+  subtitleZh: '记录 GSYEN-Quant v0.7.2 的模型版本、核心功能与本轮量化验证口径',
+  subtitleEn: 'A versioned note on GSYEN-Quant v0.7.2, core model upgrades, and the latest validation scope',
+  features: ['Pre-Chaos', 'Adaptive Rank', 'Robust Control', 'PyTorch CUDA/TF32', 'Post-reference Validation'],
+};
 
 type LiveMacroEvent = {
   date: string;
@@ -213,6 +224,78 @@ When confidence rises, the model should raise the explanatory weight of FX, rate
 
 5. Conclusion
 The world model should digest not the number of headlines, but the ability of an event to rewrite the state space. One lead event per week keeps the research page disciplined and tells the quant model which information is background and which information deserves risk-weight adjustment.`,
+  };
+}
+
+function buildQuantModelLogArticle(): DisplayArticle {
+  return {
+    id: `gsyen-quant-${QUANT_MODEL_RELEASE.version}`,
+    no: 9,
+    slug: `gsyen-quant-${QUANT_MODEL_RELEASE.version}`,
+    title: QUANT_MODEL_RELEASE.titleZh,
+    title_en: QUANT_MODEL_RELEASE.titleEn,
+    subtitle: QUANT_MODEL_RELEASE.subtitleZh,
+    subtitle_en: QUANT_MODEL_RELEASE.subtitleEn,
+    author: 'GSYEN-Quant Research',
+    author_en: 'GSYEN-Quant Research',
+    category: QUANT_MODEL_CATEGORY,
+    tags: QUANT_MODEL_TAGS,
+    reading_time: 9,
+    published_at: `${QUANT_MODEL_RELEASE.date}T21:30:00+08:00`,
+    is_published: true,
+    is_featured: true,
+    star_count: 0,
+    summary: `当前模型：GSYEN-Quant ${QUANT_MODEL_RELEASE.version} · ${QUANT_MODEL_RELEASE.features.join(' / ')}`,
+    content: `模型版本
+
+GSYEN-Quant ${QUANT_MODEL_RELEASE.version}
+结果日期：${QUANT_MODEL_RELEASE.date}
+核心能力：${QUANT_MODEL_RELEASE.features.join(' / ')}
+
+一、这次更新解决什么问题
+这次版本不把模型日志写成普通新闻，而是把它作为量化系统的可追溯版本记录。每一次模型结构、数据口径、训练方式或算力后端发生变化，都应该留下一个简短但可复盘的说明，避免未来只看到收益曲线，却不知道收益来自哪一次改动。
+
+二、核心改进
+第一，Pre-Chaos 未来混沌状态继续作为前置状态层，用来描述未来可能状态的吸引子、不稳定性与场景先验。
+
+第二，Adaptive Rank 保留为当前模型的主干选择机制，让模型在不同市场结构下调整有效秩，而不是固定使用同一套暴露维度。
+
+第三，Robust Control 继续服务于回撤约束。模型不仅追求收益，还会对坏场景下的路径稳定性进行惩罚。
+
+第四，PyTorch CUDA/TF32 后端已经进入验证链路。它不是为了单纯显示 GPU，而是为了把后续 control、transition、reward 等热路径逐步迁移到更高并行度的张量 pipeline。
+
+第五，Post-reference Validation 允许模型在幻方公开净值披露滞后时，继续跑到最新真实交易日，同时保留 reference disclosure window，避免把对方尚未披露的数据伪装成已知结果。
+
+三、为什么模型日志放在 Research
+模型日志不是 UI 文案，也不是算力中心指标。它解释“为什么改、改了什么、对结果口径有什么影响”。所以它应该作为 Research 里的 GSYEN-Quant 专题存在；而量化面板只展示当前版本和结果，算力中心只展示本次运行资源。
+
+四、下一步
+后续每次模型升级，都只需要新增一条模型日志：版本号、日期、核心改动、验证范围、性能变化和已知风险。这样 GSYEN-Quant 会形成自己的模型演化史，而不是一串不可解释的回测结果。`,
+    content_en: `Model Version
+
+GSYEN-Quant ${QUANT_MODEL_RELEASE.version}
+Result date: ${QUANT_MODEL_RELEASE.date}
+Core capabilities: ${QUANT_MODEL_RELEASE.features.join(' / ')}
+
+1. What this update solves
+This note treats the model log as a traceable research record rather than ordinary news. Every structural change, data-scope change, training change, or compute-backend change should leave a short but auditable explanation, so future results can be tied back to model decisions.
+
+2. Core upgrades
+Pre-Chaos remains the forward state layer for attractors, instability, and scenario priors.
+
+Adaptive Rank remains the main selection mechanism so the model can adjust effective rank across regimes.
+
+Robust Control continues to constrain drawdown by penalizing adverse path behavior.
+
+The PyTorch CUDA/TF32 backend is now part of the validation chain, preparing control, transition, and reward hot paths for higher tensor residency.
+
+Post-reference Validation allows the model to run through the latest real trading day when public High-Flyer NAV disclosure lags, while preserving the reference disclosure window.
+
+3. Why the model log belongs in Research
+The model log explains why the model changed, what changed, and how the validation scope changed. The quant panel should show the current version and result; the compute center should show resources; Research should hold the explanation.
+
+4. Next step
+Each future upgrade should add one model log entry: version, date, core changes, validation scope, performance change, and known risk. This turns GSYEN-Quant into an explainable model history rather than a disconnected series of backtests.`,
   };
 }
 
@@ -608,9 +691,14 @@ export default function ResearchPage() {
     () => buildWeeklyMemoArticle(liveEvents, liveAsOf),
     [liveEvents, liveAsOf]
   );
+  const quantModelArticle = useMemo(() => buildQuantModelLogArticle(), []);
   const generatedArticles = useMemo(
-    () => articleMatches(weeklyArticle, category, search) ? [weeklyArticle] : [],
-    [weeklyArticle, category, search]
+    () => [quantModelArticle, weeklyArticle].filter(article => articleMatches(article, category, search)),
+    [quantModelArticle, weeklyArticle, category, search]
+  );
+  const categoryItems = useMemo(
+    () => [QUANT_MODEL_CATEGORY, ...categories.filter(cat => cat !== QUANT_MODEL_CATEGORY)],
+    [categories]
   );
   const displayArticles = useMemo<DisplayArticle[]>(() => {
     const generatedSlugs = new Set(generatedArticles.map(art => art.slug));
@@ -623,6 +711,28 @@ export default function ResearchPage() {
   const selectedContent = selectedArt
     ? (isZh ? selectedArt.content : (selectedArt.content_en || selectedArt.content))
     : '';
+
+  const scrollToResearchArchive = useCallback(() => {
+    window.requestAnimationFrame(() => {
+      document
+        .getElementById('research-archive')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, []);
+
+  const openResearchArchive = useCallback(() => {
+    setCategory('all');
+    setSearchInput('');
+    setSearch('');
+    scrollToResearchArchive();
+  }, [scrollToResearchArchive]);
+
+  const openQuantModelTopic = useCallback(() => {
+    setCategory(QUANT_MODEL_CATEGORY);
+    setSearchInput('');
+    setSearch('');
+    scrollToResearchArchive();
+  }, [scrollToResearchArchive]);
 
   // ─────────────────────────────────────────────────────────
   return (
@@ -673,9 +783,28 @@ export default function ResearchPage() {
 
           {/* Right: archive label + API button */}
           <div className="ml-auto flex items-center gap-2 md:gap-4 shrink-0 z-10">
-            <span className="text-[10px] font-mono text-[#A58261] tracking-widest uppercase font-bold hidden sm:block">
-              {isZh ? '观点与研究 · 全库' : 'Research Hub · Full Archive'}
-            </span>
+            <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono text-[#A58261] tracking-widest uppercase font-bold">
+              <button
+                onClick={openResearchArchive}
+                className={`cursor-pointer transition-colors ${category === 'all' ? 'text-[#1D1D1B]' : 'hover:text-[#1D1D1B]'}`}
+              >
+                {isZh ? '观点与研究' : 'Research'}
+              </button>
+              <span className="text-[#A58261]/60">·</span>
+              <button
+                onClick={openQuantModelTopic}
+                className={`cursor-pointer transition-colors ${category === QUANT_MODEL_CATEGORY ? 'text-[#1D1D1B]' : 'hover:text-[#1D1D1B]'}`}
+              >
+                GSYEN-Quant
+              </button>
+              <span className="text-[#A58261]/60">·</span>
+              <button
+                onClick={openResearchArchive}
+                className="cursor-pointer transition-colors hover:text-[#1D1D1B]"
+              >
+                {isZh ? '全库' : 'Archive'}
+              </button>
+            </div>
             <button
               onClick={() => navigate('/gemini/calculator/')}
               className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded"
@@ -865,7 +994,7 @@ export default function ResearchPage() {
         </section>
 
         {/* ── Articles ─────────────────────────────────────── */}
-        <section className="py-16 px-6 md:px-12 lg:px-20">
+        <section id="research-archive" className="py-16 px-6 md:px-12 lg:px-20">
 
           {/* Section header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6 select-none">
@@ -898,7 +1027,7 @@ export default function ResearchPage() {
               </div>
               {/* Category Filter */}
               <div className="flex flex-wrap gap-2 justify-end">
-                {['all', ...categories].map(cat => (
+                {['all', ...categoryItems].map(cat => (
                   <button key={cat}
                     onClick={() => setCategory(cat)}
                     className={`text-[9px] font-sans font-bold uppercase tracking-widest px-3 py-1.5 border transition-colors cursor-pointer ${
