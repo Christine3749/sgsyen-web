@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { WORKLOAD_PRESETS, GEMINI_MODELS, ModelPricing, WorkloadPreset } from '../types';
 import { HelpCircle, Sparkles, FileText, Image as ImageIcon, Video, Mic } from 'lucide-react';
 import { useLocale } from '../context/LocaleContext';
+import SystemPerformancePanel from './SystemPerformancePanel';
 
 interface CostCalculatorProps {
   initialModelId?: string;
@@ -137,6 +138,8 @@ export default function CostCalculator({ initialModelId }: CostCalculatorProps) 
           </select>
         </div>
       </div>
+
+      <SystemPerformancePanel />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left column: Vector controls */}
