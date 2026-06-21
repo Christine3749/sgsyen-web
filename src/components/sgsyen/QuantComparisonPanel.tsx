@@ -254,7 +254,7 @@ export default function QuantComparisonPanel() {
           <span className="text-[10px] font-sans font-bold uppercase tracking-[0.24em] text-[#A58261]">
             GSYEN-Quant · LIVE BENCHMARK
           </span>
-          <h2 className="mt-3 text-2xl sm:text-3xl md:text-5xl font-serif font-semibold text-[#1D1D1B] leading-tight break-words">
+          <h2 className="mt-3 text-2xl sm:text-3xl md:text-[42px] xl:text-5xl font-serif font-semibold text-[#1D1D1B] leading-tight whitespace-nowrap">
             {isZh ? '未来世界模型 · 实时量化对比' : 'Future World Model · Live Quant Comparison'}
           </h2>
           <p className="mt-3 max-w-2xl text-xs md:text-sm font-sans leading-relaxed text-zinc-500 break-all [overflow-wrap:anywhere]">
@@ -262,22 +262,25 @@ export default function QuantComparisonPanel() {
               ? '同周期对比当前模型、幻方公开净值与 AQR 公开基金代理净值，展示收益路径和回撤路径。'
               : 'Same-period comparison across the current model, public High-Flyer NAV, and an AQR public-fund proxy.'}
           </p>
-          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 font-sans">
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1D1D1B]">
-              {MODEL_VERSION}
-            </span>
-            <span className="hidden sm:inline text-[10px] text-zinc-300">·</span>
-            <span className="text-[10px] font-semibold tracking-[0.08em] text-[#5A687D]">
-              {isZh ? '后参考日验证 · 未来混沌状态层' : 'Post-reference validation · Pre-chaos state layer'}
-            </span>
-            <span className="hidden sm:inline text-[10px] text-zinc-300">·</span>
-            <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-zinc-400">
-              {MODEL_FEATURES.join(' / ')}
-            </span>
-          </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-start lg:justify-end gap-2">
+        <div className="flex flex-col items-start lg:items-end gap-4">
+          <div className="w-full lg:w-[760px] text-left lg:text-right font-sans">
+            <div className="flex flex-wrap items-center justify-start lg:justify-end gap-x-3 gap-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1D1D1B]">
+                {MODEL_VERSION}
+              </span>
+              <span className="hidden sm:inline text-[10px] text-zinc-300">·</span>
+              <span className="text-[10px] font-semibold tracking-[0.08em] text-[#5A687D]">
+                {isZh ? '真实交易日验证版：未来混沌状态参与收益与回撤验证' : 'Real trading-day validation: pre-chaos state joins return and drawdown checks'}
+              </span>
+            </div>
+            <div className="mt-2 text-[10px] font-mono uppercase tracking-[0.16em] text-zinc-400">
+              {MODEL_FEATURES.join(' / ')}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-start lg:justify-end gap-2">
           {history?.items?.length ? (
             <label className="inline-flex items-center gap-2 h-9 px-3 border border-[#1D1D1B]/10 bg-white text-zinc-500 rounded">
               <CalendarDays className="w-4 h-4 text-[#A58261]" />
@@ -334,6 +337,7 @@ export default function QuantComparisonPanel() {
           >
             <RefreshCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
+          </div>
         </div>
       </div>
 
