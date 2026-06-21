@@ -727,13 +727,6 @@ export default function ResearchPage() {
     scrollToResearchArchive();
   }, [scrollToResearchArchive]);
 
-  const openQuantModelTopic = useCallback(() => {
-    setCategory(QUANT_MODEL_CATEGORY);
-    setSearchInput('');
-    setSearch('');
-    scrollToResearchArchive();
-  }, [scrollToResearchArchive]);
-
   // ─────────────────────────────────────────────────────────
   return (
     <div className="research-page w-full bg-[#FFFFFF] text-[#1D1D1B] min-h-screen font-serif antialiased overflow-x-hidden">
@@ -792,8 +785,8 @@ export default function ResearchPage() {
               </button>
               <span className="text-[#A58261]/60">·</span>
               <button
-                onClick={openQuantModelTopic}
-                className={`cursor-pointer transition-colors ${category === QUANT_MODEL_CATEGORY ? 'text-[#1D1D1B]' : 'hover:text-[#1D1D1B]'}`}
+                onClick={() => navigate('/research/gsyen-quant')}
+                className="cursor-pointer transition-colors hover:text-[#1D1D1B]"
               >
                 GSYEN-Quant
               </button>

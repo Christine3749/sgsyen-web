@@ -114,6 +114,8 @@ type QuantRunReport = {
 };
 
 const INDEX_ORDER = ['hs300', 'csi500'] as const;
+const MODEL_VERSION = 'GSYEN-Quant v0.7.2';
+const MODEL_FEATURES = ['Pre-Chaos', 'Adaptive Rank', 'Robust Control', 'CUDA/TF32'];
 
 export default function QuantComparisonPanel() {
   const { locale } = useLocale();
@@ -250,7 +252,7 @@ export default function QuantComparisonPanel() {
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
         <div className="min-w-0">
           <span className="text-[10px] font-sans font-bold uppercase tracking-[0.24em] text-[#A58261]">
-            DGWM QUANT · LIVE BENCHMARK
+            GSYEN-Quant · LIVE BENCHMARK
           </span>
           <h2 className="mt-3 text-2xl sm:text-3xl md:text-5xl font-serif font-semibold text-[#1D1D1B] leading-tight break-words">
             {isZh ? '未来世界模型 · 实时量化对比' : 'Future World Model · Live Quant Comparison'}
@@ -260,6 +262,19 @@ export default function QuantComparisonPanel() {
               ? '同周期对比当前模型、幻方公开净值与 AQR 公开基金代理净值，展示收益路径和回撤路径。'
               : 'Same-period comparison across the current model, public High-Flyer NAV, and an AQR public-fund proxy.'}
           </p>
+          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 font-sans">
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1D1D1B]">
+              {MODEL_VERSION}
+            </span>
+            <span className="hidden sm:inline text-[10px] text-zinc-300">·</span>
+            <span className="text-[10px] font-semibold tracking-[0.08em] text-[#5A687D]">
+              {isZh ? '后参考日验证 · 未来混沌状态层' : 'Post-reference validation · Pre-chaos state layer'}
+            </span>
+            <span className="hidden sm:inline text-[10px] text-zinc-300">·</span>
+            <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-zinc-400">
+              {MODEL_FEATURES.join(' / ')}
+            </span>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center justify-start lg:justify-end gap-2">

@@ -8,6 +8,7 @@ import SystemPerformancePanel from './components/SystemPerformancePanel';
 import SgsyenPortal from './components/sgsyen/SgsyenPortal';
 import MiaojiePortal from './components/miaojie/MiaojiePortal';
 import ResearchPage from './pages/ResearchPage';
+import GsyenQuantBlogPage from './pages/GsyenQuantBlogPage';
 import { BookOpen, Calculator, FileText, Layers } from 'lucide-react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 
@@ -181,7 +182,7 @@ function InnerApp() {
         </div>
 
         <div className={activeApp === 'research' ? 'block' : 'hidden'}>
-          <ResearchPage />
+          {path.startsWith('/research/gsyen-quant') ? <GsyenQuantBlogPage /> : <ResearchPage />}
         </div>
 
         <AnimatePresence mode="wait">
