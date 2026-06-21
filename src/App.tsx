@@ -20,14 +20,13 @@ function InnerApp() {
 
   // Derive active state from URL path
   const path = location.pathname;
-  const initialActiveApp: ActiveApp = path.startsWith('/research')
+  const activeApp: ActiveApp = path.startsWith('/research')
     ? 'research'
     : path.startsWith('/gemini')
       ? 'gemini'
       : path.startsWith('/miaojie')
         ? 'miaojie'
         : 'sgsyen';
-  const [activeApp, setActiveApp] = useState<ActiveApp>(initialActiveApp);
   let activeTab: 'calculator' | 'articles' | 'tariffs' = 'calculator';
   if (path.includes('/pricing')) activeTab = 'tariffs';
   else if (path.includes('/analysis')) activeTab = 'articles';
@@ -42,13 +41,6 @@ function InnerApp() {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
   };
-
-  useEffect(() => {
-    if (path.startsWith('/research')) setActiveApp('research');
-    else if (path.startsWith('/gemini')) setActiveApp('gemini');
-    else if (path.startsWith('/miaojie')) setActiveApp('miaojie');
-    else setActiveApp('sgsyen');
-  }, [path]);
 
   // Dynamic page title based on active app/tab
   useEffect(() => {
@@ -90,7 +82,7 @@ function InnerApp() {
       <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 grid grid-cols-2 text-center text-xs font-sans font-bold uppercase select-none border-b border-[#1D1D1B]/10 bg-white">
         <button
           id="toggle-sgsyen-portal-btn"
-          onClick={() => setActiveApp('sgsyen')}
+          onClick={() => navigate('/')}
           className={`py-4 transition-all flex items-center justify-center gap-2 cursor-pointer outline-none ${
             activeApp === 'sgsyen'
               ? 'bg-[#1D1D1B] text-[#FDFCF9]'
@@ -101,7 +93,7 @@ function InnerApp() {
         </button>
         <button
           id="toggle-research-hub-btn"
-          onClick={() => setActiveApp('research')}
+          onClick={() => navigate('/research')}
           className={`py-4 transition-all flex items-center justify-center gap-2 cursor-pointer outline-none ${
             activeApp === 'research'
               ? 'bg-[#1D1D1B] text-[#FDFCF9]'
