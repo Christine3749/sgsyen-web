@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowRight, ArrowLeft, Calendar, Tag, Globe,
-  ChevronDown, Loader2, Clock, Star, Search, X, Terminal, Copy, Check,
+  ChevronDown, Loader2, Clock, Star, Search, X, Terminal, Copy, Check, Cpu,
   FileText, Download, Lock, Activity, BookMarked, GitCompare, Landmark, Route, ShieldAlert,
 } from 'lucide-react';
 import { research, Article, PolicyEvent } from '../lib/research';
@@ -676,6 +676,14 @@ export default function ResearchPage() {
             <span className="text-[10px] font-mono text-[#A58261] tracking-widest uppercase font-bold hidden sm:block">
               {isZh ? '观点与研究 · 全库' : 'Research Hub · Full Archive'}
             </span>
+            <button
+              onClick={() => navigate('/gemini/calculator/')}
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded"
+            >
+              <Cpu className="w-3 h-3" />
+              <span className="hidden sm:inline">{isZh ? '算力中心' : 'Compute Lab'}</span>
+              <span className="sm:hidden">{isZh ? '算力' : 'Compute'}</span>
+            </button>
             <button
               onClick={() => setShowApi(true)}
               className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded"

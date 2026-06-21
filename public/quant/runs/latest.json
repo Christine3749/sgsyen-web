@@ -1,0 +1,151 @@
+{
+  "schema": "sgsyen.quant.run.v1",
+  "run_date": "2026-06-21",
+  "generated_at": "2026-06-21T21:54:16+08:00",
+  "source": {
+    "quant_comparison": "/quant/latest-comparison.json",
+    "performance_report": "/system/performance/latest.json"
+  },
+  "workload": {
+    "name": "沪深300 + 中证500 完整 validation",
+    "snapshot_date": "2026-06-21",
+    "comparison_refs": [
+      "High-Flyer",
+      "AQR QMNIX"
+    ],
+    "indices": [
+      "沪深300",
+      "中证500"
+    ],
+    "training_sample": "最近 3 年训练样本",
+    "validation_scope": "沪深300 + 中证500 同周期完整 validation",
+    "rank_mode": "adaptive rank",
+    "model_path": "PyTorch accelerator pipeline"
+  },
+  "results": [
+    {
+      "index_key": "hs300",
+      "label": "沪深300",
+      "start_date": "2025-12-05",
+      "end_date": "2026-06-12",
+      "trade_date": "2026-06-12",
+      "sample_count": 124,
+      "model_return_pct": 24.0591754547,
+      "highflyer_return_pct": 22.2144530955,
+      "aqr_return_pct": -4.17306289071,
+      "model_drawdown_pct": -4.49611313198,
+      "highflyer_drawdown_pct": -5.53185895001,
+      "aqr_drawdown_pct": -6.94333522856,
+      "model_max_drawdown_pct": -5.745214528802311,
+      "highflyer_max_drawdown_pct": -8.542843311279647,
+      "aqr_max_drawdown_pct": -8.30007968125468,
+      "model_annualized_return_pct": 51.64136961569126,
+      "highflyer_annualized_return_pct": 47.31690281456975,
+      "aqr_annualized_return_pct": -7.902348993319519,
+      "highflyer_excess_return_pct": 1.8447223592279238,
+      "aqr_excess_return_pct": 28.23223834541312,
+      "highflyer_leading_rate_pct": 76.61290322580645,
+      "aqr_leading_rate_pct": 92.74193548387096,
+      "beats_highflyer_return": true,
+      "beats_highflyer_drawdown": true,
+      "beats_aqr_return": true,
+      "beats_aqr_drawdown": true
+    },
+    {
+      "index_key": "csi500",
+      "label": "中证500",
+      "start_date": "2025-12-05",
+      "end_date": "2026-06-12",
+      "trade_date": "2026-06-12",
+      "sample_count": 124,
+      "model_return_pct": 24.7742988242,
+      "highflyer_return_pct": 22.6822813561,
+      "aqr_return_pct": -4.17306289071,
+      "model_drawdown_pct": -5.15803366119,
+      "highflyer_drawdown_pct": -5.06643446852,
+      "aqr_drawdown_pct": -6.94333522856,
+      "model_max_drawdown_pct": -6.5757833925388365,
+      "highflyer_max_drawdown_pct": -8.155889474433842,
+      "aqr_max_drawdown_pct": -8.30007968125468,
+      "model_annualized_return_pct": 53.334010180409884,
+      "highflyer_annualized_return_pct": 48.40789293520766,
+      "aqr_annualized_return_pct": -7.902348993319519,
+      "highflyer_excess_return_pct": 2.092017468055851,
+      "aqr_excess_return_pct": 28.94736171491311,
+      "highflyer_leading_rate_pct": 91.12903225806451,
+      "aqr_leading_rate_pct": 95.96774193548387,
+      "beats_highflyer_return": true,
+      "beats_highflyer_drawdown": false,
+      "beats_aqr_return": true,
+      "beats_aqr_drawdown": true
+    }
+  ],
+  "compute": {
+    "round_id": "hardware-audit-01",
+    "change_label": "compute-efficiency-design",
+    "updated_at": "2026-06-21T21:30:57+08:00",
+    "hardware": {
+      "cpu_name": "Intel(R) Core(TM) i9-14900KF",
+      "cpu_logical_threads": 32,
+      "cpu_worker_threads": 28,
+      "memory_gb": 95.81745529174805,
+      "gpu_name": "NVIDIA GeForce RTX 4070 Ti SUPER",
+      "gpu_memory_gb": 15.9921875,
+      "gpu_count": 1,
+      "gpu_driver_version": "595.79",
+      "cuda_version": "13.2",
+      "gpu_compute_capability": "8.9",
+      "platform_system": "Windows",
+      "platform_machine": "AMD64",
+      "accelerator_family": "nvidia-cuda"
+    },
+    "utilization_summary": {
+      "round_id": "hardware-audit-01",
+      "change_label": "compute-efficiency-design",
+      "elapsed_seconds": 3.1078140999889,
+      "status": "gpu_below_target",
+      "target_gpu_utilization_pct": 60.0,
+      "gpu": {
+        "available": true,
+        "sample_count": 3,
+        "utilization_pct_mean": 0.6666666666666666,
+        "utilization_pct_max": 2.0,
+        "target_gap_pct": 59.333333333333336,
+        "memory_used_gb_mean": 5.7265625,
+        "memory_used_gb_max": 5.939453125,
+        "power_watts_mean": 36.733333333333334,
+        "power_watts_max": 46.33
+      },
+      "system": {
+        "available": true,
+        "sample_count": 4,
+        "cpu_total_pct_mean": 5.901543243538009,
+        "cpu_total_pct_max": 13.49056603773585,
+        "memory_used_pct_mean": 45.98125581082963,
+        "memory_used_pct_max": 46.27801345896928,
+        "memory_available_gb_min": 51.475040435791016
+      },
+      "torch_engine": {
+        "backend": "cuda",
+        "device": "cuda:0",
+        "device_name": "NVIDIA GeForce RTX 4070 Ti SUPER",
+        "dtype": "tf32",
+        "accelerated": true
+      },
+      "accelerator": {
+        "backend": "cuda",
+        "calls": 2,
+        "accelerator_calls": 2,
+        "cuda_calls": 2,
+        "fallback_calls": 0,
+        "accelerator_hit_rate": 1.0,
+        "accelerator_time_share": 1.0,
+        "accelerator_input_element_share": 1.0,
+        "accelerator_output_element_share": 1.0
+      },
+      "next_actions": [
+        "increase_tensor_residency_and_batch_control_validation"
+      ]
+    }
+  }
+}

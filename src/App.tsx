@@ -4,10 +4,11 @@ import { useLocation, useNavigate, Routes, Route } from 'react-router-dom';
 import ModelPricingTable from './components/ModelPricingTable';
 import CostCalculator from './components/CostCalculator';
 import InsightArticles from './components/InsightArticles';
+import SystemPerformancePanel from './components/SystemPerformancePanel';
 import SgsyenPortal from './components/sgsyen/SgsyenPortal';
 import MiaojiePortal from './components/miaojie/MiaojiePortal';
 import ResearchPage from './pages/ResearchPage';
-import { BookOpen, Calculator, Cpu, FileText, Layers } from 'lucide-react';
+import { BookOpen, Calculator, FileText, Layers } from 'lucide-react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 
 type ActiveApp = 'sgsyen' | 'research' | 'gemini' | 'miaojie';
@@ -130,15 +131,6 @@ function InnerApp() {
 
               {/* Right Side: Language Switcher and Top-Right Login */}
               <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 text-[10px] uppercase font-sans tracking-widest text-[#1D1D1B]">
-                <button
-                  id="sgsyen-compute-center-link"
-                  onClick={() => navigate('/gemini/calculator/')}
-                  className="flex items-center gap-1.5 rounded border border-[#1D1D1B]/10 bg-white px-3 py-1.5 font-bold text-stone-600 transition-colors hover:border-[#A58261]/40 hover:text-[#A58261] outline-none cursor-pointer"
-                >
-                  <Cpu className="w-3.5 h-3.5" />
-                  <span>{locale === 'zh' ? '算力中心' : 'Compute Lab'}</span>
-                </button>
-
                 {/* Top-Right Unified Login */}
                 <div className="flex items-center gap-2 border-r border-[#1D1D1B]/10 pr-4">
                   {authorizedEmail ? (
@@ -369,6 +361,8 @@ function InnerApp() {
                 </motion.div>
 
                 {/* Micro-Chart Comparison of Competitors */}
+                {activeTab === 'calculator' && <SystemPerformancePanel />}
+
                 <div className="border border-[#1D1D1B] p-6 bg-white space-y-4 rounded shadow-sm">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
                     <div className="space-y-1 col-span-1">

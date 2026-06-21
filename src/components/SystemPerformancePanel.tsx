@@ -3,7 +3,6 @@ import { Activity, Cpu, Gauge, HardDrive, MemoryStick, Zap } from 'lucide-react'
 import { useLocale } from '../context/LocaleContext';
 
 type SystemPerformancePayload = {
-  schema?: string;
   updated_at?: string;
   source?: string;
   round_id?: string | null;
@@ -11,27 +10,31 @@ type SystemPerformancePayload = {
   hardware?: {
     cpu_name?: string;
     cpu_logical_threads?: number;
+    cpu_worker_threads?: number;
     memory_gb?: number;
     gpu_name?: string;
     gpu_memory_gb?: number;
+    gpu_count?: number;
+    gpu_driver_version?: string;
+    cuda_version?: string;
+    gpu_compute_capability?: string;
+    platform_system?: string;
+    platform_machine?: string;
+    accelerator_family?: string;
   };
   utilization_summary?: {
     elapsed_seconds?: number | null;
-    status?: string;
     target_gpu_utilization_pct?: number;
     gpu?: {
-      available?: boolean;
       sample_count?: number;
       utilization_pct_mean?: number;
       utilization_pct_max?: number;
-      target_gap_pct?: number;
       memory_used_gb_mean?: number;
       memory_used_gb_max?: number;
       power_watts_mean?: number;
       power_watts_max?: number;
     };
     system?: {
-      available?: boolean;
       sample_count?: number;
       cpu_total_pct_mean?: number;
       cpu_total_pct_max?: number;
@@ -57,39 +60,66 @@ type SystemPerformancePayload = {
       accelerator_input_element_share?: number;
       accelerator_output_element_share?: number;
     };
-    next_actions?: string[];
   };
+};
+
+type QuantRunPayload = {
+  run_date?: string;
+  generated_at?: string;
+  workload?: {
+    name?: string;
+    snapshot_date?: string;
+    validation_scope?: string;
+    model_path?: string;
+  };
+  results?: Array<{
+    index_key?: string;
+    label?: string;
+    trade_date?: string;
+    sample_count?: number;
+    model_return_pct?: number | null;
+    highflyer_return_pct?: number | null;
+    aqr_return_pct?: number | null;
+    model_drawdown_pct?: number | null;
+    model_max_drawdown_pct?: number | null;
+    highflyer_excess_return_pct?: number | null;
+    aqr_excess_return_pct?: number | null;
+  }>;
 };
 
 const fallbackPerformance: SystemPerformancePayload = {
   updated_at: '2026-06-21T13:13:00+08:00',
   source: 'DGWM quant_fast_run',
-  round_id: 'arch-pytorch-02',
-  change_label: 'utilization-report',
+  round_id: 'latest',
+  change_label: 'hardware-resource-call',
   hardware: {
     cpu_name: 'Intel Core i9-14900KF',
     cpu_logical_threads: 32,
+    cpu_worker_threads: 28,
     memory_gb: 96,
     gpu_name: 'NVIDIA GeForce RTX 4070 Ti SUPER',
     gpu_memory_gb: 16,
+    gpu_count: 1,
+    gpu_driver_version: '595.79',
+    cuda_version: '13.2',
+    gpu_compute_capability: '8.9',
+    platform_system: 'Windows',
+    platform_machine: 'AMD64',
+    accelerator_family: 'nvidia-cuda',
   },
   utilization_summary: {
     elapsed_seconds: 1.087,
-    status: 'gpu_below_target',
     target_gpu_utilization_pct: 60,
     gpu: {
-      available: true,
       sample_count: 4,
       utilization_pct_mean: 3,
       utilization_pct_max: 3,
-      target_gap_pct: 57,
       memory_used_gb_mean: 5.71,
       memory_used_gb_max: 5.71,
       power_watts_mean: 44.5,
       power_watts_max: 44.57,
     },
     system: {
-      available: true,
       sample_count: 4,
       cpu_total_pct_mean: 20.69,
       cpu_total_pct_max: 59.63,
@@ -115,15 +145,55 @@ const fallbackPerformance: SystemPerformancePayload = {
       accelerator_input_element_share: 1,
       accelerator_output_element_share: 1,
     },
-    next_actions: ['increase_tensor_residency_and_batch_control_validation'],
   },
+};
+
+const fallbackRunReport: QuantRunPayload = {
+  run_date: '2026-06-21',
+  generated_at: '2026-06-21T21:54:16+08:00',
+  workload: {
+    name: '沪深300 + 中证500 完整 validation',
+    snapshot_date: '2026-06-21',
+    validation_scope: '沪深300 + 中证500 同周期完整 validation',
+    model_path: 'PyTorch accelerator pipeline',
+  },
+  results: [
+    {
+      index_key: 'hs300',
+      label: '沪深300',
+      trade_date: '2026-06-12',
+      sample_count: 124,
+      model_return_pct: 24.0591754547,
+      highflyer_return_pct: 22.2144530955,
+      aqr_return_pct: -4.17306289071,
+      model_drawdown_pct: -4.49611313198,
+      model_max_drawdown_pct: -5.745214528802311,
+      highflyer_excess_return_pct: 1.8447223592279238,
+      aqr_excess_return_pct: 28.23223834541312,
+    },
+    {
+      index_key: 'csi500',
+      label: '中证500',
+      trade_date: '2026-06-12',
+      sample_count: 124,
+      model_return_pct: 24.7742988242,
+      highflyer_return_pct: 22.6822813561,
+      aqr_return_pct: -4.17306289071,
+      model_drawdown_pct: -5.15803366119,
+      model_max_drawdown_pct: -6.5757833925388365,
+      highflyer_excess_return_pct: 2.092017468055851,
+      aqr_excess_return_pct: 28.94736171491311,
+    },
+  ],
 };
 
 export default function SystemPerformancePanel() {
   const { locale } = useLocale();
   const isZh = locale === 'zh';
   const [payload, setPayload] = useState<SystemPerformancePayload>(fallbackPerformance);
+  const [runPayload, setRunPayload] = useState<QuantRunPayload>(fallbackRunReport);
   const [isLiveLoaded, setIsLiveLoaded] = useState(false);
+  const [isRunLiveLoaded, setIsRunLiveLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -143,123 +213,126 @@ export default function SystemPerformancePanel() {
     };
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/quant/runs/latest.json', { cache: 'no-store' })
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error('quant run report unavailable'))))
+      .then((data: QuantRunPayload) => {
+        if (!cancelled) {
+          setRunPayload(data);
+          setIsRunLiveLoaded(true);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setIsRunLiveLoaded(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const summary = payload.utilization_summary ?? fallbackPerformance.utilization_summary!;
+  const hardware = payload.hardware ?? fallbackPerformance.hardware!;
   const gpu = summary.gpu ?? {};
   const system = summary.system ?? {};
   const accelerator = summary.accelerator ?? {};
   const torchEngine = summary.torch_engine ?? {};
-  const hardware = payload.hardware ?? {};
-  const updatedAt = useMemo(() => formatDateTime(payload.updated_at, isZh), [payload.updated_at, isZh]);
 
+  const updatedAt = useMemo(() => formatDateTime(payload.updated_at, isZh), [payload.updated_at, isZh]);
+  const machineClass = classifyMachine(hardware, torchEngine);
   const gpuMean = clampPercent(gpu.utilization_pct_mean);
   const gpuTarget = clampPercent(summary.target_gpu_utilization_pct ?? 60);
   const cpuMean = clampPercent(system.cpu_total_pct_mean);
   const memoryMean = clampPercent(system.memory_used_pct_mean);
   const acceleratorHitRate = clampPercent((accelerator.accelerator_hit_rate ?? 0) * 100);
+  const acceleratorTimeShare = clampPercent((accelerator.accelerator_time_share ?? 0) * 100);
+  const tensorShare = clampPercent(
+    Math.max(accelerator.accelerator_input_element_share ?? 0, accelerator.accelerator_output_element_share ?? 0) * 100
+  );
 
   return (
-    <section className="border border-[#1D1D1B]/10 bg-white rounded p-4 md:p-5 font-sans select-none">
-      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 border-b border-[#1D1D1B]/10 pb-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#A58261]">
-            <Activity className="w-3.5 h-3.5" />
-            <span>{isZh ? '本地训练设备利用率' : 'Local Training Utilization'}</span>
+    <section className="border border-[#1D1D1B] bg-white rounded shadow-sm p-6 font-sans select-none">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <Activity className="w-3.5 h-3.5 text-[#A58261] shrink-0" />
+            <span className="text-[10px] font-mono tracking-widest uppercase text-[#A58261] font-bold">
+              {isZh ? '本次运算调用资源' : 'Runtime Hardware Resources'}
+            </span>
+            <span className="hidden sm:inline text-[10px] text-stone-400 font-mono truncate">
+              {payload.round_id ?? 'latest'} · {updatedAt}
+            </span>
           </div>
-          <h4 className="text-xl md:text-2xl font-serif font-semibold text-[#1D1D1B]">
-            {isZh ? 'DGWM CUDA / CPU 实时采样' : 'DGWM CUDA / CPU Runtime Sample'}
-          </h4>
-          <p className="text-[11px] md:text-xs text-stone-500 leading-relaxed">
-            {isZh
-              ? `${payload.round_id ?? 'latest'} · ${payload.change_label ?? 'performance'} · ${updatedAt}`
-              : `${payload.round_id ?? 'latest'} · ${payload.change_label ?? 'performance'} · ${updatedAt}`}
-          </p>
+          <div className="flex flex-wrap gap-2 text-[10px] font-mono uppercase tracking-[0.08em]">
+            <StatusPill label={isLiveLoaded ? (isZh ? '最新采样' : 'latest sample') : (isZh ? '兜底采样' : 'fallback sample')} />
+            <StatusPill label={`${torchEngine.backend ?? accelerator.backend ?? 'cpu'} · ${torchEngine.dtype ?? 'auto'}`} />
+            <StatusPill label={`${isZh ? '调用' : 'calls'} ${accelerator.calls ?? 0} / CUDA ${accelerator.cuda_calls ?? 0}`} />
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 min-w-0 lg:min-w-[460px]">
-          <MetricTile
-            icon={<Gauge className="w-3.5 h-3.5" />}
-            label={isZh ? 'GPU 均值' : 'GPU Mean'}
-            value={`${formatNumber(gpuMean, 1)}%`}
-            detail={`${isZh ? '峰值' : 'Peak'} ${formatNumber(gpu.utilization_pct_max, 1)}%`}
-            tone="emerald"
+        <RunSummary payload={runPayload} isLiveLoaded={isRunLiveLoaded} isZh={isZh} />
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4 border-t border-[#1D1D1B]/15 pt-4">
+          <ResourceCell
+            icon={<HardDrive className="w-3.5 h-3.5" />}
+            label={isZh ? '设备' : 'Machine'}
+            value={machineClass}
           />
-          <MetricTile
-            icon={<Cpu className="w-3.5 h-3.5" />}
-            label={isZh ? 'CPU 均值' : 'CPU Mean'}
-            value={`${formatNumber(cpuMean, 1)}%`}
-            detail={`${isZh ? '峰值' : 'Peak'} ${formatNumber(system.cpu_total_pct_max, 1)}%`}
-            tone="ink"
-          />
-          <MetricTile
-            icon={<MemoryStick className="w-3.5 h-3.5" />}
-            label={isZh ? '内存占用' : 'RAM Used'}
-            value={`${formatNumber(memoryMean, 1)}%`}
-            detail={`${formatNumber(system.memory_available_gb_min, 1)} GB ${isZh ? '可用' : 'free'}`}
-            tone="blue"
-          />
-          <MetricTile
+          <ResourceCell
             icon={<Zap className="w-3.5 h-3.5" />}
+            label={isZh ? 'GPU' : 'GPU'}
+            value={`${hardware.gpu_count ?? 0} · ${compactGpuName(hardware.gpu_name ?? torchEngine.device_name)}`}
+          />
+          <ResourceCell
+            icon={<Gauge className="w-3.5 h-3.5" />}
+            label={isZh ? 'CUDA / Driver' : 'CUDA / Driver'}
+            value={`${hardware.cuda_version ?? 'N/A'} / ${hardware.gpu_driver_version ?? 'N/A'}`}
+          />
+          <ResourceCell
+            icon={<MemoryStick className="w-3.5 h-3.5" />}
+            label={isZh ? '显存' : 'VRAM'}
+            value={`${formatNumber(gpu.memory_used_gb_mean, 1)} / ${formatNumber(hardware.gpu_memory_gb, 0)} GB`}
+          />
+          <ResourceCell
+            icon={<Cpu className="w-3.5 h-3.5" />}
+            label={isZh ? 'CPU' : 'CPU'}
+            value={`${formatNumber(cpuMean, 1)}% · ${hardware.cpu_logical_threads ?? 0}T`}
+          />
+          <ResourceCell
+            icon={<MemoryStick className="w-3.5 h-3.5" />}
+            label={isZh ? '内存' : 'RAM'}
+            value={`${formatNumber(memoryMean, 1)}% / ${formatNumber(hardware.memory_gb, 0)} GB`}
+          />
+          <ResourceCell
+            icon={<Activity className="w-3.5 h-3.5" />}
             label={isZh ? '加速命中' : 'Accel Hit'}
             value={`${formatNumber(acceleratorHitRate, 1)}%`}
-            detail={`${torchEngine.backend ?? 'cpu'} · ${torchEngine.dtype ?? 'auto'}`}
-            tone="gold"
+          />
+          <ResourceCell
+            icon={<Gauge className="w-3.5 h-3.5" />}
+            label={isZh ? '耗时' : 'Elapsed'}
+            value={formatDuration(summary.elapsed_seconds)}
           />
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-5">
-        <div className="lg:col-span-5 space-y-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <HardwareLine label={isZh ? '显卡' : 'GPU'} value={hardware.gpu_name ?? torchEngine.device_name ?? 'N/A'} />
-            <HardwareLine label={isZh ? '处理器' : 'CPU'} value={hardware.cpu_name ?? 'N/A'} />
-            <HardwareLine
-              label={isZh ? '显存' : 'VRAM'}
-              value={`${formatNumber(gpu.memory_used_gb_mean, 2)} / ${formatNumber(hardware.gpu_memory_gb, 0)} GB`}
-            />
-            <HardwareLine
-              label={isZh ? '系统内存' : 'System RAM'}
-              value={`${formatNumber(system.memory_used_pct_mean, 1)}% / ${formatNumber(hardware.memory_gb, 0)} GB`}
-            />
-          </div>
-
-          <div className="flex flex-wrap gap-2 text-[10px] font-mono uppercase tracking-[0.08em]">
-            <span className="border border-[#1D1D1B]/10 rounded bg-stone-50 px-2 py-1 text-stone-600">
-              {isLiveLoaded ? (isZh ? '已读取最新采样' : 'Latest sample loaded') : (isZh ? '使用本地兜底采样' : 'Fallback sample')}
-            </span>
-            <span className="border border-[#1D1D1B]/10 rounded bg-stone-50 px-2 py-1 text-stone-600">
-              {isZh ? '样本数' : 'Samples'} {gpu.sample_count ?? system.sample_count ?? 0}
-            </span>
-            <span className="border border-[#1D1D1B]/10 rounded bg-stone-50 px-2 py-1 text-stone-600">
-              {isZh ? '耗时' : 'Elapsed'} {formatDuration(summary.elapsed_seconds)}
-            </span>
-          </div>
-        </div>
-
-        <div className="lg:col-span-7 space-y-4">
-          <ProgressRow
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <MiniBar
             label={isZh ? 'GPU 利用率 / 目标' : 'GPU Utilization / Target'}
             value={gpuMean}
             target={gpuTarget}
             valueLabel={`${formatNumber(gpuMean, 1)}% / ${formatNumber(gpuTarget, 0)}%`}
-            barClassName="bg-emerald-600"
           />
-          <ProgressRow
-            label={isZh ? 'CPU 总利用率' : 'CPU Total Utilization'}
-            value={cpuMean}
-            valueLabel={`${formatNumber(cpuMean, 1)}%`}
-            barClassName="bg-[#1D1D1B]"
+          <MiniBar
+            label={isZh ? '加速器时间占比' : 'Accelerator Time Share'}
+            value={acceleratorTimeShare}
+            valueLabel={`${formatNumber(acceleratorTimeShare, 1)}%`}
+            semantic="accelerator"
           />
-          <ProgressRow
-            label={isZh ? '内存占用' : 'Memory Used'}
-            value={memoryMean}
-            valueLabel={`${formatNumber(memoryMean, 1)}%`}
-            barClassName="bg-blue-600"
-          />
-          <ProgressRow
-            label={isZh ? 'Tensor 加速命中率' : 'Tensor Acceleration Hit Rate'}
-            value={acceleratorHitRate}
-            valueLabel={`${formatNumber(acceleratorHitRate, 1)}%`}
-            barClassName="bg-[#A58261]"
+          <MiniBar
+            label={isZh ? 'Tensor 常驻比例' : 'Tensor Residency'}
+            value={tensorShare}
+            valueLabel={`${formatNumber(tensorShare, 1)}%`}
+            semantic="accelerator"
           />
         </div>
       </div>
@@ -267,79 +340,118 @@ export default function SystemPerformancePanel() {
   );
 }
 
-function MetricTile({
-  icon,
-  label,
-  value,
-  detail,
-  tone,
+function RunSummary({
+  payload,
+  isLiveLoaded,
+  isZh,
 }: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  detail: string;
-  tone: 'emerald' | 'ink' | 'blue' | 'gold';
+  payload: QuantRunPayload;
+  isLiveLoaded: boolean;
+  isZh: boolean;
 }) {
-  const toneClass = {
-    emerald: 'text-emerald-700',
-    ink: 'text-[#1D1D1B]',
-    blue: 'text-blue-700',
-    gold: 'text-[#A58261]',
-  }[tone];
+  const results = payload.results?.slice(0, 2) ?? [];
 
   return (
-    <div className="border border-[#1D1D1B]/10 bg-[#FFFFFF] rounded p-3 min-w-0">
-      <div className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] ${toneClass}`}>
-        {icon}
-        <span className="truncate">{label}</span>
+    <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_repeat(2,minmax(0,1fr))] gap-4 border-t border-[#1D1D1B]/15 pt-4">
+      <div className="min-w-0">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#A58261] font-bold min-w-0">
+            <Gauge className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">{isZh ? '本次模型结果' : 'Current Quant Run'}</span>
+          </div>
+          <span className="shrink-0 border border-[#1D1D1B]/15 bg-white rounded px-2 py-0.5 text-[10px] font-mono uppercase tracking-widest text-stone-500">
+            {isLiveLoaded ? (isZh ? '已接入' : 'live') : (isZh ? '预览' : 'preview')}
+          </span>
+        </div>
+        <div className="font-serif text-lg text-[#1D1D1B] mt-1 truncate">{payload.workload?.name ?? 'DGWM validation'}</div>
+        <div className="font-mono text-[10px] text-stone-400 mt-1 truncate">
+          {payload.run_date ?? '-'} · {payload.workload?.model_path ?? 'PyTorch accelerator pipeline'}
+        </div>
       </div>
-      <div className="font-mono text-xl font-bold text-[#1D1D1B] mt-2">{value}</div>
-      <div className="text-[10px] text-stone-500 mt-1 truncate">{detail}</div>
+
+      {results.map((result) => (
+        <div key={result.index_key ?? result.label} className="border border-[#1D1D1B]/10 bg-white rounded px-4 py-3 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-stone-500 truncate">
+              {result.label}
+            </span>
+            <span className="font-mono text-[10px] text-stone-400 shrink-0">{result.trade_date}</span>
+          </div>
+          <div className="grid grid-cols-3 gap-3 mt-2">
+            <Metric label={isZh ? '模型' : 'Model'} value={formatSignedPercent(result.model_return_pct)} />
+            <Metric label="High-Flyer" value={formatSignedPercent(result.highflyer_return_pct)} />
+            <Metric label="AQR" value={formatSignedPercent(result.aqr_return_pct)} />
+          </div>
+          <div className="font-mono text-[10px] text-stone-500 mt-2 truncate">
+            {isZh ? '当前回撤' : 'Drawdown'} {formatSignedPercent(result.model_drawdown_pct)} ·{' '}
+            {isZh ? '超幻方' : 'vs HF'} {formatSignedPercent(result.highflyer_excess_return_pct)}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
-function HardwareLine({ label, value }: { label: string; value: string }) {
+function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border border-[#1D1D1B]/10 bg-stone-50/60 rounded px-3 py-2 min-w-0">
-      <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-stone-500">
-        <HardDrive className="w-3 h-3" />
-        <span>{label}</span>
+    <div className="min-w-0">
+      <div className="font-sans text-[9px] font-bold uppercase tracking-[0.08em] text-stone-400 truncate">{label}</div>
+      <div className="font-mono text-[12px] text-[#1D1D1B] font-bold tabular-nums whitespace-nowrap">{value}</div>
+    </div>
+  );
+}
+
+function StatusPill({ label }: { label: string }) {
+  return (
+    <span className="inline-flex h-9 min-w-[88px] items-center justify-center border border-[#1D1D1B]/15 bg-white rounded px-3 text-stone-500">
+      {label}
+    </span>
+  );
+}
+
+function ResourceCell({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="min-w-0">
+      <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[#A58261]">
+        {icon}
+        <span className="truncate">{label}</span>
       </div>
       <div className="font-mono text-[11px] text-[#1D1D1B] font-bold mt-1 truncate">{value}</div>
     </div>
   );
 }
 
-function ProgressRow({
+function MiniBar({
   label,
   value,
   target,
   valueLabel,
-  barClassName,
+  semantic = 'utilization',
 }: {
   label: string;
   value: number;
   target?: number;
   valueLabel: string;
-  barClassName: string;
+  semantic?: 'utilization' | 'accelerator';
 }) {
   const width = clampPercent(value);
   const targetWidth = target === undefined ? null : clampPercent(target);
+  const fillStyle = {
+    width: `${width}%`,
+    minWidth: width > 0 ? '4px' : undefined,
+    backgroundColor: semanticBarColor(width, semantic),
+  };
 
   return (
     <div className="space-y-1.5">
-      <div className="flex items-center justify-between gap-3 text-[11px] font-sans">
-        <span className="font-bold text-stone-700">{label}</span>
-        <span className="font-mono text-stone-600">{valueLabel}</span>
+      <div className="flex items-center justify-between gap-2 text-[10px] font-sans">
+        <span className="font-semibold text-[rgba(0,0,0,0.32)] truncate">{label}</span>
+        <span className="font-mono font-bold text-[rgba(0,0,0,0.92)] shrink-0 tabular-nums">{valueLabel}</span>
       </div>
-      <div className="relative h-2.5 bg-stone-100 rounded overflow-hidden">
-        <div className={`absolute left-0 top-0 h-full ${barClassName}`} style={{ width: `${width}%` }} />
+      <div className="relative h-[4px] bg-[rgba(0,0,0,0.10)] rounded overflow-hidden">
+        <div className="absolute left-0 top-0 h-full" style={fillStyle} />
         {targetWidth !== null && (
-          <div
-            className="absolute top-0 bottom-0 w-px bg-[#1D1D1B]/55"
-            style={{ left: `${targetWidth}%` }}
-          />
+          <div className="absolute top-0 bottom-0 w-px bg-[#1D1D1B]/45" style={{ left: `${targetWidth}%` }} />
         )}
       </div>
     </div>
@@ -351,9 +463,23 @@ function clampPercent(value: number | undefined | null) {
   return Math.max(0, Math.min(100, value));
 }
 
+function semanticBarColor(value: number, semantic: 'utilization' | 'accelerator') {
+  if (semantic === 'accelerator' && value >= 99.5) return '#166534';
+  if (value < 30) return 'rgba(0,0,0,0.18)';
+  if (value < 80) return '#1F73D8';
+  if (value > 90) return '#B45309';
+  return '#1F73D8';
+}
+
 function formatNumber(value: number | undefined | null, digits = 1) {
   if (typeof value !== 'number' || !Number.isFinite(value)) return '0';
   return value.toFixed(digits);
+}
+
+function formatSignedPercent(value: number | undefined | null) {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return '0.00%';
+  const prefix = value > 0 ? '+' : '';
+  return `${prefix}${value.toFixed(2)}%`;
 }
 
 function formatDuration(value: number | undefined | null) {
@@ -373,4 +499,23 @@ function formatDateTime(value: string | undefined, isZh: boolean) {
     hour: '2-digit',
     minute: '2-digit',
   });
+}
+
+function compactGpuName(value: string | undefined) {
+  if (!value) return 'N/A';
+  return value.replace('NVIDIA GeForce ', '').replace(' SUPER', 'S');
+}
+
+function classifyMachine(
+  hardware: NonNullable<SystemPerformancePayload['hardware']>,
+  torchEngine: NonNullable<NonNullable<SystemPerformancePayload['utilization_summary']>['torch_engine']>,
+) {
+  const family = `${hardware.accelerator_family ?? ''}`.toLowerCase();
+  const gpu = `${hardware.gpu_name ?? torchEngine.device_name ?? ''}`.toLowerCase();
+  const machine = `${hardware.platform_machine ?? ''}`.toLowerCase();
+  const system = `${hardware.platform_system ?? ''}`.toLowerCase();
+  if (family.includes('nvidia') || gpu.includes('nvidia') || gpu.includes('rtx')) return 'NVIDIA CUDA workstation';
+  if (family.includes('mps') || (system === 'darwin' && (machine === 'arm64' || machine === 'aarch64'))) return 'Apple Silicon MPS';
+  if (family.includes('arm') || machine === 'arm64' || machine === 'aarch64') return 'ARM server';
+  return 'CPU workstation';
 }

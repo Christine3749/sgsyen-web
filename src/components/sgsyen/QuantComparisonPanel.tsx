@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Activity, CalendarDays, RefreshCcw, ShieldCheck, TrendingUp } from 'lucide-react';
+import { Activity, CalendarDays, Cpu, Gauge, HardDrive, MemoryStick, RefreshCcw, ShieldCheck, TrendingUp, Zap } from 'lucide-react';
 import { useLocale } from '../../context/LocaleContext';
 
 type QuantRow = {
@@ -56,6 +56,63 @@ type QuantHistoryIndex = {
   items: QuantHistoryItem[];
 };
 
+type QuantRunReport = {
+  run_date?: string;
+  generated_at?: string;
+  source?: {
+    performance_report?: string;
+  };
+  workload?: {
+    name?: string;
+    validation_scope?: string;
+    training_sample?: string;
+    rank_mode?: string;
+    model_path?: string;
+  };
+  compute?: {
+    updated_at?: string;
+    hardware?: {
+      cpu_name?: string;
+      cpu_logical_threads?: number;
+      memory_gb?: number;
+      gpu_name?: string;
+      gpu_memory_gb?: number;
+      gpu_count?: number;
+      gpu_driver_version?: string;
+      cuda_version?: string;
+      platform_system?: string;
+      platform_machine?: string;
+      accelerator_family?: string;
+    };
+    utilization_summary?: {
+      elapsed_seconds?: number | null;
+      target_gpu_utilization_pct?: number;
+      gpu?: {
+        utilization_pct_mean?: number;
+        utilization_pct_max?: number;
+        memory_used_gb_mean?: number;
+      };
+      system?: {
+        cpu_total_pct_mean?: number;
+        memory_used_pct_mean?: number;
+      };
+      torch_engine?: {
+        backend?: string;
+        device?: string;
+        dtype?: string;
+      };
+      accelerator?: {
+        accelerator_hit_rate?: number;
+        accelerator_time_share?: number;
+        accelerator_input_element_share?: number;
+        accelerator_output_element_share?: number;
+        cuda_calls?: number;
+        calls?: number;
+      };
+    };
+  };
+};
+
 const INDEX_ORDER = ['hs300', 'csi500'] as const;
 
 export default function QuantComparisonPanel() {
@@ -65,6 +122,7 @@ export default function QuantComparisonPanel() {
   const [selected, setSelected] = useState<'hs300' | 'csi500'>('hs300');
   const [selectedDate, setSelectedDate] = useState('');
   const [history, setHistory] = useState<QuantHistoryIndex | null>(null);
+  const [runReport, setRunReport] = useState<QuantRunReport | null>(null);
   const [snapshotPath, setSnapshotPath] = useState('/quant/latest-comparison.json');
   const [loading, setLoading] = useState(true);
 
@@ -110,6 +168,26 @@ export default function QuantComparisonPanel() {
     boot();
     return () => {
       cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadRunReport = async () => {
+      try {
+        const res = await fetch(`/quant/runs/latest.json?t=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = (await res.json()) as QuantRunReport;
+        if (!cancelled) setRunReport(data);
+      } catch {
+        if (!cancelled) setRunReport(null);
+      }
+    };
+    loadRunReport();
+    const timer = window.setInterval(loadRunReport, 60_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
     };
   }, []);
 
@@ -168,7 +246,7 @@ export default function QuantComparisonPanel() {
   }, [current, isZh, payload?.aqr_ticker, selectedRow]);
 
   return (
-    <section className="px-5 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#FFFFFF] overflow-hidden">
+    <section className="px-5 md:px-12 lg:px-20 py-12 border-b border-[#1D1D1B]/10 bg-[#FFFFFF] overflow-visible">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
         <div className="min-w-0">
           <span className="text-[10px] font-sans font-bold uppercase tracking-[0.24em] text-[#A58261]">
@@ -305,6 +383,7 @@ export default function QuantComparisonPanel() {
               {isZh ? '刷新' : 'Updated'} {fmtTime(payload?.generated_at)}
             </span>
           </div>
+          <QuantHardwareFootnote runReport={runReport} isZh={isZh} />
           <div className="text-[10px] font-sans leading-relaxed text-zinc-400 border-l-2 border-[#A58261]/30 pl-3">
             {isZh
               ? `AQR 使用 ${payload?.aqr_ticker ?? '公开基金'} 的公开基金净值作为代理值，不等同于 AQR 私募策略真实账本。`
@@ -403,6 +482,172 @@ function QuantFallback({ loading, isZh }: { loading: boolean; isZh: boolean }) {
   );
 }
 
+function QuantHardwareFootnote({ runReport, isZh }: { runReport: QuantRunReport | null; isZh: boolean }) {
+  const compute = runReport?.compute;
+  const hardware = compute?.hardware;
+  const summary = compute?.utilization_summary;
+  if (!hardware && !summary) return null;
+
+  const gpuName = compactHardwareName(hardware?.gpu_name);
+  const cpuName = compactCpuName(hardware?.cpu_name);
+  const accelerator = hardware?.accelerator_family || summary?.torch_engine?.backend || 'cpu';
+  const backend = summary?.torch_engine?.backend || accelerator;
+  const dtype = summary?.torch_engine?.dtype || 'auto';
+  const gpuUtil = summary?.gpu?.utilization_pct_mean;
+  const gpuMax = summary?.gpu?.utilization_pct_max;
+  const cpuUtil = summary?.system?.cpu_total_pct_mean;
+  const hitRate = typeof summary?.accelerator?.accelerator_hit_rate === 'number' ? summary.accelerator.accelerator_hit_rate * 100 : null;
+  const tensorShare = Math.max(
+    summary?.accelerator?.accelerator_input_element_share ?? 0,
+    summary?.accelerator?.accelerator_output_element_share ?? 0,
+  ) * 100;
+  const cudaCalls = summary?.accelerator?.cuda_calls ?? summary?.accelerator?.calls;
+  const elapsed = summary?.elapsed_seconds;
+  const source = runReport?.source?.performance_report;
+  const workload = runReport?.workload;
+
+  const footnoteText = (
+    <>
+      <span>
+        {gpuName ? `${hardware?.gpu_count ?? 1}× ${gpuName}` : classifyComputeDevice(hardware)}
+        {hardware?.cuda_version ? ` · CUDA ${hardware.cuda_version}` : ''}
+        {hardware?.gpu_driver_version ? ` · Driver ${hardware.gpu_driver_version}` : ''}
+        {cpuName ? ` · ${cpuName}` : ''}
+        {hardware?.cpu_logical_threads ? ` · ${hardware.cpu_logical_threads}T` : ''}
+        {hardware?.memory_gb ? ` · RAM ${formatOneDecimal(hardware.memory_gb)}GB` : ''}
+        {hardware?.gpu_memory_gb ? ` · VRAM ${formatOneDecimal(hardware.gpu_memory_gb)}GB` : ''}
+      </span>
+      <span>
+        {' · '}
+        {isZh ? '计算后端' : 'Backend'} {backend}/{dtype}
+        {cudaCalls !== undefined ? ` · CUDA calls ${cudaCalls}` : ''}
+        {hitRate !== null ? ` · ${isZh ? '加速命中' : 'Accel hit'} ${formatOneDecimal(hitRate)}%` : ''}
+        {gpuUtil !== undefined ? ` · GPU ${formatOneDecimal(gpuUtil)}%` : ''}
+        {gpuMax !== undefined ? `/${formatOneDecimal(gpuMax)}% max` : ''}
+        {cpuUtil !== undefined ? ` · CPU ${formatOneDecimal(cpuUtil)}%` : ''}
+        {elapsed !== null && elapsed !== undefined ? ` · ${isZh ? '耗时' : 'Elapsed'} ${formatShortDuration(elapsed)}` : ''}
+      </span>
+      {source ? (
+        <span className="hidden md:inline">
+          {' · '}
+          {isZh ? '资源报告' : 'Report'} {source}
+        </span>
+      ) : null}
+    </>
+  );
+
+  return (
+    <div className="relative group -my-2 py-2 outline-none" tabIndex={0}>
+      <div className="pointer-events-none absolute left-6 top-full z-[9999] mt-2 w-[min(560px,calc(100vw-48px))] -translate-y-1 opacity-0 delay-0 transition-all duration-150 group-hover:delay-500 group-hover:opacity-100 group-hover:-translate-y-0 group-focus:delay-500 group-focus:opacity-100 group-focus:-translate-y-0">
+        <div className="max-h-[540px] overflow-hidden border border-[#1D1D1B]/20 bg-white/80 backdrop-blur-2xl shadow-[0_18px_54px_rgba(29,29,27,0.14)] rounded px-4 pt-3 pb-5">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-1 leading-none">
+            <div className="text-[9px] font-sans font-bold uppercase tracking-[0.18em] text-[rgba(0,0,0,0.38)]">
+              {isZh ? '算力资源快照' : 'Compute Resource Snapshot'}
+            </div>
+            <div className="text-[9px] font-mono uppercase tracking-widest text-[rgba(0,0,0,0.22)]">
+              {runReport?.run_date ?? '-'} · {backend}/{dtype}
+            </div>
+          </div>
+
+          <div className="mt-2 border-t border-[#1D1D1B]/10 bg-white/70 pt-2">
+            <div className="font-serif text-[15px] leading-5 font-semibold text-[#1E232A] truncate">
+              {workload?.name ?? (isZh ? '量化验证任务' : 'Quant Validation Run')}
+            </div>
+            <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-[rgba(0,0,0,0.22)] truncate">
+              {workload?.model_path ?? 'PyTorch accelerator pipeline'}
+              {workload?.rank_mode ? ` · ${workload.rank_mode}` : ''}
+              {workload?.training_sample ? ` · ${workload.training_sample}` : ''}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3.5 pt-3">
+            <HoverMetric icon={<HardDrive className="h-3 w-3" />} label={isZh ? '设备' : 'Device'} value={gpuName || classifyComputeDevice(hardware)} />
+            <HoverMetric icon={<Gauge className="h-3 w-3" />} label="CUDA / Driver" value={`${hardware?.cuda_version ?? 'N/A'} / ${hardware?.gpu_driver_version ?? 'N/A'}`} />
+            <HoverMetric icon={<MemoryStick className="h-3 w-3" />} label={isZh ? '资源' : 'Resource'} value={`${formatOneDecimal(summary?.gpu?.memory_used_gb_mean ?? 0)}GB VRAM · ${formatOneDecimal(summary?.system?.memory_used_pct_mean ?? 0)}% RAM`} />
+            <HoverMetric icon={<Activity className="h-3 w-3" />} label={isZh ? '命中 / 耗时' : 'Hit / Time'} value={`${hitRate !== null ? `${formatOneDecimal(hitRate)}%` : 'N/A'} · ${elapsed !== null && elapsed !== undefined ? formatShortDuration(elapsed) : 'N/A'}`} />
+            <HoverMetric icon={<Cpu className="h-3 w-3" />} label="CPU" value={`${compactCpuName(hardware?.cpu_name) || 'CPU'} · ${hardware?.cpu_logical_threads ?? 0}T`} />
+            <HoverMetric icon={<Zap className="h-3 w-3" />} label={isZh ? 'GPU 峰值' : 'GPU Max'} value={`${formatOneDecimal(gpuMax ?? 0)}%`} />
+            <HoverMetric icon={<Activity className="h-3 w-3" />} label="CUDA Calls" value={`${cudaCalls ?? 0}`} />
+            <HoverMetric icon={<HardDrive className="h-3 w-3" />} label={isZh ? '资源报告' : 'Report'} value={source ?? '/system/performance/latest.json'} valueTone="aux" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 border-t border-[rgba(0,0,0,0.05)] pt-3">
+            <HoverBar label={isZh ? 'GPU 利用率 / 目标' : 'GPU Utilization / Target'} value={gpuUtil ?? 0} target={summary?.target_gpu_utilization_pct ?? 60} />
+            <HoverBar label={isZh ? '加速器时间占比' : 'Accelerator Time Share'} value={(summary?.accelerator?.accelerator_time_share ?? 0) * 100} semantic="accelerator" />
+            <HoverBar label={isZh ? 'CPU 利用率' : 'CPU Utilization'} value={cpuUtil ?? 0} />
+            <HoverBar label={isZh ? 'Tensor 常驻比例' : 'Tensor Residency'} value={tensorShare} semantic="accelerator" />
+          </div>
+        </div>
+      </div>
+
+      <div className="text-[10px] font-sans leading-relaxed text-[rgba(0,0,0,0.22)] border-l-2 border-[rgba(0,0,0,0.10)] pl-3 cursor-default">
+        <span className="font-bold text-[rgba(0,0,0,0.38)]">
+          {isZh ? '硬件资源' : 'Hardware Resources'}
+        </span>
+        {' · '}
+        {footnoteText}
+      </div>
+    </div>
+  );
+}
+
+function HoverMetric({
+  icon,
+  label,
+  value,
+  valueTone = 'value',
+}: {
+  icon?: React.ReactNode;
+  label: string;
+  value: string;
+  valueTone?: 'value' | 'aux';
+}) {
+  return (
+    <div className="min-w-0">
+      <div className="flex items-center gap-1.5 text-[10px] font-sans font-bold uppercase tracking-widest text-[rgba(0,0,0,0.38)] truncate">
+        {icon ? <span className="shrink-0 text-[rgba(0,0,0,0.38)]">{icon}</span> : null}
+        <span className="truncate">{label}</span>
+      </div>
+      <div className={`mt-0.5 text-[12px] font-mono font-bold truncate ${valueTone === 'aux' ? 'text-[rgba(0,0,0,0.22)]' : 'text-[rgba(0,0,0,0.82)]'}`}>{value}</div>
+    </div>
+  );
+}
+
+function HoverBar({
+  label,
+  value,
+  target,
+  semantic = 'utilization',
+}: {
+  label: string;
+  value: number;
+  target?: number;
+  semantic?: 'utilization' | 'accelerator';
+}) {
+  const width = boundedPercent(value);
+  const targetWidth = target === undefined ? null : boundedPercent(target);
+  const fillColor = semanticBarColor(width, semantic);
+  const fillStyle = {
+    width: `${width}%`,
+    minWidth: width > 0 ? '4px' : undefined,
+    backgroundColor: fillColor,
+  };
+  return (
+    <div className="space-y-0.5">
+      <div className="flex items-center justify-between gap-2 text-[11px] font-sans">
+        <span className="font-semibold text-[rgba(0,0,0,0.32)] truncate">{label}</span>
+        <span className="font-mono font-bold text-[rgba(0,0,0,0.92)] shrink-0">{formatOneDecimal(value)}%</span>
+      </div>
+      <div className="relative h-[4px] bg-[rgba(0,0,0,0.10)] rounded-full overflow-hidden">
+        <div className="absolute left-0 top-0 h-full" style={fillStyle} />
+        {targetWidth !== null ? (
+          <div className="absolute top-0 bottom-0 w-px bg-[rgba(0,0,0,0.38)]" style={{ left: `${targetWidth}%` }} />
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 function QuantSvgChart({
   title,
   rows,
@@ -478,6 +723,54 @@ function metricHint(label: string, isZh: boolean) {
   if (label.includes('AQR')) return isZh ? 'AQR 公开基金代理值。' : 'AQR public-fund proxy.';
   if (label.includes('回撤') || label.includes('Max DD')) return isZh ? '当前显示交易日的模型回撤。' : 'Model drawdown on the selected trading date.';
   return isZh ? '当前模型在所选日期的累计收益。' : 'Current model cumulative return on the selected date.';
+}
+
+function compactHardwareName(value?: string) {
+  if (!value) return '';
+  return value.replace('NVIDIA GeForce ', '').replace(' SUPER', 'S').replace(/\s+/g, ' ').trim();
+}
+
+function compactCpuName(value?: string) {
+  if (!value) return '';
+  return value
+    .replace('Intel(R) Core(TM) ', 'Intel ')
+    .replace('AMD Ryzen ', 'Ryzen ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function classifyComputeDevice(hardware?: QuantRunReport['compute']['hardware']) {
+  const family = `${hardware?.accelerator_family ?? ''}`.toLowerCase();
+  const machine = `${hardware?.platform_machine ?? ''}`.toLowerCase();
+  const system = `${hardware?.platform_system ?? ''}`.toLowerCase();
+  if (family.includes('mps') || (system === 'darwin' && (machine === 'arm64' || machine === 'aarch64'))) return 'Apple Silicon MPS';
+  if (family.includes('arm') || machine === 'arm64' || machine === 'aarch64') return 'ARM server';
+  if (family.includes('cuda')) return 'NVIDIA CUDA';
+  return 'CPU';
+}
+
+function formatOneDecimal(value: number) {
+  if (!Number.isFinite(value)) return '0.0';
+  return value.toFixed(1);
+}
+
+function boundedPercent(value: number) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(100, value));
+}
+
+function semanticBarColor(value: number, semantic: 'utilization' | 'accelerator') {
+  if (semantic === 'accelerator' && value >= 99.5) return '#166534';
+  if (value < 30) return 'rgba(0,0,0,0.18)';
+  if (value < 80) return '#1F73D8';
+  if (value > 90) return '#B45309';
+  return '#1F73D8';
+}
+
+function formatShortDuration(value: number) {
+  if (!Number.isFinite(value)) return '0s';
+  if (value < 60) return `${value.toFixed(1)}s`;
+  return `${(value / 60).toFixed(1)}m`;
 }
 
 function fmtDate(value?: string) {
