@@ -1,9 +1,9 @@
 {
   "schema": "sgsyen.system.performance.v1",
-  "updated_at": "2026-06-21T23:43:28+08:00",
-  "source": "DGWM quant_fast_run",
-  "round_id": "quant-2026-06-19",
-  "change_label": "snapshot 2026-06-19 web export",
+  "updated_at": "2026-06-22T01:10:09+08:00",
+  "source": "DGWM quant_hs300_csi500_weekly_e2e",
+  "round_id": "post-2026-06-18-v2",
+  "change_label": "fill real trading dates after 2026-06-12, excluding market holidays",
   "hardware": {
     "cpu_name": "Intel(R) Core(TM) i9-14900KF",
     "cpu_logical_threads": 32,
@@ -20,30 +20,30 @@
     "accelerator_family": "nvidia-cuda"
   },
   "utilization_summary": {
-    "round_id": "quant-2026-06-19",
-    "change_label": "snapshot 2026-06-19 web export",
-    "elapsed_seconds": 5.013912199996412,
+    "round_id": "post-2026-06-18-v2",
+    "change_label": "fill real trading dates after 2026-06-12, excluding market holidays",
+    "elapsed_seconds": 1844.6853409999749,
     "status": "gpu_below_target",
     "target_gpu_utilization_pct": 60.0,
     "gpu": {
       "available": true,
-      "sample_count": 5,
-      "utilization_pct_mean": 5.8,
-      "utilization_pct_max": 14.0,
-      "target_gap_pct": 54.2,
-      "memory_used_gb_mean": 5.3955078125,
-      "memory_used_gb_max": 5.4072265625,
-      "power_watts_mean": 39.384,
-      "power_watts_max": 47.67
+      "sample_count": 872,
+      "utilization_pct_mean": 22.619266055045873,
+      "utilization_pct_max": 76.0,
+      "target_gap_pct": 37.38073394495413,
+      "memory_used_gb_mean": 5.592079092603211,
+      "memory_used_gb_max": 6.119140625,
+      "power_watts_mean": 17.085802752293578,
+      "power_watts_max": 51.69
     },
     "system": {
       "available": true,
-      "sample_count": 5,
-      "cpu_total_pct_mean": 11.916415432915995,
-      "cpu_total_pct_max": 20.185275475377864,
-      "memory_used_pct_mean": 47.95270446008557,
-      "memory_used_pct_max": 48.056966862490604,
-      "memory_available_gb_min": 49.77049255371094
+      "sample_count": 892,
+      "cpu_total_pct_mean": 14.208177001823557,
+      "cpu_total_pct_max": 88.37209302325581,
+      "memory_used_pct_mean": 57.43025270524814,
+      "memory_used_pct_max": 76.17164220788375,
+      "memory_available_gb_min": 22.83172607421875
     },
     "torch_engine": {
       "backend": "cuda",
@@ -54,17 +54,36 @@
     },
     "accelerator": {
       "backend": "cuda",
-      "calls": 2,
-      "accelerator_calls": 2,
-      "cuda_calls": 2,
+      "calls": 201818,
+      "accelerator_calls": 692,
+      "cuda_calls": 692,
       "fallback_calls": 0,
-      "accelerator_hit_rate": 1.0,
-      "accelerator_time_share": 1.0,
-      "accelerator_input_element_share": 1.0,
-      "accelerator_output_element_share": 1.0
+      "accelerator_hit_rate": 0.003428831917866593,
+      "accelerator_time_share": 0.04737688251843551,
+      "accelerator_input_element_share": 0.08252387008140824,
+      "accelerator_output_element_share": 0.46135705140670097,
+      "accelerator_seconds": 5.027973701828159,
+      "profiled_seconds": 106.12715388927609
+    },
+    "latest_quant_result": {
+      "snapshot_date": "2026-06-19",
+      "trade_date": "2026-06-18",
+      "indices": [
+        "hs300",
+        "csi500"
+      ],
+      "validation_window": {
+        "start": "2025-12-05",
+        "end": "2026-06-18"
+      },
+      "reference_disclosure_window": {
+        "start": "2025-12-05",
+        "end": "2026-06-12"
+      }
     },
     "next_actions": [
-      "increase_tensor_residency_and_batch_control_validation"
+      "increase_tensor_residency_and_batch_control_validation",
+      "raise_cuda_call_share_for_bellman_control_and_reward_heads"
     ]
   }
 }
