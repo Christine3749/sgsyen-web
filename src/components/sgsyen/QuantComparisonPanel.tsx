@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Activity, CalendarDays, Cpu, Gauge, HardDrive, MemoryStick, RefreshCcw, ShieldCheck, TrendingUp, Zap } from 'lucide-react';
+import { Activity, CalendarDays, Clock, Cpu, Gauge, HardDrive, MemoryStick, RefreshCcw, ShieldCheck, TrendingUp, Zap } from 'lucide-react';
 import { useLocale } from '../../context/LocaleContext';
 
 type QuantRow = {
@@ -525,7 +525,7 @@ function QuantHardwareFootnote({ runReport, isZh }: { runReport: QuantRunReport 
         {gpuUtil !== undefined ? ` · GPU ${formatOneDecimal(gpuUtil)}%` : ''}
         {gpuMax !== undefined ? `/${formatOneDecimal(gpuMax)}% max` : ''}
         {cpuUtil !== undefined ? ` · CPU ${formatOneDecimal(cpuUtil)}%` : ''}
-        {elapsed !== null && elapsed !== undefined ? ` · ${isZh ? '耗时' : 'Elapsed'} ${formatShortDuration(elapsed)}` : ''}
+        {elapsed !== null && elapsed !== undefined ? ` · ${isZh ? '计算时间' : 'Compute time'} ${formatShortDuration(elapsed)}` : ''}
       </span>
       {source ? (
         <span className="hidden md:inline">
@@ -564,10 +564,11 @@ function QuantHardwareFootnote({ runReport, isZh }: { runReport: QuantRunReport 
             <HoverMetric icon={<HardDrive className="h-3 w-3" />} label={isZh ? '设备' : 'Device'} value={gpuName || classifyComputeDevice(hardware)} />
             <HoverMetric icon={<Gauge className="h-3 w-3" />} label="CUDA / Driver" value={`${hardware?.cuda_version ?? 'N/A'} / ${hardware?.gpu_driver_version ?? 'N/A'}`} />
             <HoverMetric icon={<MemoryStick className="h-3 w-3" />} label={isZh ? '资源' : 'Resource'} value={`${formatOneDecimal(summary?.gpu?.memory_used_gb_mean ?? 0)}GB VRAM · ${formatOneDecimal(summary?.system?.memory_used_pct_mean ?? 0)}% RAM`} />
-            <HoverMetric icon={<Activity className="h-3 w-3" />} label={isZh ? '命中 / 耗时' : 'Hit / Time'} value={`${hitRate !== null ? `${formatOneDecimal(hitRate)}%` : 'N/A'} · ${elapsed !== null && elapsed !== undefined ? formatShortDuration(elapsed) : 'N/A'}`} />
+            <HoverMetric icon={<Clock className="h-3 w-3" />} label={isZh ? '计算时间' : 'Compute Time'} value={elapsed !== null && elapsed !== undefined ? formatShortDuration(elapsed) : 'N/A'} />
             <HoverMetric icon={<Cpu className="h-3 w-3" />} label="CPU" value={`${compactCpuName(hardware?.cpu_name) || 'CPU'} · ${hardware?.cpu_logical_threads ?? 0}T`} />
             <HoverMetric icon={<Zap className="h-3 w-3" />} label={isZh ? 'GPU 峰值' : 'GPU Max'} value={`${formatOneDecimal(gpuMax ?? 0)}%`} />
             <HoverMetric icon={<Activity className="h-3 w-3" />} label="CUDA Calls" value={`${cudaCalls ?? 0}`} />
+            <HoverMetric icon={<Gauge className="h-3 w-3" />} label={isZh ? '加速命中' : 'Accel Hit'} value={hitRate !== null ? `${formatOneDecimal(hitRate)}%` : 'N/A'} />
             <HoverMetric icon={<HardDrive className="h-3 w-3" />} label={isZh ? '资源报告' : 'Report'} value={source ?? '/system/performance/latest.json'} valueTone="aux" />
           </div>
 
