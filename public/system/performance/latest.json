@@ -1,9 +1,9 @@
 {
   "schema": "sgsyen.system.performance.v1",
-  "updated_at": "2026-06-22T01:10:09+08:00",
-  "source": "DGWM quant_hs300_csi500_weekly_e2e",
-  "round_id": "post-2026-06-18-v2",
-  "change_label": "fill real trading dates after 2026-06-12, excluding market holidays",
+  "updated_at": "2026-06-22T22:25:26+08:00",
+  "source": "DGWM quant_fast_run",
+  "round_id": "sgsyen-2026-06-22",
+  "change_label": "SGSYEN daily run 2026-06-22",
   "hardware": {
     "cpu_name": "Intel(R) Core(TM) i9-14900KF",
     "cpu_logical_threads": 32,
@@ -20,70 +20,70 @@
     "accelerator_family": "nvidia-cuda"
   },
   "utilization_summary": {
-    "round_id": "post-2026-06-18-v2",
-    "change_label": "fill real trading dates after 2026-06-12, excluding market holidays",
-    "elapsed_seconds": 1844.6853409999749,
+    "round_id": "sgsyen-2026-06-22",
+    "change_label": "SGSYEN daily run 2026-06-22",
+    "elapsed_seconds": 3089.5532314999728,
     "status": "gpu_below_target",
     "target_gpu_utilization_pct": 60.0,
     "gpu": {
       "available": true,
-      "sample_count": 872,
-      "utilization_pct_mean": 22.619266055045873,
-      "utilization_pct_max": 76.0,
-      "target_gap_pct": 37.38073394495413,
-      "memory_used_gb_mean": 5.592079092603211,
-      "memory_used_gb_max": 6.119140625,
-      "power_watts_mean": 17.085802752293578,
-      "power_watts_max": 51.69
+      "sample_count": 2946,
+      "utilization_pct_mean": 0.4008825526137135,
+      "utilization_pct_max": 49.0,
+      "target_gap_pct": 59.599117447386284,
+      "memory_used_gb_mean": 6.7156863915054315,
+      "memory_used_gb_max": 7.107421875,
+      "power_watts_mean": 9.13754921928038,
+      "power_watts_max": 42.92
     },
     "system": {
       "available": true,
-      "sample_count": 892,
-      "cpu_total_pct_mean": 14.208177001823557,
-      "cpu_total_pct_max": 88.37209302325581,
-      "memory_used_pct_mean": 57.43025270524814,
-      "memory_used_pct_max": 76.17164220788375,
-      "memory_available_gb_min": 22.83172607421875
+      "sample_count": 3051,
+      "cpu_total_pct_mean": 9.331044194878988,
+      "cpu_total_pct_max": 56.359223300970875,
+      "memory_used_pct_mean": 57.85491405697773,
+      "memory_used_pct_max": 79.02471103259097,
+      "memory_available_gb_min": 20.09798812866211
     },
     "torch_engine": {
       "backend": "cuda",
       "device": "cuda:0",
       "device_name": "NVIDIA GeForce RTX 4070 Ti SUPER",
       "dtype": "tf32",
-      "accelerated": true
+      "accelerated": true,
+      "cuda_device_count": 1,
+      "supports_tf32": true,
+      "supports_float64": true,
+      "num_threads": 24,
+      "interop_threads": 24
     },
     "accelerator": {
       "backend": "cuda",
-      "calls": 201818,
-      "accelerator_calls": 692,
-      "cuda_calls": 692,
+      "calls": 2,
+      "accelerator_calls": 2,
+      "cuda_calls": 2,
+      "mps_calls": 0,
       "fallback_calls": 0,
-      "accelerator_hit_rate": 0.003428831917866593,
-      "accelerator_time_share": 0.04737688251843551,
-      "accelerator_input_element_share": 0.08252387008140824,
-      "accelerator_output_element_share": 0.46135705140670097,
-      "accelerator_seconds": 5.027973701828159,
-      "profiled_seconds": 106.12715388927609
-    },
-    "latest_quant_result": {
-      "snapshot_date": "2026-06-19",
-      "trade_date": "2026-06-18",
-      "indices": [
-        "hs300",
-        "csi500"
-      ],
-      "validation_window": {
-        "start": "2025-12-05",
-        "end": "2026-06-18"
-      },
-      "reference_disclosure_window": {
-        "start": "2025-12-05",
-        "end": "2026-06-12"
-      }
+      "accelerator_hit_rate": 1.0,
+      "accelerator_time_share": 1.0,
+      "accelerator_input_element_share": 1.0,
+      "accelerator_output_element_share": 1.0,
+      "operation_hotspots": [
+        {
+          "operation": "matmul",
+          "calls": 2,
+          "accelerator_calls": 2,
+          "cuda_calls": 2,
+          "mps_calls": 0,
+          "accelerator_hit_rate": 1.0,
+          "accelerator_time_share": 1.0,
+          "accelerator_input_element_share": 1.0,
+          "total_seconds": 0.06831039988901466
+        }
+      ]
     },
     "next_actions": [
-      "increase_tensor_residency_and_batch_control_validation",
-      "raise_cuda_call_share_for_bellman_control_and_reward_heads"
+      "increase_tensor_residency_and_batch_control_validation"
     ]
   }
 }
