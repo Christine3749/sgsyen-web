@@ -1,9 +1,9 @@
 {
   "schema": "sgsyen.system.performance.v1",
-  "updated_at": "2026-06-22T22:25:26+08:00",
+  "updated_at": "2026-06-23T22:02:32+08:00",
   "source": "DGWM quant_fast_run",
-  "round_id": "sgsyen-2026-06-22",
-  "change_label": "SGSYEN daily run 2026-06-22",
+  "round_id": "sgsyen-2026-06-23",
+  "change_label": "sgsyen daily run 2026-06-23",
   "hardware": {
     "cpu_name": "Intel(R) Core(TM) i9-14900KF",
     "cpu_logical_threads": 32,
@@ -20,30 +20,30 @@
     "accelerator_family": "nvidia-cuda"
   },
   "utilization_summary": {
-    "round_id": "sgsyen-2026-06-22",
-    "change_label": "SGSYEN daily run 2026-06-22",
-    "elapsed_seconds": 3089.5532314999728,
+    "round_id": "sgsyen-2026-06-23",
+    "change_label": "sgsyen daily run 2026-06-23",
+    "elapsed_seconds": 1734.9736644999357,
     "status": "gpu_below_target",
     "target_gpu_utilization_pct": 60.0,
     "gpu": {
       "available": true,
-      "sample_count": 2946,
-      "utilization_pct_mean": 0.4008825526137135,
-      "utilization_pct_max": 49.0,
-      "target_gap_pct": 59.599117447386284,
-      "memory_used_gb_mean": 6.7156863915054315,
-      "memory_used_gb_max": 7.107421875,
-      "power_watts_mean": 9.13754921928038,
-      "power_watts_max": 42.92
+      "sample_count": 1655,
+      "utilization_pct_mean": 1.2610271903323262,
+      "utilization_pct_max": 46.0,
+      "target_gap_pct": 58.73897280966767,
+      "memory_used_gb_mean": 7.347181245279456,
+      "memory_used_gb_max": 7.7607421875,
+      "power_watts_mean": 9.10062235649547,
+      "power_watts_max": 42.77
     },
     "system": {
       "available": true,
-      "sample_count": 3051,
-      "cpu_total_pct_mean": 9.331044194878988,
-      "cpu_total_pct_max": 56.359223300970875,
-      "memory_used_pct_mean": 57.85491405697773,
-      "memory_used_pct_max": 79.02471103259097,
-      "memory_available_gb_min": 20.09798812866211
+      "sample_count": 1718,
+      "cpu_total_pct_mean": 16.12089407568056,
+      "cpu_total_pct_max": 95.751953125,
+      "memory_used_pct_mean": 62.782032291319844,
+      "memory_used_pct_max": 83.20566179489578,
+      "memory_available_gb_min": 16.091907501220703
     },
     "torch_engine": {
       "backend": "cuda",
@@ -78,7 +78,7 @@
           "accelerator_hit_rate": 1.0,
           "accelerator_time_share": 1.0,
           "accelerator_input_element_share": 1.0,
-          "total_seconds": 0.06831039988901466
+          "total_seconds": 0.05439440009649843
         }
       ]
     },
