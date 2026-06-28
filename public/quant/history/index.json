@@ -1,14 +1,23 @@
 {
   "latest": {
-    "date": "2026-06-27",
-    "generated_at": "2026-06-27T18:23:41.640823+00:00",
-    "path": "/quant/history/2026-06-27.json",
+    "date": "2026-06-28",
+    "generated_at": "2026-06-28T14:06:38.575733+00:00",
+    "path": "/quant/history/2026-06-28.json",
     "indices": [
       "csi500",
       "hs300"
     ]
   },
   "items": [
+    {
+      "date": "2026-06-28",
+      "generated_at": "2026-06-28T14:06:38.575733+00:00",
+      "path": "/quant/history/2026-06-28.json",
+      "indices": [
+        "csi500",
+        "hs300"
+      ]
+    },
     {
       "date": "2026-06-27",
       "generated_at": "2026-06-27T18:23:41.640823+00:00",
