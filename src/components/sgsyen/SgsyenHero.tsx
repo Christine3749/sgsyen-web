@@ -4,17 +4,26 @@ import { motion } from 'motion/react';
 import { useLocale } from '../../context/LocaleContext';
 import { getSgsyenViewMode } from '../../lib/layoutMode';
 
-type HeroSignalTarget = 'weeklyMemo' | 'eventMirror' | 'temporaFlip';
+type HeroSignalTarget = 'weeklyMemo' | 'latestGlobalEvent' | 'temporaFlip';
 
-const heroSignalLines: Record<'zh' | 'en', Array<{ title: string; path: string; target: HeroSignalTarget }>> = {
+type HeroSignalLine = { title: string; path: string; target: HeroSignalTarget };
+
+const regimeSignalLines: Record<'zh' | 'en', HeroSignalLine[]> = {
   zh: [
     { title: '全球事件进入模型：从日元 160 到世界风险权重重估', path: '事件 → 历史镜像 → 模型动作', target: 'weeklyMemo' },
-    { title: '日元 160：不是单点价格，而是政策压力阈值', path: '历史镜像 → 政策压力 → 风险阈值', target: 'eventMirror' },
-    { title: '近期项目 · Tempora Flip 预览打磨', path: '字形 → 屏保 → 下载通道', target: 'temporaFlip' },
+    { title: '近期最重要事件 · 全球事件消化层', path: '最新事件 → regime 概率 → 风险预算', target: 'latestGlobalEvent' },
   ],
   en: [
     { title: 'Global Events Enter the Model: From JPY 160 to Risk-Weight Repricing', path: 'Event → Mirror → Model Action', target: 'weeklyMemo' },
-    { title: 'JPY 160: not one price, but a policy-pressure threshold', path: 'Historical Mirror → Policy Pressure → Risk Threshold', target: 'eventMirror' },
+    { title: 'Latest Critical Event · Global Event Digest', path: 'Latest Event → Regime Probability → Risk Budget', target: 'latestGlobalEvent' },
+  ],
+};
+
+const projectSignalLines: Record<'zh' | 'en', HeroSignalLine[]> = {
+  zh: [
+    { title: '近期项目 · Tempora Flip 预览打磨', path: '字形 → 屏保 → 下载通道', target: 'temporaFlip' },
+  ],
+  en: [
     { title: 'Current Project · Tempora Flip Preview', path: 'Type → Screensaver → Download Path', target: 'temporaFlip' },
   ],
 };
@@ -24,15 +33,16 @@ export default function SgsyenHero() {
   const navigate = useNavigate();
   const location = useLocation();
   const viewMode = getSgsyenViewMode(location.search);
-  const signalLines = locale === 'zh' ? heroSignalLines.zh : heroSignalLines.en;
+  const signalLines = locale === 'zh' ? regimeSignalLines.zh : regimeSignalLines.en;
+  const projectLines = locale === 'zh' ? projectSignalLines.zh : projectSignalLines.en;
 
   const openSignal = (target: HeroSignalTarget) => {
     if (target === 'weeklyMemo') {
       navigate(`/research?view=${viewMode}&article=weekly-memo#weekly-event-frame`);
       return;
     }
-    if (target === 'eventMirror') {
-      navigate(`/research?view=${viewMode}#event-mirror-panel`);
+    if (target === 'latestGlobalEvent') {
+      navigate(`/research?view=${viewMode}#latest-global-events`);
       return;
     }
     navigate(`/workspace/tempora-flip?view=${viewMode}`);
@@ -116,6 +126,30 @@ export default function SgsyenHero() {
               </div>
             </button>
           ))}
+        </div>
+        <div className="mt-7 pt-5 border-t border-[#C4A35A]/10">
+          <div className="flex items-center gap-3 text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-[#C4A35A]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#C4A35A]/90" />
+            <span>PROJECT FORGE ACTIVE</span>
+            <span className="h-px w-16 bg-gradient-to-r from-[#C4A35A]/35 to-transparent" />
+          </div>
+          <div className="mt-4 space-y-3">
+            {projectLines.map((line) => (
+              <button
+                key={line.title}
+                type="button"
+                onClick={() => openSignal(line.target)}
+                className="block w-full rounded-sm text-left cursor-pointer transition-colors group focus:outline-none focus-visible:ring-1 focus-visible:ring-[#C4A35A]/60"
+              >
+                <div className="text-[12px] font-sans font-semibold tracking-[0.16em] text-[#FDFCF9]/88 transition-colors group-hover:text-[#FDFCF9]">
+                  {line.title}
+                </div>
+                <div className="mt-1.5 text-[10px] font-sans tracking-[0.18em] text-[#8F8A92] transition-colors group-hover:text-[#C4A35A]">
+                  {line.path}
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </motion.aside>
       {/* Hero content aligned in column */}

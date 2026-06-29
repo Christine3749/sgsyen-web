@@ -922,7 +922,7 @@ export default function ResearchPage() {
               </div>
 
               {/* Recent */}
-              <div>
+              <div id="latest-global-events" className="scroll-mt-24">
                 <div className="px-6 py-3 border-b border-[#1D1D1B]/10 bg-[#F7F8FA]">
                   <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-zinc-400">
                     {liveEvents.length ? (isZh ? '最新全球事件' : 'Latest Global Events') : (isZh ? '近期历史节点' : 'Recent History')}
