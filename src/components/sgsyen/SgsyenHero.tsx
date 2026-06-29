@@ -60,7 +60,7 @@ export default function SgsyenHero() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.55, ease: 'easeOut' }}
-        className="absolute left-[8%] top-[42%] z-20 hidden xl:block w-[230px] select-none border border-[#C4A35A]/25 bg-[#111110]/35 px-5 py-4 backdrop-blur-[2px]"
+        className="absolute left-[14%] top-[42%] z-20 hidden xl:block w-[230px] select-none border border-[#C4A35A]/25 bg-[#111110]/35 px-5 py-4 backdrop-blur-[2px]"
       >
         <div className="flex items-center gap-2 text-[9px] font-sans font-bold uppercase tracking-[0.26em] text-[#C4A35A]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#C4A35A] shadow-[0_0_12px_rgba(196,163,90,0.55)]" />
@@ -74,7 +74,7 @@ export default function SgsyenHero() {
       {/* Hero content aligned in column */}
       <div 
         id="sgsyen-hero-content-bag" 
-        className="relative z-10 ml-auto w-full max-w-[820px]"
+        className="relative z-10 ml-auto w-full max-w-[820px] translate-x-6 xl:translate-x-14 2xl:translate-x-20"
       >
         <motion.div
           id="sgsyen-hero-meta"
