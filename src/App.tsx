@@ -116,36 +116,36 @@ function InnerApp() {
   const usFedText = Number.isFinite(regime?.fed ?? NaN) ? `${regime!.fed.toFixed(1)}%` : '3.0%';
   const macroSignals = regime ? [
     {
-      id: 'CN', shortZh: '中', shortEn: 'CN', countryZh: '中国', countryEn: 'China',
+      id: 'CN', shortZh: '中国', shortEn: 'CN', countryZh: '中国', countryEn: 'China',
       regimeZh: '政策托底', regimeEn: 'Policy Support',
       signalZh: '重红利与科技，控长债久期', signalEn: 'Dividends and tech, controlled duration',
       rateZh: 'LPR 观察', rateEn: 'LPR watch', cpiZh: 'CPI → 温和', cpiEn: 'CPI → mild',
     },
     {
-      id: 'TW', shortZh: '台', shortEn: 'TW', countryZh: '中国台湾', countryEn: 'Taiwan, China',
+      id: 'TW', shortZh: '中国台湾', shortEn: 'TW', countryZh: '中国台湾', countryEn: 'Taiwan, China',
       regimeZh: '科技周期', regimeEn: 'Tech Cycle',
       signalZh: '看半导体与外需订单', signalEn: 'Semis and external orders',
       rateZh: '台币 观察', rateEn: 'TWD watch', cpiZh: 'CPI → 温和', cpiEn: 'CPI → mild',
     },
     {
-      id: 'HK', shortZh: '港', shortEn: 'HK', countryZh: '中国香港', countryEn: 'Hong Kong, China',
+      id: 'HK', shortZh: '中国香港', shortEn: 'HK', countryZh: '中国香港', countryEn: 'Hong Kong, China',
       regimeZh: '利率联动', regimeEn: 'Rate Linkage',
       signalZh: '看港股估值与南向资金', signalEn: 'HK equity value and southbound flow',
       rateZh: '港息 观察', rateEn: 'HIBOR watch', cpiZh: 'CPI → 稳定', cpiEn: 'CPI → stable',
     },    {
-      id: 'US', shortZh: '美', shortEn: 'US', countryZh: '美国', countryEn: 'United States',
+      id: 'US', shortZh: '美国', shortEn: 'US', countryZh: '美国', countryEn: 'United States',
       regimeZh: regime.zh, regimeEn: regime.en,
       signalZh: regime.signal, signalEn: 'Commodities overweight, long bonds underweight',
       rateZh: `FED ${usFedText}`, rateEn: `Fed ${usFedText}`, cpiZh: `CPI ${inflationText(regime.inflation)}`, cpiEn: `CPI ${inflationText(regime.inflation)}`,
     },
     {
-      id: 'UK', shortZh: '英', shortEn: 'UK', countryZh: '英国', countryEn: 'United Kingdom',
+      id: 'UK', shortZh: '英国', shortEn: 'UK', countryZh: '英国', countryEn: 'United Kingdom',
       regimeZh: '高息消化', regimeEn: 'Rate Digestion',
       signalZh: '偏现金流，轻久期', signalEn: 'Cash-flow quality, lighter duration',
       rateZh: 'BOE 观察', rateEn: 'BOE watch', cpiZh: 'CPI → 黏性', cpiEn: 'CPI → sticky',
     },
     {
-      id: 'DE', shortZh: '德', shortEn: 'DE', countryZh: '德国', countryEn: 'Germany',
+      id: 'DE', shortZh: '德国', shortEn: 'DE', countryZh: '德国', countryEn: 'Germany',
       regimeZh: '工业修复', regimeEn: 'Industrial Repair',
       signalZh: '看订单与欧元区信用', signalEn: 'Orders and euro credit',
       rateZh: 'ECB 观察', rateEn: 'ECB watch', cpiZh: 'CPI → 回落', cpiEn: 'CPI → cooling',
@@ -561,7 +561,6 @@ function InnerApp() {
                   </span>
                 </div>
                 <div className="hidden md:flex items-center gap-3 min-w-0 font-sans uppercase tracking-[0.14em] text-white/55">
-                  <span className="shrink-0 text-white/45">{locale === 'zh' ? activeMacroSignal.countryZh : activeMacroSignal.countryEn}</span>
                   <span className="min-w-0 truncate">{locale === 'zh' ? '配置信号' : 'Signal'} <b className="text-[#C83E3E] font-semibold">{locale === 'zh' ? activeMacroSignal.signalZh : activeMacroSignal.signalEn}</b></span>
                   <span className="text-white/18 shrink-0">|</span>
                   <span className="shrink-0">{locale === 'zh' ? activeMacroSignal.rateZh : activeMacroSignal.rateEn}</span>
