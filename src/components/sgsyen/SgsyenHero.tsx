@@ -74,14 +74,14 @@ export default function SgsyenHero() {
       {/* Hero content aligned in column */}
       <div 
         id="sgsyen-hero-content-bag" 
-        className="relative z-10 ml-auto w-full max-w-[820px] translate-x-6 xl:translate-x-14 2xl:translate-x-20"
+        className="relative z-10 ml-auto w-full max-w-[820px] translate-x-6 xl:translate-x-14 2xl:translate-x-20 text-right"
       >
         <motion.div
           id="sgsyen-hero-meta"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="flex items-center gap-4 mb-8"
+          className="flex flex-row-reverse items-center gap-4 mb-8"
         >
           <p
             id="sgsyen-hero-badge"
@@ -92,7 +92,7 @@ export default function SgsyenHero() {
           <span 
             id="sgsyen-hero-badge-line" 
             className="block w-16 md:w-24 h-px" 
-            style={{ background: 'linear-gradient(90deg, rgba(196,163,90,0.3), transparent)' }} 
+            style={{ background: 'linear-gradient(270deg, rgba(196,163,90,0.3), transparent)' }} 
           />
         </motion.div>
 
@@ -122,8 +122,8 @@ export default function SgsyenHero() {
           initial={{ opacity: 0, scaleX: 0 }}
           animate={{ opacity: 1, scaleX: 1 }}
           transition={{ duration: 1, delay: 0.4 }}
-          className="w-full max-w-[480px] h-px mb-8 border-0 origin-left"
-          style={{ background: 'linear-gradient(90deg, rgba(253,252,249,0.15), transparent)' }}
+          className="w-full max-w-[480px] h-px mb-8 border-0 origin-right ml-auto"
+          style={{ background: 'linear-gradient(270deg, rgba(253,252,249,0.15), transparent)' }}
         />
 
         <motion.p
@@ -131,7 +131,7 @@ export default function SgsyenHero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.8 }}
           transition={{ duration: 1, delay: 0.6 }}
-          className="leading-[1.9] text-sm md:text-base max-w-2xl font-light tracking-wide text-[#FDFCF9]/70"
+          className="leading-[1.9] text-sm md:text-base max-w-2xl ml-auto font-light tracking-wide text-[#FDFCF9]/70"
           style={{ fontFamily: '"Inter", sans-serif' }}
         >
           {t('sgsyenHeroDescription')}
