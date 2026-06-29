@@ -11,7 +11,7 @@ import ResearchPage from './pages/ResearchPage';
 import GsyenQuantBlogPage from './pages/GsyenQuantBlogPage';
 import ToolsPage from './pages/ToolsPage';
 import TemporaFlipPreviewPage from './pages/TemporaFlipPreviewPage';
-import { BookOpen, Calculator, Download, FileText, Layers } from 'lucide-react';
+import { ArrowLeft, BookOpen, Calculator, Download, FileText, Layers } from 'lucide-react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 
 type ActiveApp = 'sgsyen' | 'research' | 'workspace' | 'gemini' | 'miaojie';
@@ -272,6 +272,16 @@ function InnerApp() {
             transition={{ duration: 0.4 }}
             className="flex-1 w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 flex flex-col bg-[#FFFFFF]"
           >
+            <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-6 md:px-12 lg:px-16 py-0 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none min-h-[36px] md:h-[36px] overflow-hidden shrink-0">
+              <button
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-widest text-zinc-400 hover:text-[#1D1D1B] transition-colors cursor-pointer shrink-0 z-10"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                {locale === 'zh' ? '返回首页' : 'Back Home'}
+              </button>
+            </div>
+
             {/* Header Navigation */}
             <header className="flex flex-col sm:flex-row justify-between items-center px-6 md:px-12 py-8 border-b border-[#1D1D1B]/10 gap-4 select-none">
               <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
