@@ -103,7 +103,7 @@ export default function SgsyenHero() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.55, ease: 'easeOut' }}
-        className="absolute left-[13.5%] top-[41.5%] z-20 hidden xl:block w-[320px] select-none"
+        className="absolute left-[13.5%] top-[34.5%] z-20 hidden xl:block w-[320px] select-none"
       >
         <div className="flex items-center gap-3 text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-[#C4A35A]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#C4A35A] shadow-[0_0_12px_rgba(196,163,90,0.55)]" />
