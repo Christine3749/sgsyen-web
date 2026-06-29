@@ -780,20 +780,20 @@ export default function ResearchPage() {
               </button>
             </div>
             <button
-              onClick={() => navigate('/workspace')}
-              className="h-7 flex items-center gap-1.5 px-3 border border-[#1D1D1B] bg-[#1D1D1B] text-[9px] font-sans font-bold uppercase tracking-widest text-[#FDFCF9] cursor-pointer rounded shadow-sm shrink-0"
-            >
-              <Download className="w-3 h-3" />
-              <span className="hidden sm:inline">{isZh ? '工作台' : 'Workspace'}</span>
-              <span className="sm:hidden">{isZh ? '工作台' : 'Workspace'}</span>
-            </button>
-            <button
               onClick={() => navigate('/gemini/calculator/')}
               className="h-7 flex items-center gap-1.5 px-3 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded shrink-0"
             >
               <Cpu className="w-3 h-3" />
               <span className="hidden sm:inline">{isZh ? '算力中心' : 'Compute Lab'}</span>
               <span className="sm:hidden">{isZh ? '算力' : 'Compute'}</span>
+            </button>
+            <button
+              onClick={() => navigate('/workspace')}
+              className="h-7 flex items-center gap-1.5 px-3 border border-[#1D1D1B] bg-[#1D1D1B] text-[9px] font-sans font-bold uppercase tracking-widest text-[#FDFCF9] cursor-pointer rounded shadow-sm shrink-0"
+            >
+              <Download className="w-3 h-3" />
+              <span className="hidden sm:inline">{isZh ? '工作台' : 'Workspace'}</span>
+              <span className="sm:hidden">{isZh ? '工作台' : 'Workspace'}</span>
             </button>
           </div>
         </div>
