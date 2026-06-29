@@ -2,8 +2,20 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { useLocale } from '../../context/LocaleContext';
 
+const heroSignalLines = {
+  zh: [
+    { title: '周更为底线 · 大事即时更新', path: '事件 → 历史镜像 → 模型动作' },
+    { title: '近期项目 · Tempora Flip 预览打磨', path: '字形 → 屏保 → 下载通道' },
+  ],
+  en: [
+    { title: 'Weekly Baseline · Major Events Live', path: 'Event → Mirror → Model Action' },
+    { title: 'Current Project · Tempora Flip Preview', path: 'Type → Screensaver → Download Path' },
+  ],
+};
+
 export default function SgsyenHero() {
   const { t, locale } = useLocale();
+  const signalLines = locale === 'zh' ? heroSignalLines.zh : heroSignalLines.en;
 
   return (
     <section
@@ -26,7 +38,7 @@ export default function SgsyenHero() {
       {/* Decorative text banner on the left */}
       <div
         id="sgsyen-vertical-tagline"
-        className="absolute left-[5.2%] top-[55%] -translate-y-1/2 pointer-events-none select-none hidden xl:block z-10"
+        className="absolute left-[2.4%] top-[55%] -translate-y-1/2 pointer-events-none select-none hidden xl:block z-10"
         style={{
           writingMode: 'vertical-rl',
           textOrientation: 'upright',
@@ -34,7 +46,7 @@ export default function SgsyenHero() {
           fontSize: '1.25rem',
           fontWeight: 600,
           letterSpacing: '0.4em',
-          color: 'rgba(253, 252, 249, 0.08)',
+          color: 'rgba(253, 252, 249, 0.055)',
         }}
       >
         {t('sgsyenHeroVertical')}
@@ -43,11 +55,11 @@ export default function SgsyenHero() {
       {/* Watermark character in background */}
       <div
         id="sgsyen-bg-watermark"
-        className="absolute left-[1.5%] -bottom-[14%] pointer-events-none select-none hidden lg:block text-[45vw] font-serif leading-none"
+        className="absolute left-[-7.5%] -bottom-[14%] pointer-events-none select-none hidden lg:block text-[45vw] font-serif leading-none"
         style={{
           fontFamily: '"Playfair Display", serif',
           fontWeight: 900,
-          color: 'rgba(253, 252, 249, 0.014)',
+          color: 'rgba(253, 252, 249, 0.011)',
           letterSpacing: '-0.05em',
         }}
       >
@@ -67,11 +79,17 @@ export default function SgsyenHero() {
           <span>REGIME ENGINE ACTIVE</span>
           <span className="h-px w-14 bg-[#C4A35A]/25" />
         </div>
-        <div className="mt-4 text-[12px] font-sans font-semibold tracking-[0.18em] text-[#FDFCF9]/82">
-          {locale === 'zh' ? '事件触发 · 周更校准' : 'Event Triggered · Weekly Calibration'}
-        </div>
-        <div className="mt-2 text-[10px] font-sans tracking-[0.2em] text-[#FDFCF9]/28">
-          {locale === 'zh' ? '事件 → 历史镜像 → 模型动作' : 'Event → Mirror → Model Action'}
+        <div className="mt-4 space-y-3">
+          {signalLines.map((line) => (
+            <div key={line.title}>
+              <div className="text-[12px] font-sans font-semibold tracking-[0.16em] text-[#FDFCF9]/84">
+                {line.title}
+              </div>
+              <div className="mt-1.5 text-[10px] font-sans tracking-[0.18em] text-[#FDFCF9]/28">
+                {line.path}
+              </div>
+            </div>
+          ))}
         </div>
       </motion.aside>
       {/* Hero content aligned in column */}
