@@ -168,7 +168,7 @@ function InnerApp() {
 
       <div>
         <div
-          className={`flex-1 w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 flex-col bg-[#FFFFFF] ${
+          className={`flex-1 w-full max-w-[1500px] mx-auto border-x border-[#1D1D1B]/10 flex-col bg-[#FFFFFF] ${
             activeApp === 'sgsyen' ? 'flex' : 'hidden'
           }`}
         >
@@ -270,7 +270,7 @@ function InnerApp() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.4 }}
-            className="flex-1 w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 flex flex-col bg-[#FFFFFF]"
+            className="flex-1 w-full max-w-[1500px] mx-auto border-x border-[#1D1D1B]/10 flex flex-col bg-[#FFFFFF]"
           >
             <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-6 md:px-12 lg:px-16 py-0 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none min-h-[36px] md:h-[36px] overflow-hidden shrink-0">
               <button
@@ -541,7 +541,7 @@ function InnerApp() {
 
 
       <div className="fixed inset-x-0 bottom-0 z-[650] pointer-events-none flex justify-center px-0">
-        <div className="w-full max-w-[1300px] min-h-9 border-x border-t border-[#C4A35A]/25 bg-[#111110] px-5 md:px-10 py-2">
+        <div className="w-full max-w-[1500px] min-h-9 border-x border-t border-[#C4A35A]/25 bg-[#111110] px-5 md:px-10 py-2">
           {regime && activeMacroSignal ? (
             <AnimatePresence mode="wait">
               <motion.div

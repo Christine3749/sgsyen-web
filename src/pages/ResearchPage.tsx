@@ -742,7 +742,7 @@ export default function ResearchPage() {
   return (
     <div className="research-page w-full bg-[#FFFFFF] text-[#1D1D1B] min-h-screen font-serif antialiased overflow-x-hidden">
 
-      <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10">
+      <div className="w-full max-w-[1500px] mx-auto border-x border-[#1D1D1B]/10">
 
         {/* ── Breadcrumb ────────────────────────────────────── */}
         <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-6 md:px-12 lg:px-16 py-0 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none min-h-[36px] md:h-[36px] overflow-hidden shrink-0">

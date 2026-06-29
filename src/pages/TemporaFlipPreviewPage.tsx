@@ -9,7 +9,7 @@ export default function TemporaFlipPreviewPage() {
   const isZh = locale === 'zh';
 
   return (
-    <main className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 bg-[#FFFFFF] text-[#1D1D1B] min-h-screen">
+    <main className="w-full max-w-[1500px] mx-auto border-x border-[#1D1D1B]/10 bg-[#FFFFFF] text-[#1D1D1B] min-h-screen">
       <header className="px-6 md:px-12 lg:px-20 py-7 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none">
         <button
           onClick={() => navigate('/workspace')}
