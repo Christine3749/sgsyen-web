@@ -11,6 +11,7 @@ import ResearchPage from './pages/ResearchPage';
 import GsyenQuantBlogPage from './pages/GsyenQuantBlogPage';
 import ToolsPage from './pages/ToolsPage';
 import TemporaFlipPreviewPage from './pages/TemporaFlipPreviewPage';
+import RegimeReviewDeskPage from './pages/RegimeReviewDeskPage';
 import { ArrowLeft, BookOpen, Calculator, Download, FileText, Layers } from 'lucide-react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 import { getPageFrameMaxClass, getSgsyenViewMode } from './lib/layoutMode';
@@ -250,7 +251,9 @@ function InnerApp() {
         </div>
 
         <div className={activeApp === 'workspace' ? 'block' : 'hidden'}>
-          {path.startsWith('/workspace/tempora-flip') || path.startsWith('/tools/tempora-flip') ? (
+          {path.startsWith('/workspace/regime-lab') || path.startsWith('/tools/regime-lab') ? (
+            <RegimeReviewDeskPage />
+          ) : path.startsWith('/workspace/tempora-flip') || path.startsWith('/tools/tempora-flip') ? (
             <TemporaFlipPreviewPage />
           ) : (
             <ToolsPage />

@@ -17,6 +17,23 @@ import {
 
 const TOOL_ITEMS = [
   {
+    name: 'Regime Review Desk',
+    zh: '雍彻审阅台',
+    en: 'Owner review and distillation desk',
+    categoryZh: '审阅与蒸馏',
+    categoryEn: 'Review',
+    statusZh: 'Owner 预览',
+    statusEn: 'Owner preview',
+    platform: 'Owner / Web',
+    icon: ShieldCheck,
+    accent: 'bg-[#C4A35A]',
+    href: '/workspace/regime-lab',
+    actionZh: '进入审阅',
+    actionEn: 'Open Review',
+    noteZh: '给 Ethan7586@gsyen.com / Owner 使用，先做候选事件、评分、改写和蒸馏样本入口。',
+    noteEn: 'Owner desk for candidate events, scoring, rewriting, and distillation samples.',
+  },
+  {
     name: 'Tempora Flip',
     zh: '时幕翻页钟',
     en: 'Flip clock screensaver',
@@ -160,7 +177,7 @@ export default function ToolsPage() {
             </h2>
           </div>
           <div className="text-[10px] font-mono uppercase tracking-[0.16em] text-zinc-400">
-            4 ITEMS · PREVIEW CHANNEL ACTIVE
+            {TOOL_ITEMS.length} ITEMS · PREVIEW CHANNEL ACTIVE
           </div>
         </div>
 
