@@ -1,15 +1,18 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
+import { getPageFrameMaxClass } from '../lib/layoutMode';
 import { ArrowLeft, Clock, ExternalLink, MonitorDown } from 'lucide-react';
 
 export default function TemporaFlipPreviewPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { locale } = useLocale();
   const isZh = locale === 'zh';
+  const pageFrameMaxClass = getPageFrameMaxClass(location.search);
 
   return (
-    <main className="w-full max-w-[1500px] mx-auto border-x border-[#1D1D1B]/10 bg-[#FFFFFF] text-[#1D1D1B] min-h-screen">
+    <main className={`w-full ${pageFrameMaxClass} mx-auto border-x border-[#1D1D1B]/10 bg-[#FFFFFF] text-[#1D1D1B] min-h-screen`}>
       <header className="px-6 md:px-12 lg:px-20 py-7 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none">
         <button
           onClick={() => navigate('/workspace')}

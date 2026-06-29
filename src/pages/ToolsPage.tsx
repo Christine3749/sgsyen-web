@@ -1,6 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
+import { getPageFrameMaxClass } from '../lib/layoutMode';
 import {
   ArrowLeft,
   Activity,
@@ -85,11 +86,13 @@ const RELEASE_NOTES = [
 
 export default function ToolsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { locale } = useLocale();
   const isZh = locale === 'zh';
+  const pageFrameMaxClass = getPageFrameMaxClass(location.search);
 
   return (
-    <main className="w-full max-w-[1500px] mx-auto border-x border-[#1D1D1B]/10 bg-[#FFFFFF] text-[#1D1D1B] min-h-screen">
+    <main className={`w-full ${pageFrameMaxClass} mx-auto border-x border-[#1D1D1B]/10 bg-[#FFFFFF] text-[#1D1D1B] min-h-screen`}>
       <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-6 md:px-12 lg:px-16 py-0 bg-[#F7F8FA] select-none min-h-[36px] md:h-[36px] overflow-hidden shrink-0">
         <button
           onClick={() => navigate('/research')}

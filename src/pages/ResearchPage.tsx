@@ -12,6 +12,7 @@ import { useLocale } from '../context/LocaleContext';
 import MacroPulseBar from '../components/sgsyen/MacroPulseBar';
 import GlobalDataLayerPanel from '../components/sgsyen/GlobalDataLayerPanel';
 import QuantComparisonPanel from '../components/sgsyen/QuantComparisonPanel';
+import { getPageFrameMaxClass } from '../lib/layoutMode';
 
 const PAGE_SIZE = 8;
 
@@ -513,6 +514,7 @@ export default function ResearchPage() {
   const location   = useLocation();
   const { locale } = useLocale();
   const isZh       = locale === 'zh';
+  const pageFrameMaxClass = getPageFrameMaxClass(location.search);
 
   // articles
   const [articles,    setArticles]    = useState<Article[]>([]);
@@ -742,7 +744,7 @@ export default function ResearchPage() {
   return (
     <div className="research-page w-full bg-[#FFFFFF] text-[#1D1D1B] min-h-screen font-serif antialiased overflow-x-hidden">
 
-      <div className="w-full max-w-[1500px] mx-auto border-x border-[#1D1D1B]/10">
+      <div className={`w-full ${pageFrameMaxClass} mx-auto border-x border-[#1D1D1B]/10`}>
 
         {/* ── Breadcrumb ────────────────────────────────────── */}
         <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-6 md:px-12 lg:px-16 py-0 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none min-h-[36px] md:h-[36px] overflow-hidden shrink-0">
