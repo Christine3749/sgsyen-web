@@ -119,7 +119,10 @@ export default function ToolsPage() {
       <header className="px-6 md:px-12 lg:px-20 pt-7 pb-10 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none">
         <div className="grid lg:grid-cols-[1fr_0.7fr] gap-10 items-end">
           <div>
-            <h1 className="text-4xl md:text-6xl font-serif font-semibold leading-tight" style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
+            <span className="text-[10px] font-sans font-bold uppercase tracking-[0.26em] text-[#A58261]">
+              SGSYEN · WORKSPACE
+            </span>
+            <h1 className="mt-4 text-4xl md:text-6xl font-serif font-semibold leading-tight" style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
               {isZh ? '雍彻工作台' : 'SGSYEN Workspace'}
             </h1>
             <p className="mt-5 max-w-3xl text-sm md:text-base font-sans leading-relaxed text-zinc-500">
