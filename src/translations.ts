@@ -137,7 +137,7 @@ export const TRANSLATIONS = {
     sgsyenHeroTitleStart: '洞见',
     sgsyenHeroTitleHighlight: '时代',
     sgsyenHeroTitleEnd: ' 策谋未来',
-    sgsyenHeroDescription: '立足中国深度转型现场，以独立研究与战略思维，为公共决策与产业前沿提供具有全球视野与学术严谨性的智库成果与战略见解。对事实负责，对逻辑效忠。',
+    sgsyenHeroDescription: '立足中国深度转型现场，以独立研究与战略思维，为公共决策与产业前沿提供具有全球视野与学术严谨性的智库成果与战略见解。对事实负责，对逻辑效忠',
     sgsyenHeroVertical: '洞见时代 策谋未来',
     sgsyenOverviewSub: 'Overview • 智库概览',
     sgsyenOverviewTitle: '我们的学术沉淀',
