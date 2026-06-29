@@ -34,8 +34,8 @@ export default function GsyenQuantBlogPage() {
         </div>
       </div>
 
-      <header className="px-6 md:px-12 lg:px-20 py-8 border-b border-[#1D1D1B]/10">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+      <header className="px-6 md:px-12 lg:px-20 pt-7 pb-10 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none">
+        <div className="grid lg:grid-cols-[1fr_0.7fr] gap-10 items-end">
           <div>
             <span className="text-[10px] font-sans font-bold uppercase tracking-[0.26em] text-[#A58261]">
               GSYEN-Quant · MODEL BLOG
@@ -49,9 +49,22 @@ export default function GsyenQuantBlogPage() {
                 : 'A versioned record for GSYEN-Quant model changes, algorithm upgrades, validation scope, and compute backends.'}
             </p>
           </div>
-          <div className="font-mono text-[11px] tracking-[0.16em] text-zinc-400 uppercase">
-            {MODEL_DATE} · Current Release
-          </div>
+
+          <aside className="border border-[#1D1D1B]/10 bg-white p-5">
+            <div className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[#A58261]">
+              {isZh ? '发布状态' : 'Release State'}
+            </div>
+            <div className="mt-4 grid sm:grid-cols-2 gap-5 text-[10px] tracking-widest uppercase font-sans font-medium text-stone-600">
+              <div>
+                <div className="text-[9px] text-zinc-400 font-bold mb-1">{isZh ? '版本' : 'Version'}</div>
+                <div>{MODEL_VERSION}</div>
+              </div>
+              <div>
+                <div className="text-[9px] text-zinc-400 font-bold mb-1">{isZh ? '日期' : 'Date'}</div>
+                <div>{MODEL_DATE}</div>
+              </div>
+            </div>
+          </aside>
         </div>
       </header>
 

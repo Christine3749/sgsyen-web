@@ -282,20 +282,33 @@ function InnerApp() {
             </div>
 
             {/* Header Navigation */}
-            <header className="flex flex-col sm:flex-row justify-between items-center px-6 md:px-12 py-8 border-b border-[#1D1D1B]/10 gap-4 select-none">
-              <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-                <div className="text-xs tracking-[0.3em] uppercase font-sans font-bold text-[#A58261]">
-                  {t('appSubtitle')}
+            <header className="px-6 md:px-12 lg:px-20 pt-7 pb-10 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none">
+              <div className="grid lg:grid-cols-[1fr_0.7fr] gap-10 items-end">
+                <div>
+                  <div className="text-xs tracking-[0.3em] uppercase font-sans font-bold text-[#A58261]">
+                    {t('appSubtitle')}
+                  </div>
+                  <div className="text-stone-400 font-sans text-[10px] uppercase mt-1">
+                    {t('analystName')}
+                  </div>
                 </div>
-                <div className="text-stone-400 font-sans text-[10px] uppercase mt-1">
-                  {t('analystName')}
-                </div>
-              </div>
-              
-              <div className="flex flex-wrap items-center justify-center sm:justify-end gap-6 text-[10px] tracking-widest uppercase font-sans font-medium text-stone-600">
-                <span>{t('memoNo')}</span>
-                <span>{t('memoMonth')}</span>
-                <span>{t('memoTitle')}</span>
+
+                <aside className="border border-[#1D1D1B]/10 bg-white p-5">
+                  <div className="grid sm:grid-cols-3 gap-5 text-[10px] tracking-widest uppercase font-sans font-medium text-stone-600">
+                    <div>
+                      <div className="text-[9px] text-zinc-400 font-bold mb-1">{locale === 'zh' ? '编号' : 'Memo'}</div>
+                      <div>{t('memoNo')}</div>
+                    </div>
+                    <div>
+                      <div className="text-[9px] text-zinc-400 font-bold mb-1">{locale === 'zh' ? '日期' : 'Date'}</div>
+                      <div>{t('memoMonth')}</div>
+                    </div>
+                    <div>
+                      <div className="text-[9px] text-zinc-400 font-bold mb-1">{locale === 'zh' ? '备忘' : 'Brief'}</div>
+                      <div>{t('memoTitle')}</div>
+                    </div>
+                  </div>
+                </aside>
               </div>
             </header>
 
