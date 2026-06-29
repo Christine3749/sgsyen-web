@@ -74,7 +74,7 @@ export default function SgsyenHero() {
       {/* Hero content aligned in column */}
       <div 
         id="sgsyen-hero-content-bag" 
-        className="relative z-10 ml-auto w-full max-w-[820px] translate-x-6 xl:translate-x-14 2xl:translate-x-20 text-right"
+        className="relative z-10 ml-auto w-full max-w-[820px] xl:mr-10 2xl:mr-14 text-right"
       >
         <motion.div
           id="sgsyen-hero-meta"

@@ -13,7 +13,7 @@ import ToolsPage from './pages/ToolsPage';
 import TemporaFlipPreviewPage from './pages/TemporaFlipPreviewPage';
 import { ArrowLeft, BookOpen, Calculator, Download, FileText, Layers } from 'lucide-react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
-import { getPageFrameMaxClass } from './lib/layoutMode';
+import { getPageFrameMaxClass, getSgsyenViewMode, type SgsyenViewMode } from './lib/layoutMode';
 
 type ActiveApp = 'sgsyen' | 'research' | 'workspace' | 'gemini' | 'miaojie';
 
@@ -22,6 +22,13 @@ function InnerApp() {
   const location = useLocation();
   const navigate = useNavigate();
   const pageFrameMaxClass = getPageFrameMaxClass(location.search);
+  const viewMode = getSgsyenViewMode(location.search);
+  const switchViewMode = (mode: SgsyenViewMode) => {
+    const params = new URLSearchParams(location.search);
+    params.set('view', mode);
+    params.delete('layout');
+    navigate({ pathname: location.pathname, search: '?'+params.toString(), hash: location.hash });
+  };
 
   // Derive active state from URL path
   const path = location.pathname;
@@ -187,13 +194,25 @@ function InnerApp() {
               {/* Right Side: Language Switcher and Top-Right Login */}
               <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 text-[10px] uppercase font-sans tracking-widest text-[#1D1D1B]">
                 <button
-                  onClick={() => navigate('/research')}
+                  onClick={() => navigate(`/research?view=${viewMode}`)}
                   className="h-7 inline-flex items-center gap-1.5 px-2.5 border border-[#1D1D1B]/10 text-[9px] font-sans font-bold uppercase tracking-widest text-[#1D1D1B] hover:border-[#1D1D1B] hover:bg-[#1D1D1B] hover:text-[#FDFCF9] transition-colors cursor-pointer rounded shrink-0"
                 >
                   <BookOpen className="w-3 h-3" />
                   <span className="hidden sm:inline">{locale === 'zh' ? '观点与研究' : 'Research'}</span>
                   <span className="sm:hidden">Research</span>
                 </button>
+
+                <div className="h-7 inline-flex items-center overflow-hidden rounded border border-[#1D1D1B]/10 bg-white text-[9px] font-sans font-bold uppercase tracking-widest shrink-0">
+                  {(['classic', 'panorama'] as const).map((mode) => (
+                    <button
+                      key={mode}
+                      onClick={() => switchViewMode(mode)}
+                      className={`h-full px-2.5 transition-colors cursor-pointer ${viewMode === mode ? 'bg-[#1D1D1B] text-[#FDFCF9]' : 'text-stone-400 hover:text-[#1D1D1B]'}`}
+                    >
+                      {locale === 'zh' ? (mode === 'classic' ? '经典' : '全景') : (mode === 'classic' ? 'Classic' : 'Panorama')}
+                    </button>
+                  ))}
+                </div>
 
                 {/* Top-Right Unified Login */}
                 <div className="h-7 flex items-center gap-2 border-r border-[#1D1D1B]/10 pr-4">
