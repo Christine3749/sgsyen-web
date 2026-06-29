@@ -201,7 +201,7 @@ function InnerApp() {
           }`}
         >
             {/* Top mini-bar for lang switcher to keep it accessible everywhere */}
-            <div className="min-h-[52px] md:h-[52px] flex flex-col sm:flex-row justify-between items-center px-6 md:px-12 lg:px-16 py-0 bg-[#FFFFFF] border-b border-[#1D1D1B]/10 select-none gap-3 shrink-0">
+            <div className="min-h-[36px] md:h-[36px] flex flex-col sm:flex-row justify-between items-center px-6 md:px-12 lg:px-16 py-0 bg-[#FFFFFF] border-b border-[#1D1D1B]/10 select-none gap-3 shrink-0">
               {/* Left Side: Domain Identity Network Status */}
               <div className="flex items-center gap-2 text-left">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
@@ -213,7 +213,7 @@ function InnerApp() {
               {/* Right Side: Language Switcher and Top-Right Login */}
               <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 text-[10px] uppercase font-sans tracking-widest text-[#1D1D1B]">
                 {/* Top-Right Unified Login */}
-                <div className="h-8 flex items-center gap-2 border-r border-[#1D1D1B]/10 pr-4">
+                <div className="h-7 flex items-center gap-2 border-r border-[#1D1D1B]/10 pr-4">
                   {authorizedEmail ? (
                     <div className="text-[10px] uppercase font-sans tracking-widest text-stone-600 flex items-center gap-2">
                       <span className="font-bold text-[#A58261]">● {authorizedEmail}</span>
@@ -227,7 +227,7 @@ function InnerApp() {
                   ) : (
                     <button
                       onClick={() => setShowLoginModal(true)}
-                      className="h-8 text-[10px] uppercase font-sans tracking-widest text-[#A58261] font-bold hover:underline cursor-pointer flex items-center gap-1"
+                      className="h-7 text-[10px] uppercase font-sans tracking-widest text-[#A58261] font-bold hover:underline cursor-pointer flex items-center gap-1"
                     >
                       <span>🔑 {locale === 'zh' ? '专属登录' : 'Sign In'}</span>
                     </button>

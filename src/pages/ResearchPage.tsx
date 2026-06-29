@@ -734,7 +734,7 @@ export default function ResearchPage() {
       <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10">
 
         {/* ── Breadcrumb ────────────────────────────────────── */}
-        <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-6 md:px-12 lg:px-16 py-0 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none min-h-[52px] md:h-[52px] overflow-hidden shrink-0">
+        <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-6 md:px-12 lg:px-16 py-0 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none min-h-[36px] md:h-[36px] overflow-hidden shrink-0">
 
           {/* Left: back button */}
           <button
@@ -770,7 +770,7 @@ export default function ResearchPage() {
             </div>
             <button
               onClick={() => navigate('/workspace')}
-              className="h-8 flex items-center gap-1.5 px-3 border border-[#1D1D1B] bg-[#1D1D1B] text-[9px] font-sans font-bold uppercase tracking-widest text-[#FDFCF9] cursor-pointer rounded shadow-sm shrink-0"
+              className="h-7 flex items-center gap-1.5 px-3 border border-[#1D1D1B] bg-[#1D1D1B] text-[9px] font-sans font-bold uppercase tracking-widest text-[#FDFCF9] cursor-pointer rounded shadow-sm shrink-0"
             >
               <Download className="w-3 h-3" />
               <span className="hidden sm:inline">{isZh ? '工作台' : 'Workspace'}</span>
@@ -778,7 +778,7 @@ export default function ResearchPage() {
             </button>
             <button
               onClick={() => navigate('/gemini/calculator/')}
-              className="h-8 flex items-center gap-1.5 px-3 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded shrink-0"
+              className="h-7 flex items-center gap-1.5 px-3 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded shrink-0"
             >
               <Cpu className="w-3 h-3" />
               <span className="hidden sm:inline">{isZh ? '算力中心' : 'Compute Lab'}</span>
@@ -786,7 +786,7 @@ export default function ResearchPage() {
             </button>
             <button
               onClick={() => setShowApi(true)}
-              className="h-8 flex items-center gap-1.5 px-3 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded shrink-0"
+              className="h-7 flex items-center gap-1.5 px-3 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded shrink-0"
             >
               <Terminal className="w-3 h-3" />
               <span className="hidden sm:inline">{isZh ? '研究员 API 接入' : 'Researcher API'}</span>
