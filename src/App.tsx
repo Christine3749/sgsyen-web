@@ -541,7 +541,7 @@ function InnerApp() {
 
 
       <div className="fixed inset-x-0 bottom-0 z-[650] pointer-events-none flex justify-center px-0">
-        <div className="w-full max-w-[1300px] min-h-9 border-x border-t border-[#C4A35A]/25 bg-[#111110] backdrop-blur px-5 md:px-10 py-2 shadow-[0_-10px_30px_rgba(0,0,0,0.22)]">
+        <div className="w-full max-w-[1300px] min-h-9 border-x border-t border-[#C4A35A]/25 bg-[#111110] px-5 md:px-10 py-2">
           {regime && activeMacroSignal ? (
             <AnimatePresence mode="wait">
               <motion.div
