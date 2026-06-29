@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
 import { getPageFrameMaxClass, getSgsyenViewMode } from '../lib/layoutMode';
 import ViewModeSwitch from '../components/sgsyen/ViewModeSwitch';
+import LanguageSwitch from '../components/sgsyen/LanguageSwitch';
 import { ArrowLeft, Clock, ExternalLink, MonitorDown } from 'lucide-react';
 
 export default function TemporaFlipPreviewPage() {
@@ -24,7 +25,10 @@ export default function TemporaFlipPreviewPage() {
           <ArrowLeft className="w-3.5 h-3.5" />
           {isZh ? '返回工作台' : 'Back to Workspace'}
           </button>
-          <ViewModeSwitch />
+          <div className="flex items-center gap-2 shrink-0">
+            <ViewModeSwitch />
+            <LanguageSwitch />
+          </div>
         </div>
 
         <div className="mt-7 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">

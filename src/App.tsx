@@ -15,11 +15,12 @@ import { ArrowLeft, BookOpen, Calculator, Download, FileText, Layers } from 'luc
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 import { getPageFrameMaxClass, getSgsyenViewMode } from './lib/layoutMode';
 import ViewModeSwitch from './components/sgsyen/ViewModeSwitch';
+import LanguageSwitch from './components/sgsyen/LanguageSwitch';
 
 type ActiveApp = 'sgsyen' | 'research' | 'workspace' | 'gemini' | 'miaojie';
 
 function InnerApp() {
-  const { locale, setLocale, t, authorizedEmail, login, logout, showLoginModal, setShowLoginModal } = useLocale();
+  const { locale, t, authorizedEmail, login, logout, showLoginModal, setShowLoginModal } = useLocale();
   const location = useLocation();
   const navigate = useNavigate();
   const pageFrameMaxClass = getPageFrameMaxClass(location.search);
@@ -198,6 +199,7 @@ function InnerApp() {
                 </button>
 
                 <ViewModeSwitch />
+                <LanguageSwitch />
 
                 {/* Top-Right Unified Login */}
                 <div className="h-7 flex items-center gap-2 border-r border-[#1D1D1B]/10 pr-4">
@@ -221,19 +223,6 @@ function InnerApp() {
                   )}
                 </div>
 
-                <button
-                  onClick={() => setLocale('zh')}
-                  className={`px-2 py-0.5 cursor-pointer underline-offset-4 ${locale === 'zh' ? 'font-bold underline text-[#A58261]' : 'opacity-50 hover:opacity-100'}`}
-                >
-                  中文
-                </button>
-                <span className="text-stone-300">|</span>
-                <button
-                  onClick={() => setLocale('en')}
-                  className={`px-2 py-0.5 cursor-pointer underline-offset-4 ${locale === 'en' ? 'font-bold underline text-[#A58261]' : 'opacity-50 hover:opacity-100'}`}
-                >
-                  English
-                </button>
               </div>
             </div>
 
@@ -288,24 +277,7 @@ function InnerApp() {
               </button>
               <div className="ml-auto z-10 flex items-center gap-2">
                 <ViewModeSwitch />
-                <div className="h-7 flex items-center border border-[#1D1D1B]/10 rounded overflow-hidden divide-x divide-[#1D1D1B]/10 bg-white font-sans text-[9px] font-bold shrink-0">
-                  <button
-                    onClick={() => setLocale('zh')}
-                    className={`h-full px-2.5 transition-colors uppercase cursor-pointer outline-none ${
-                      locale === 'zh' ? 'bg-[#1D1D1B] text-[#FDFCF9]' : 'text-stone-500 hover:text-[#1D1D1B]'
-                    }`}
-                  >
-                    中文 (ZH)
-                  </button>
-                  <button
-                    onClick={() => setLocale('en')}
-                    className={`h-full px-2.5 transition-colors uppercase cursor-pointer outline-none ${
-                      locale === 'en' ? 'bg-[#1D1D1B] text-[#FDFCF9]' : 'text-stone-500 hover:text-[#1D1D1B]'
-                    }`}
-                  >
-                    EN
-                  </button>
-                </div>
+                <LanguageSwitch />
               </div>
             </div>
 

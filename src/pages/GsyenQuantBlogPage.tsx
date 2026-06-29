@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
 import { getPageFrameMaxClass, getSgsyenViewMode } from '../lib/layoutMode';
 import ViewModeSwitch from '../components/sgsyen/ViewModeSwitch';
+import LanguageSwitch from '../components/sgsyen/LanguageSwitch';
 
 const MODEL_VERSION = 'GSYEN-Quant v0.7.2';
 const MODEL_DATE = '2026-06-18';
@@ -27,8 +28,9 @@ export default function GsyenQuantBlogPage() {
           <ArrowLeft className="w-3.5 h-3.5" />
           {isZh ? '返回观点与研究' : 'Back to Research'}
         </button>
-        <div className="ml-auto z-10">
+        <div className="ml-auto z-10 flex items-center gap-2">
           <ViewModeSwitch />
+          <LanguageSwitch />
         </div>
       </div>
 
