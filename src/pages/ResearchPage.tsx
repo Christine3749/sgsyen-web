@@ -365,7 +365,7 @@ function modelAction(ev: PolicyEvent, isZh: boolean) {
     : 'Model action: use as an auxiliary state variable for regime probability and sector exposure tuning.';
 }
 
-function WeeklyEventFrame({ isZh }: { isZh: boolean }) {
+function WeeklyEventFrame({ isZh, onOpenWeeklyMemo }: { isZh: boolean; onOpenWeeklyMemo: () => void }) {
   return (
     <section id="weekly-event-frame" className="px-6 md:px-12 lg:px-20 py-10 border-b border-[#1D1D1B]/10 bg-[#FFFFFF]">
       <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] border border-[#1D1D1B]/10 bg-white">
@@ -396,7 +396,11 @@ function WeeklyEventFrame({ isZh }: { isZh: boolean }) {
             ))}
           </div>
 
-          <div className="mt-6 border-t border-[#1D1D1B]/10 pt-5">
+          <button
+            type="button"
+            onClick={onOpenWeeklyMemo}
+            className="mt-6 w-full border-t border-[#1D1D1B]/10 pt-5 text-left cursor-pointer group focus:outline-none focus-visible:ring-1 focus-visible:ring-[#A58261]/45"
+          >
             <div className="text-[9px] font-sans font-bold uppercase tracking-widest text-zinc-400">
               {isZh ? '本周核心论点' : 'This Week’s Core Thesis'}
             </div>
@@ -419,9 +423,9 @@ function WeeklyEventFrame({ isZh }: { isZh: boolean }) {
                   {LATEST_WEEKLY_MEMO.date} · {isZh ? '更新节奏：周更 + 重大事件即时' : 'Cadence: weekly + immediate on major events'}
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-[#A58261] shrink-0 mt-1" />
+              <ArrowRight className="w-4 h-4 text-[#A58261] shrink-0 mt-1 transition-transform group-hover:translate-x-1" />
             </div>
-          </div>
+          </button>
         </div>
 
         <div className="p-6 md:p-8">
@@ -707,6 +711,23 @@ export default function ResearchPage() {
     [liveEvents, liveAsOf]
   );
   const quantModelArticle = useMemo(() => buildQuantModelLogArticle(), []);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('article') !== 'weekly-memo') return;
+
+    setSelectedArt(weeklyArticle);
+    params.delete('article');
+    const nextSearch = params.toString();
+    navigate(
+      {
+        pathname: location.pathname,
+        search: nextSearch ? `?${nextSearch}` : '',
+        hash: location.hash || '#weekly-event-frame',
+      },
+      { replace: true }
+    );
+  }, [location.hash, location.pathname, location.search, navigate, weeklyArticle]);
+
   const generatedArticles = useMemo(
     () => [quantModelArticle, weeklyArticle].filter(article => articleMatches(article, category, search)),
     [quantModelArticle, weeklyArticle, category, search]
@@ -842,7 +863,7 @@ export default function ResearchPage() {
           </div>
         </section>
 
-        <WeeklyEventFrame isZh={isZh} />
+        <WeeklyEventFrame isZh={isZh} onOpenWeeklyMemo={() => setSelectedArt(weeklyArticle)} />
 
         <QuantComparisonPanel />
 

@@ -1,21 +1,36 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useLocale } from '../../context/LocaleContext';
+import { getSgsyenViewMode } from '../../lib/layoutMode';
 
-const heroSignalLines = {
+type HeroSignalTarget = 'weeklyMemo' | 'temporaFlip';
+
+const heroSignalLines: Record<'zh' | 'en', Array<{ title: string; path: string; target: HeroSignalTarget }>> = {
   zh: [
-    { title: '周更为底线 · 大事即时更新', path: '事件 → 历史镜像 → 模型动作' },
-    { title: '近期项目 · Tempora Flip 预览打磨', path: '字形 → 屏保 → 下载通道' },
+    { title: '全球事件进入模型：从日元 160 到世界风险权重重估', path: '事件 → 历史镜像 → 模型动作', target: 'weeklyMemo' },
+    { title: '近期项目 · Tempora Flip 预览打磨', path: '字形 → 屏保 → 下载通道', target: 'temporaFlip' },
   ],
   en: [
-    { title: 'Weekly Baseline · Major Events Live', path: 'Event → Mirror → Model Action' },
-    { title: 'Current Project · Tempora Flip Preview', path: 'Type → Screensaver → Download Path' },
+    { title: 'Global Events Enter the Model: From JPY 160 to Risk-Weight Repricing', path: 'Event → Mirror → Model Action', target: 'weeklyMemo' },
+    { title: 'Current Project · Tempora Flip Preview', path: 'Type → Screensaver → Download Path', target: 'temporaFlip' },
   ],
 };
 
 export default function SgsyenHero() {
   const { t, locale } = useLocale();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const viewMode = getSgsyenViewMode(location.search);
   const signalLines = locale === 'zh' ? heroSignalLines.zh : heroSignalLines.en;
+
+  const openSignal = (target: HeroSignalTarget) => {
+    if (target === 'weeklyMemo') {
+      navigate(`/research?view=${viewMode}&article=weekly-memo#weekly-event-frame`);
+      return;
+    }
+    navigate(`/workspace/tempora-flip?view=${viewMode}`);
+  };
 
   return (
     <section
@@ -81,14 +96,19 @@ export default function SgsyenHero() {
         </div>
         <div className="mt-4 space-y-3">
           {signalLines.map((line) => (
-            <div key={line.title}>
-              <div className="text-[12px] font-sans font-semibold tracking-[0.16em] text-[#FDFCF9]/88">
+            <button
+              key={line.title}
+              type="button"
+              onClick={() => openSignal(line.target)}
+              className="block w-full rounded-sm text-left cursor-pointer transition-colors group focus:outline-none focus-visible:ring-1 focus-visible:ring-[#C4A35A]/60"
+            >
+              <div className="text-[12px] font-sans font-semibold tracking-[0.16em] text-[#FDFCF9]/88 transition-colors group-hover:text-[#FDFCF9]">
                 {line.title}
               </div>
-              <div className="mt-1.5 text-[10px] font-sans tracking-[0.18em] text-[#8F8A92]">
+              <div className="mt-1.5 text-[10px] font-sans tracking-[0.18em] text-[#8F8A92] transition-colors group-hover:text-[#C4A35A]">
                 {line.path}
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </motion.aside>
