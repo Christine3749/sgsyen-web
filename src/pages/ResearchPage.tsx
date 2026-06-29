@@ -734,7 +734,7 @@ export default function ResearchPage() {
       <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10">
 
         {/* ── Breadcrumb ────────────────────────────────────── */}
-        <div className="relative flex items-center px-4 md:px-10 lg:px-16 py-3 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none min-h-[52px] overflow-hidden">
+        <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-6 md:px-12 lg:px-16 py-0 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none min-h-16 md:h-16 overflow-hidden shrink-0">
 
           {/* Left: back button */}
           <button
@@ -744,38 +744,8 @@ export default function ResearchPage() {
             <ArrowLeft className="w-3.5 h-3.5" /> SGSYEN 首页
           </button>
 
-          {/* Center: regime signal — true centered via absolute */}
-          <div className="absolute inset-x-0 hidden md:flex justify-center pointer-events-none">
-            {regime ? (
-              <div className="flex items-center gap-2.5 md:gap-4 pointer-events-auto">
-                <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse" />
-                <span className="text-[9px] font-sans font-bold uppercase tracking-[0.18em] text-[#A58261] hidden md:block">
-                  {isZh ? '宏观象限' : 'REGIME'}
-                </span>
-                <span className="text-[13px] font-serif font-semibold text-[#1D1D1B]">
-                  {isZh ? regime.zh : regime.en}
-                </span>
-                <span className="h-3.5 w-px bg-[#1D1D1B]/15 hidden md:block" />
-                <span className="text-[11px] font-sans text-zinc-500 hidden md:block">
-                  {isZh ? '配置信号：' : 'Signal: '}
-                  <span className="text-[#C83E3E] font-semibold">{regime.signal}</span>
-                </span>
-                <span className="h-3.5 w-px bg-[#1D1D1B]/15 hidden lg:block" />
-                <span className="text-[10px] font-mono text-zinc-400 hidden lg:block">
-                  Fed {regime.fed}%
-                  {' · '}CPI {isZh
-                    ? (regime.inflation === 'rising' ? '↑ 上行' : regime.inflation === 'falling' ? '↓ 下行' : '→ 平稳')
-                    : (regime.inflation === 'rising' ? '↑ rising' : regime.inflation === 'falling' ? '↓ falling' : '→ flat')}
-                </span>
-              </div>
-            ) : (
-              /* loading skeleton */
-              <div className="w-64 h-3 rounded bg-zinc-100 animate-pulse" />
-            )}
-          </div>
-
-          {/* Right: archive label + API button */}
-          <div className="ml-auto flex items-center gap-2 md:gap-4 shrink-0 z-10">
+          {/* Right: archive, tools and API controls */}
+          <div className="ml-auto flex flex-wrap md:flex-nowrap items-center justify-end gap-2 md:gap-4 z-10 min-w-0">
             <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono text-[#A58261] tracking-widest uppercase font-bold">
               <button
                 onClick={openResearchArchive}
@@ -799,8 +769,16 @@ export default function ResearchPage() {
               </button>
             </div>
             <button
+              onClick={() => navigate('/workspace')}
+              className="h-9 flex items-center gap-1.5 px-3 border border-[#1D1D1B] bg-[#1D1D1B] text-[9px] font-sans font-bold uppercase tracking-widest text-[#FDFCF9] cursor-pointer rounded shadow-sm shrink-0"
+            >
+              <Download className="w-3 h-3" />
+              <span className="hidden sm:inline">{isZh ? '工作台' : 'Workspace'}</span>
+              <span className="sm:hidden">{isZh ? '工作台' : 'Workspace'}</span>
+            </button>
+            <button
               onClick={() => navigate('/gemini/calculator/')}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded"
+              className="h-9 flex items-center gap-1.5 px-3 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded shrink-0"
             >
               <Cpu className="w-3 h-3" />
               <span className="hidden sm:inline">{isZh ? '算力中心' : 'Compute Lab'}</span>
@@ -808,7 +786,7 @@ export default function ResearchPage() {
             </button>
             <button
               onClick={() => setShowApi(true)}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded"
+              className="h-9 flex items-center gap-1.5 px-3 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded shrink-0"
             >
               <Terminal className="w-3 h-3" />
               <span className="hidden sm:inline">{isZh ? '研究员 API 接入' : 'Researcher API'}</span>

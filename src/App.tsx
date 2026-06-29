@@ -9,10 +9,12 @@ import SgsyenPortal from './components/sgsyen/SgsyenPortal';
 import MiaojiePortal from './components/miaojie/MiaojiePortal';
 import ResearchPage from './pages/ResearchPage';
 import GsyenQuantBlogPage from './pages/GsyenQuantBlogPage';
-import { BookOpen, Calculator, FileText, Layers } from 'lucide-react';
+import ToolsPage from './pages/ToolsPage';
+import TemporaFlipPreviewPage from './pages/TemporaFlipPreviewPage';
+import { BookOpen, Calculator, Download, FileText, Landmark, Layers } from 'lucide-react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 
-type ActiveApp = 'sgsyen' | 'research' | 'gemini' | 'miaojie';
+type ActiveApp = 'sgsyen' | 'research' | 'workspace' | 'gemini' | 'miaojie';
 
 function InnerApp() {
   const { locale, setLocale, t, authorizedEmail, login, logout, showLoginModal, setShowLoginModal } = useLocale();
@@ -23,25 +25,63 @@ function InnerApp() {
   const path = location.pathname;
   const activeApp: ActiveApp = path.startsWith('/research')
     ? 'research'
-    : path.startsWith('/gemini')
-      ? 'gemini'
-      : path.startsWith('/miaojie')
-        ? 'miaojie'
-        : 'sgsyen';
+    : (path.startsWith('/workspace') || path.startsWith('/tools'))
+      ? 'workspace'
+      : path.startsWith('/gemini')
+        ? 'gemini'
+        : path.startsWith('/miaojie')
+          ? 'miaojie'
+          : 'sgsyen';
   let activeTab: 'calculator' | 'articles' | 'tariffs' = 'calculator';
   if (path.includes('/pricing')) activeTab = 'tariffs';
   else if (path.includes('/analysis')) activeTab = 'articles';
 
   const [selectedModelId, setSelectedModelId] = useState<string>('gemini-1.5-pro');
+  const [regime, setRegime] = useState<{
+    zh: string;
+    en: string;
+    signal: string;
+    fed: number;
+    inflation: string;
+  } | null>({
+    zh: '通胀持续',
+    en: 'Inflation Persistence',
+    signal: '超配大宗，低配长债',
+    fed: 3.0,
+    inflation: 'rising',
+  });
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
+  const [macroSignalIndex, setMacroSignalIndex] = useState(0);
 
   const containerVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
   };
+
+  useEffect(() => {
+    fetch('https://terminal.gsyen.com/api/regime')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (!d?.regime) return;
+        setRegime({
+          zh: d.regime.zh,
+          en: d.regime.en,
+          signal: d.regime.signal,
+          fed: Number(d.regime.fed_cut_prob ?? d.inputs?.fed_funds_rate ?? 3.0),
+          inflation: d.regime.inflation_trend ?? d.inputs?.inflation_direction ?? 'flat',
+        });
+      })
+      .catch(() => undefined);
+  }, []);
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setMacroSignalIndex(index => (index + 1) % 6);
+    }, 8000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   // Dynamic page title based on active app/tab
   useEffect(() => {
@@ -54,6 +94,10 @@ function InnerApp() {
       document.title = locale === 'zh'
         ? `Research 观点与研究 | ${baseTitle}`
         : `Research Hub | ${baseTitle}`;
+    } else if (activeApp === 'workspace') {
+      document.title = locale === 'zh'
+        ? `SGSYEN Workspace | ${baseTitle}`
+        : `SGSYEN Workspace | ${baseTitle}`;
     } else {
       const tabNames = {
         calculator: locale === 'zh' ? '算力成本估算' : 'Cost Calculator',
@@ -65,12 +109,55 @@ function InnerApp() {
     }
   }, [activeApp, activeTab, locale]);
 
+  const inflationText = (inflation: string) => locale === 'zh'
+    ? (inflation === 'rising' ? '↑ 上行' : inflation === 'falling' ? '↓ 下行' : '→ 平稳')
+    : (inflation === 'rising' ? '↑ rising' : inflation === 'falling' ? '↓ falling' : '→ flat');
+
+  const usFedText = Number.isFinite(regime?.fed ?? NaN) ? `${regime!.fed.toFixed(1)}%` : '3.0%';
+  const macroSignals = regime ? [
+    {
+      id: 'CN', shortZh: '中', shortEn: 'CN', countryZh: '中国', countryEn: 'China',
+      regimeZh: '政策托底', regimeEn: 'Policy Support',
+      signalZh: '重红利与科技，控长债久期', signalEn: 'Dividends and tech, controlled duration',
+      rateZh: 'LPR 观察', rateEn: 'LPR watch', cpiZh: 'CPI → 温和', cpiEn: 'CPI → mild',
+    },
+    {
+      id: 'TW', shortZh: '台', shortEn: 'TW', countryZh: '中国台湾', countryEn: 'Taiwan, China',
+      regimeZh: '科技周期', regimeEn: 'Tech Cycle',
+      signalZh: '看半导体与外需订单', signalEn: 'Semis and external orders',
+      rateZh: '台币 观察', rateEn: 'TWD watch', cpiZh: 'CPI → 温和', cpiEn: 'CPI → mild',
+    },
+    {
+      id: 'HK', shortZh: '港', shortEn: 'HK', countryZh: '中国香港', countryEn: 'Hong Kong, China',
+      regimeZh: '利率联动', regimeEn: 'Rate Linkage',
+      signalZh: '看港股估值与南向资金', signalEn: 'HK equity value and southbound flow',
+      rateZh: '港息 观察', rateEn: 'HIBOR watch', cpiZh: 'CPI → 稳定', cpiEn: 'CPI → stable',
+    },    {
+      id: 'US', shortZh: '美', shortEn: 'US', countryZh: '美国', countryEn: 'United States',
+      regimeZh: regime.zh, regimeEn: regime.en,
+      signalZh: regime.signal, signalEn: 'Commodities overweight, long bonds underweight',
+      rateZh: `FED ${usFedText}`, rateEn: `Fed ${usFedText}`, cpiZh: `CPI ${inflationText(regime.inflation)}`, cpiEn: `CPI ${inflationText(regime.inflation)}`,
+    },
+    {
+      id: 'UK', shortZh: '英', shortEn: 'UK', countryZh: '英国', countryEn: 'United Kingdom',
+      regimeZh: '高息消化', regimeEn: 'Rate Digestion',
+      signalZh: '偏现金流，轻久期', signalEn: 'Cash-flow quality, lighter duration',
+      rateZh: 'BOE 观察', rateEn: 'BOE watch', cpiZh: 'CPI → 黏性', cpiEn: 'CPI → sticky',
+    },
+    {
+      id: 'DE', shortZh: '德', shortEn: 'DE', countryZh: '德国', countryEn: 'Germany',
+      regimeZh: '工业修复', regimeEn: 'Industrial Repair',
+      signalZh: '看订单与欧元区信用', signalEn: 'Orders and euro credit',
+      rateZh: 'ECB 观察', rateEn: 'ECB watch', cpiZh: 'CPI → 回落', cpiEn: 'CPI → cooling',
+    },
+  ] : [];
+  const activeMacroSignal = macroSignals[macroSignalIndex % Math.max(macroSignals.length, 1)];
+
   if (activeApp === 'miaojie') {
     return <MiaojiePortal />;
   }
-
   return (
-    <div className="w-full bg-[#FFFFFF] text-[#1D1D1B] font-serif min-h-screen flex flex-col overflow-x-hidden antialiased">
+    <div className="w-full bg-[#FFFFFF] text-[#1D1D1B] font-serif min-h-screen flex flex-col overflow-x-hidden antialiased pb-12">
       {/* Top Margin Editorial Board */}
       <div className="bg-[#1D1D1B] text-[#FDFCF9] py-2 px-6 text-center select-none text-[9px] tracking-[0.25em] font-sans font-bold uppercase">
         {activeApp === 'gemini'
@@ -80,29 +167,30 @@ function InnerApp() {
       </div>
 
       {/* Structural Central Switcher for SGSYEN and Research */}
-      <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 grid grid-cols-2 text-center text-xs font-sans font-bold uppercase select-none border-b border-[#1D1D1B]/10 bg-white">
+      <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 grid grid-cols-2 text-center text-xs font-sans font-bold uppercase select-none border-b h-14 border-[#1D1D1B]/10 bg-white">
         <button
           id="toggle-sgsyen-portal-btn"
           onClick={() => navigate('/')}
-          className={`py-4 transition-all flex items-center justify-center gap-2 cursor-pointer outline-none ${
+          className={`h-14 py-0 leading-none transition-colors flex items-center justify-center gap-2 cursor-pointer outline-none ${
             activeApp === 'sgsyen'
               ? 'bg-[#1D1D1B] text-[#FDFCF9]'
               : 'text-[#1D1D1B] hover:bg-stone-50'
           }`}
         >
-          <span>🏛️ {locale === 'zh' ? 'SGSYEN 智库研究中心' : 'SGSYEN Research Center (sgsyen.com)'}</span>
+          <Landmark className="w-3.5 h-3.5 shrink-0" />
+          <span className="leading-none">{locale === 'zh' ? 'SGSYEN 智库研究中心' : 'SGSYEN Research Center (sgsyen.com)'}</span>
         </button>
         <button
           id="toggle-research-hub-btn"
           onClick={() => navigate('/research')}
-          className={`py-4 transition-all flex items-center justify-center gap-2 cursor-pointer outline-none ${
-            activeApp === 'research'
+          className={`h-14 py-0 leading-none transition-colors flex items-center justify-center gap-2 cursor-pointer outline-none ${
+            activeApp === 'research' || activeApp === 'workspace'
               ? 'bg-[#1D1D1B] text-[#FDFCF9]'
               : 'text-[#1D1D1B] hover:bg-stone-50'
           }`}
         >
-          <BookOpen className="w-3.5 h-3.5" />
-          <span>{locale === 'zh' ? 'Research 观点与研究' : 'Research Hub'}</span>
+          <BookOpen className="w-3.5 h-3.5 shrink-0" />
+          <span className="leading-none">{locale === 'zh' ? 'Research 观点与研究' : 'Research Hub'}</span>
         </button>
       </div>
 
@@ -113,7 +201,7 @@ function InnerApp() {
           }`}
         >
             {/* Top mini-bar for lang switcher to keep it accessible everywhere */}
-            <div className="flex flex-col sm:flex-row justify-between items-center px-6 md:px-12 py-3 bg-[#FFFFFF] border-b border-[#1D1D1B]/10 select-none gap-3">
+            <div className="min-h-16 md:h-16 flex flex-col sm:flex-row justify-between items-center px-6 md:px-12 lg:px-16 py-0 bg-[#FFFFFF] border-b border-[#1D1D1B]/10 select-none gap-3 shrink-0">
               {/* Left Side: Domain Identity Network Status */}
               <div className="flex items-center gap-2 text-left">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
@@ -125,7 +213,7 @@ function InnerApp() {
               {/* Right Side: Language Switcher and Top-Right Login */}
               <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 text-[10px] uppercase font-sans tracking-widest text-[#1D1D1B]">
                 {/* Top-Right Unified Login */}
-                <div className="flex items-center gap-2 border-r border-[#1D1D1B]/10 pr-4">
+                <div className="h-9 flex items-center gap-2 border-r border-[#1D1D1B]/10 pr-4">
                   {authorizedEmail ? (
                     <div className="text-[10px] uppercase font-sans tracking-widest text-stone-600 flex items-center gap-2">
                       <span className="font-bold text-[#A58261]">● {authorizedEmail}</span>
@@ -139,7 +227,7 @@ function InnerApp() {
                   ) : (
                     <button
                       onClick={() => setShowLoginModal(true)}
-                      className="text-[10px] uppercase font-sans tracking-widest text-[#A58261] font-bold hover:underline cursor-pointer flex items-center gap-1"
+                      className="h-9 text-[10px] uppercase font-sans tracking-widest text-[#A58261] font-bold hover:underline cursor-pointer flex items-center gap-1"
                     >
                       <span>🔑 {locale === 'zh' ? '专属登录' : 'Sign In'}</span>
                     </button>
@@ -183,6 +271,14 @@ function InnerApp() {
 
         <div className={activeApp === 'research' ? 'block' : 'hidden'}>
           {path.startsWith('/research/gsyen-quant') ? <GsyenQuantBlogPage /> : <ResearchPage />}
+        </div>
+
+        <div className={activeApp === 'workspace' ? 'block' : 'hidden'}>
+          {path.startsWith('/workspace/tempora-flip') || path.startsWith('/tools/tempora-flip') ? (
+            <TemporaFlipPreviewPage />
+          ) : (
+            <ToolsPage />
+          )}
         </div>
 
         <AnimatePresence mode="wait">
@@ -452,6 +548,44 @@ function InnerApp() {
         </AnimatePresence>
       </div>
 
+
+      <div className="fixed inset-x-0 bottom-0 z-[650] pointer-events-none flex justify-center px-0">
+        <div className="w-full max-w-[1300px] min-h-9 border-x border-t border-[#C4A35A]/25 bg-[#111110] backdrop-blur px-5 md:px-10 py-2 shadow-[0_-10px_30px_rgba(0,0,0,0.22)]">
+          {regime && activeMacroSignal ? (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeMacroSignal.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.36, ease: 'easeOut' }}
+                className="flex min-h-5 items-center justify-center md:justify-between gap-4 overflow-hidden text-[10px] font-sans uppercase tracking-[0.14em] text-white/62"
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0 animate-pulse" />
+                  <span className="font-bold text-[#C4A35A] shrink-0">{locale === 'zh' ? '宏观象限' : 'Regime'}</span>
+                  <span className="rounded-sm border border-[#C4A35A]/25 px-1.5 py-0.5 text-[9px] font-bold text-[#C4A35A] shrink-0">{locale === 'zh' ? activeMacroSignal.shortZh : activeMacroSignal.shortEn}</span>
+                  <span className="font-sans font-semibold uppercase tracking-[0.14em] text-[10px] text-white truncate">
+                    {locale === 'zh' ? activeMacroSignal.regimeZh : activeMacroSignal.regimeEn}
+                  </span>
+                </div>
+                <div className="hidden md:flex items-center gap-3 min-w-0 font-sans uppercase tracking-[0.14em] text-white/55">
+                  <span className="shrink-0 text-white/45">{locale === 'zh' ? activeMacroSignal.countryZh : activeMacroSignal.countryEn}</span>
+                  <span className="min-w-0 truncate">{locale === 'zh' ? '配置信号' : 'Signal'} <b className="text-[#C83E3E] font-semibold">{locale === 'zh' ? activeMacroSignal.signalZh : activeMacroSignal.signalEn}</b></span>
+                  <span className="text-white/18 shrink-0">|</span>
+                  <span className="shrink-0">{locale === 'zh' ? activeMacroSignal.rateZh : activeMacroSignal.rateEn}</span>
+                  <span className="shrink-0">{locale === 'zh' ? activeMacroSignal.cpiZh : activeMacroSignal.cpiEn}</span>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          ) : (
+            <div className="flex items-center gap-2 text-[9px] font-sans uppercase tracking-[0.16em] text-white/35">
+              <span className="w-1.5 h-1.5 rounded-full bg-white/20 shrink-0 animate-pulse" />
+              <span>{locale === 'zh' ? '宏观象限载入中' : 'Loading regime signal'}</span>
+            </div>
+          )}
+        </div>
+      </div>
       {/* Unified Security Login Modal */}
       <AnimatePresence>
         {showLoginModal && (

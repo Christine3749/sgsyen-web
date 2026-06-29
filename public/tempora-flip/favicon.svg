@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Tempora">
+  <rect width="64" height="64" rx="12" fill="#000000"/>
+  <rect x="10" y="16" width="44" height="32" rx="6" fill="#050505" stroke="#2a2a2a"/>
+  <path d="M10 32h44" stroke="#000000" stroke-width="3"/>
+  <path d="M22 23h20v6H29v3h10v6H29v8h-7V23Z" fill="#d8d8d8"/>
+</svg>
