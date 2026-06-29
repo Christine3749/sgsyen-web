@@ -13,7 +13,8 @@ import ToolsPage from './pages/ToolsPage';
 import TemporaFlipPreviewPage from './pages/TemporaFlipPreviewPage';
 import { ArrowLeft, BookOpen, Calculator, Download, FileText, Layers } from 'lucide-react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
-import { getPageFrameMaxClass, getSgsyenViewMode, type SgsyenViewMode } from './lib/layoutMode';
+import { getPageFrameMaxClass, getSgsyenViewMode } from './lib/layoutMode';
+import ViewModeSwitch from './components/sgsyen/ViewModeSwitch';
 
 type ActiveApp = 'sgsyen' | 'research' | 'workspace' | 'gemini' | 'miaojie';
 
@@ -23,12 +24,6 @@ function InnerApp() {
   const navigate = useNavigate();
   const pageFrameMaxClass = getPageFrameMaxClass(location.search);
   const viewMode = getSgsyenViewMode(location.search);
-  const switchViewMode = (mode: SgsyenViewMode) => {
-    const params = new URLSearchParams(location.search);
-    params.set('view', mode);
-    params.delete('layout');
-    navigate({ pathname: location.pathname, search: '?'+params.toString(), hash: location.hash });
-  };
 
   // Derive active state from URL path
   const path = location.pathname;
@@ -202,17 +197,7 @@ function InnerApp() {
                   <span className="sm:hidden">Research</span>
                 </button>
 
-                <div className="h-7 inline-flex items-center overflow-hidden rounded border border-[#1D1D1B]/10 bg-white text-[9px] font-sans font-bold uppercase tracking-widest shrink-0">
-                  {(['classic', 'panorama'] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      onClick={() => switchViewMode(mode)}
-                      className={`h-full px-2.5 transition-colors cursor-pointer ${viewMode === mode ? 'bg-[#1D1D1B] text-[#FDFCF9]' : 'text-stone-400 hover:text-[#1D1D1B]'}`}
-                    >
-                      {locale === 'zh' ? (mode === 'classic' ? '经典' : '全景') : (mode === 'classic' ? 'Classic' : 'Panorama')}
-                    </button>
-                  ))}
-                </div>
+                <ViewModeSwitch />
 
                 {/* Top-Right Unified Login */}
                 <div className="h-7 flex items-center gap-2 border-r border-[#1D1D1B]/10 pr-4">
@@ -295,12 +280,15 @@ function InnerApp() {
           >
             <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-6 md:px-12 lg:px-16 py-0 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none min-h-[36px] md:h-[36px] overflow-hidden shrink-0">
               <button
-                onClick={() => navigate('/')}
+                onClick={() => navigate(`/?view=${viewMode}`)}
                 className="flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-widest text-zinc-400 hover:text-[#1D1D1B] transition-colors cursor-pointer shrink-0 z-10"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 {locale === 'zh' ? '返回首页' : 'Back Home'}
               </button>
+              <div className="ml-auto z-10">
+                <ViewModeSwitch />
+              </div>
             </div>
 
             {/* Header Navigation */}
@@ -401,7 +389,7 @@ function InnerApp() {
                 <div className="flex flex-col sm:flex-row border border-[#1D1D1B]/20 bg-[#FFFFFF] p-1.5 rounded items-stretch sm:items-center justify-between gap-4 select-none">
                   <div className="flex flex-wrap gap-1 font-sans text-xs">
                     <button
-                      onClick={() => navigate('/gemini/calculator/')}
+                      onClick={() => navigate(`/gemini/calculator/?view=${viewMode}`)}
                       className={`flex items-center gap-1.5 px-4 py-2.5 rounded font-bold tracking-wider uppercase transition-colors outline-none cursor-pointer ${
                         activeTab === 'calculator' 
                           ? 'bg-[#1D1D1B] text-[#FDFCF9]' 
@@ -412,7 +400,7 @@ function InnerApp() {
                       {t('tabCalculator')}
                     </button>
                     <button
-                      onClick={() => navigate('/gemini/analysis/')}
+                      onClick={() => navigate(`/gemini/analysis/?view=${viewMode}`)}
                       className={`flex items-center gap-1.5 px-4 py-2.5 rounded font-bold tracking-wider uppercase transition-colors outline-none cursor-pointer ${
                         activeTab === 'articles' 
                           ? 'bg-[#1D1D1B] text-[#FDFCF9]' 
@@ -423,7 +411,7 @@ function InnerApp() {
                       {t('tabArticles')}
                     </button>
                     <button
-                      onClick={() => navigate('/gemini/pricing/')}
+                      onClick={() => navigate(`/gemini/pricing/?view=${viewMode}`)}
                       className={`flex items-center gap-1.5 px-4 py-2.5 rounded font-bold tracking-wider uppercase transition-colors outline-none cursor-pointer ${
                         activeTab === 'tariffs' 
                           ? 'bg-[#1D1D1B] text-[#FDFCF9]' 

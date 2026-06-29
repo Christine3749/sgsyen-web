@@ -12,7 +12,8 @@ import { useLocale } from '../context/LocaleContext';
 import MacroPulseBar from '../components/sgsyen/MacroPulseBar';
 import GlobalDataLayerPanel from '../components/sgsyen/GlobalDataLayerPanel';
 import QuantComparisonPanel from '../components/sgsyen/QuantComparisonPanel';
-import { getPageFrameMaxClass } from '../lib/layoutMode';
+import { getPageFrameMaxClass, getSgsyenViewMode } from '../lib/layoutMode';
+import ViewModeSwitch from '../components/sgsyen/ViewModeSwitch';
 
 const PAGE_SIZE = 8;
 
@@ -515,6 +516,7 @@ export default function ResearchPage() {
   const { locale } = useLocale();
   const isZh       = locale === 'zh';
   const pageFrameMaxClass = getPageFrameMaxClass(location.search);
+  const viewMode = getSgsyenViewMode(location.search);
 
   // articles
   const [articles,    setArticles]    = useState<Article[]>([]);
@@ -751,7 +753,7 @@ export default function ResearchPage() {
 
           {/* Left: back button */}
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate(`/?view=${viewMode}`)}
             className="flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-widest text-zinc-400 hover:text-[#1D1D1B] transition-colors cursor-pointer shrink-0 z-10"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> SGSYEN 首页
@@ -768,7 +770,7 @@ export default function ResearchPage() {
               </button>
               <span className="text-[#A58261]/60">·</span>
               <button
-                onClick={() => navigate('/research/gsyen-quant')}
+                onClick={() => navigate(`/research/gsyen-quant?view=${viewMode}`)}
                 className="cursor-pointer transition-colors hover:text-[#1D1D1B]"
               >
                 GSYEN-Quant
@@ -781,8 +783,9 @@ export default function ResearchPage() {
                 {isZh ? '全库' : 'Archive'}
               </button>
             </div>
+            <ViewModeSwitch />
             <button
-              onClick={() => navigate('/gemini/calculator/')}
+              onClick={() => navigate(`/gemini/calculator/?view=${viewMode}`)}
               className="h-7 flex items-center gap-1.5 px-3 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded shrink-0"
             >
               <Cpu className="w-3 h-3" />
@@ -790,7 +793,7 @@ export default function ResearchPage() {
               <span className="sm:hidden">{isZh ? '算力' : 'Compute'}</span>
             </button>
             <button
-              onClick={() => navigate('/workspace')}
+              onClick={() => navigate(`/workspace?view=${viewMode}`)}
               className="h-7 flex items-center gap-1.5 px-3 border border-[#1D1D1B] bg-[#1D1D1B] text-[9px] font-sans font-bold uppercase tracking-widest text-[#FDFCF9] cursor-pointer rounded shadow-sm shrink-0"
             >
               <Download className="w-3 h-3" />

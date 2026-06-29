@@ -2,7 +2,8 @@ import React from 'react';
 import { ArrowLeft, Cpu, GitBranch, ShieldCheck, Zap } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
-import { getPageFrameMaxClass } from '../lib/layoutMode';
+import { getPageFrameMaxClass, getSgsyenViewMode } from '../lib/layoutMode';
+import ViewModeSwitch from '../components/sgsyen/ViewModeSwitch';
 
 const MODEL_VERSION = 'GSYEN-Quant v0.7.2';
 const MODEL_DATE = '2026-06-18';
@@ -14,17 +15,21 @@ export default function GsyenQuantBlogPage() {
   const { locale } = useLocale();
   const isZh = locale === 'zh';
   const pageFrameMaxClass = getPageFrameMaxClass(location.search);
+  const viewMode = getSgsyenViewMode(location.search);
 
   return (
     <main className={`w-full ${pageFrameMaxClass} mx-auto border-x border-[#1D1D1B]/10 bg-[#FFFFFF] text-[#1D1D1B] min-h-screen`}>
       <header className="px-6 md:px-12 lg:px-20 py-8 border-b border-[#1D1D1B]/10">
-        <button
-          onClick={() => navigate('/research')}
+        <div className="flex items-center justify-between gap-4">
+          <button
+          onClick={() => navigate(`/research?view=${viewMode}`)}
           className="inline-flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-[0.18em] text-zinc-400 hover:text-[#1D1D1B] transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           {isZh ? '返回观点与研究' : 'Back to Research'}
-        </button>
+          </button>
+          <ViewModeSwitch />
+        </div>
 
         <div className="mt-10 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <div>

@@ -1,7 +1,8 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
-import { getPageFrameMaxClass } from '../lib/layoutMode';
+import { getPageFrameMaxClass, getSgsyenViewMode } from '../lib/layoutMode';
+import ViewModeSwitch from '../components/sgsyen/ViewModeSwitch';
 import { ArrowLeft, Clock, ExternalLink, MonitorDown } from 'lucide-react';
 
 export default function TemporaFlipPreviewPage() {
@@ -10,17 +11,21 @@ export default function TemporaFlipPreviewPage() {
   const { locale } = useLocale();
   const isZh = locale === 'zh';
   const pageFrameMaxClass = getPageFrameMaxClass(location.search);
+  const viewMode = getSgsyenViewMode(location.search);
 
   return (
     <main className={`w-full ${pageFrameMaxClass} mx-auto border-x border-[#1D1D1B]/10 bg-[#FFFFFF] text-[#1D1D1B] min-h-screen`}>
       <header className="px-6 md:px-12 lg:px-20 py-7 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none">
-        <button
-          onClick={() => navigate('/workspace')}
+        <div className="flex items-center justify-between gap-4">
+          <button
+          onClick={() => navigate(`/workspace?view=${viewMode}`)}
           className="inline-flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-[0.18em] text-zinc-400 hover:text-[#1D1D1B] transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           {isZh ? '返回工作台' : 'Back to Workspace'}
-        </button>
+          </button>
+          <ViewModeSwitch />
+        </div>
 
         <div className="mt-7 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
           <div>

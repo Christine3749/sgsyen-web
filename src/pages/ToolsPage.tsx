@@ -1,7 +1,8 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLocale } from '../context/LocaleContext';
-import { getPageFrameMaxClass } from '../lib/layoutMode';
+import { getPageFrameMaxClass, getSgsyenViewMode } from '../lib/layoutMode';
+import ViewModeSwitch from '../components/sgsyen/ViewModeSwitch';
 import {
   ArrowLeft,
   Activity,
@@ -90,17 +91,27 @@ export default function ToolsPage() {
   const { locale } = useLocale();
   const isZh = locale === 'zh';
   const pageFrameMaxClass = getPageFrameMaxClass(location.search);
+  const viewMode = getSgsyenViewMode(location.search);
+  const withView = (href: string) => {
+    const [pathname, query = ''] = href.split('?');
+    const params = new URLSearchParams(query);
+    params.set('view', viewMode);
+    return `${pathname}?${params.toString()}`;
+  };
 
   return (
     <main className={`w-full ${pageFrameMaxClass} mx-auto border-x border-[#1D1D1B]/10 bg-[#FFFFFF] text-[#1D1D1B] min-h-screen`}>
       <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-6 md:px-12 lg:px-16 py-0 bg-[#F7F8FA] select-none min-h-[36px] md:h-[36px] overflow-hidden shrink-0">
         <button
-          onClick={() => navigate('/research')}
+          onClick={() => navigate(withView('/research'))}
           className="flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-widest text-zinc-400 hover:text-[#1D1D1B] transition-colors cursor-pointer shrink-0 z-10"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           {isZh ? '返回观点与研究' : 'Back to Research'}
         </button>
+        <div className="ml-auto z-10">
+          <ViewModeSwitch />
+        </div>
       </div>
 
       <header className="px-6 md:px-12 lg:px-20 pt-7 pb-10 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none">
@@ -181,7 +192,7 @@ export default function ToolsPage() {
                   <button
                     type="button"
                     disabled={!isEnabled}
-                    onClick={() => tool.href && navigate(tool.href)}
+                    onClick={() => tool.href && navigate(withView(tool.href))}
                     className={`inline-flex items-center gap-2 px-3.5 py-2 border text-[9px] font-sans font-bold uppercase tracking-widest transition-colors ${
                       isEnabled
                         ? 'border-[#1D1D1B] bg-[#1D1D1B] text-[#FDFCF9] hover:bg-[#A58261] hover:border-[#A58261] cursor-pointer'
