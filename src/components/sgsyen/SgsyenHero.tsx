@@ -23,10 +23,10 @@ export default function SgsyenHero() {
         }}
       />
 
-      {/* Decorative text banner on the right */}
+      {/* Decorative text banner on the left */}
       <div
         id="sgsyen-vertical-tagline"
-        className="absolute right-[4.5%] top-1/2 -translate-y-1/2 pointer-events-none select-none hidden xl:block z-10"
+        className="absolute left-[5.2%] top-[55%] -translate-y-1/2 pointer-events-none select-none hidden xl:block z-10"
         style={{
           writingMode: 'vertical-rl',
           textOrientation: 'upright',
@@ -54,22 +54,25 @@ export default function SgsyenHero() {
         {locale === 'zh' ? '策' : 'S'}
       </div>
 
-      {/* System status stamp: the page's visual eye */}
+      {/* System signal: the page's visual eye */}
       <motion.aside
         id="sgsyen-regime-engine-stamp"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.55, ease: 'easeOut' }}
-        className="absolute left-[14%] top-[42%] z-20 hidden xl:block w-[230px] select-none border border-[#C4A35A]/25 bg-[#111110]/35 px-5 py-4 backdrop-blur-[2px]"
+        className="absolute left-[13.5%] top-[44%] z-20 hidden xl:block w-[320px] select-none"
       >
-        <div className="flex items-center gap-2 text-[9px] font-sans font-bold uppercase tracking-[0.26em] text-[#C4A35A]">
+        <div className="flex items-center gap-3 text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-[#C4A35A]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#C4A35A] shadow-[0_0_12px_rgba(196,163,90,0.55)]" />
-          REGIME ENGINE ACTIVE
+          <span>REGIME ENGINE ACTIVE</span>
+          <span className="h-px w-14 bg-[#C4A35A]/25" />
         </div>
-        <div className="mt-3 text-[11px] font-sans font-semibold tracking-[0.18em] text-[#FDFCF9]/82">
-          {locale === 'zh' ? '周更 · 大事即时' : 'Weekly · Event Triggered'}
+        <div className="mt-4 text-[12px] font-sans font-semibold tracking-[0.18em] text-[#FDFCF9]/82">
+          {locale === 'zh' ? '事件触发 · 周更校准' : 'Event Triggered · Weekly Calibration'}
         </div>
-
+        <div className="mt-2 text-[10px] font-sans tracking-[0.2em] text-[#FDFCF9]/28">
+          {locale === 'zh' ? '事件 → 历史镜像 → 模型动作' : 'Event → Mirror → Model Action'}
+        </div>
       </motion.aside>
       {/* Hero content aligned in column */}
       <div 
