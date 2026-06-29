@@ -173,7 +173,7 @@ function InnerApp() {
           }`}
         >
             {/* Top mini-bar for lang switcher to keep it accessible everywhere */}
-            <div className="min-h-[36px] md:h-[36px] flex flex-col sm:flex-row justify-between items-center px-6 md:px-12 lg:px-16 py-0 bg-[#FFFFFF] border-b border-[#1D1D1B]/10 select-none gap-3 shrink-0">
+            <div className="min-h-[36px] md:h-[36px] flex flex-col sm:flex-row justify-between items-center px-3 md:px-5 lg:px-6 py-0 bg-[#FFFFFF] border-b border-[#1D1D1B]/10 select-none gap-3 shrink-0">
               {/* Left Side: Domain Identity Network Status */}
               <div className="flex items-center gap-2 text-left">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
