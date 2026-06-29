@@ -12,13 +12,14 @@ import GsyenQuantBlogPage from './pages/GsyenQuantBlogPage';
 import ToolsPage from './pages/ToolsPage';
 import TemporaFlipPreviewPage from './pages/TemporaFlipPreviewPage';
 import RegimeReviewDeskPage from './pages/RegimeReviewDeskPage';
+import MemberCenterPage from './pages/MemberCenterPage';
 import { ArrowLeft, BookOpen, Calculator, Download, FileText, Layers } from 'lucide-react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 import { getPageFrameMaxClass, getSgsyenViewMode } from './lib/layoutMode';
 import ViewModeSwitch from './components/sgsyen/ViewModeSwitch';
 import LanguageSwitch from './components/sgsyen/LanguageSwitch';
 
-type ActiveApp = 'sgsyen' | 'research' | 'workspace' | 'gemini' | 'miaojie';
+type ActiveApp = 'sgsyen' | 'research' | 'workspace' | 'member' | 'gemini' | 'miaojie';
 
 function InnerApp() {
   const { locale, t, authorizedEmail, login, logout, showLoginModal, setShowLoginModal } = useLocale();
@@ -33,11 +34,13 @@ function InnerApp() {
     ? 'research'
     : (path.startsWith('/workspace') || path.startsWith('/tools'))
       ? 'workspace'
-      : path.startsWith('/gemini')
-        ? 'gemini'
-        : path.startsWith('/miaojie')
-          ? 'miaojie'
-          : 'sgsyen';
+      : path.startsWith('/member')
+        ? 'member'
+        : path.startsWith('/gemini')
+          ? 'gemini'
+          : path.startsWith('/miaojie')
+            ? 'miaojie'
+            : 'sgsyen';
   let activeTab: 'calculator' | 'articles' | 'tariffs' = 'calculator';
   if (path.includes('/pricing')) activeTab = 'tariffs';
   else if (path.includes('/analysis')) activeTab = 'articles';
@@ -104,6 +107,10 @@ function InnerApp() {
       document.title = locale === 'zh'
         ? `SGSYEN Workspace | ${baseTitle}`
         : `SGSYEN Workspace | ${baseTitle}`;
+    } else if (activeApp === 'member') {
+      document.title = locale === 'zh'
+        ? `会员中心 | ${baseTitle}`
+        : `Member Center | ${baseTitle}`;
     } else {
       const tabNames = {
         calculator: locale === 'zh' ? '算力成本估算' : 'Cost Calculator',
@@ -206,7 +213,13 @@ function InnerApp() {
                 <div className="h-7 flex items-center gap-2 border-r border-[#1D1D1B]/10 pr-4">
                   {authorizedEmail ? (
                     <div className="text-[10px] uppercase font-sans tracking-widest text-stone-600 flex items-center gap-2">
-                      <span className="font-bold text-[#A58261]">● {authorizedEmail}</span>
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/member?view=${viewMode}`)}
+                        className="font-bold text-[#A58261] hover:underline cursor-pointer"
+                      >
+                        ● {authorizedEmail}
+                      </button>
                       <button 
                         onClick={logout}
                         className="text-[#C83E3E] font-bold hover:underline cursor-pointer ml-1 text-[9px]"
@@ -258,6 +271,9 @@ function InnerApp() {
           ) : (
             <ToolsPage />
           )}
+        </div>
+        <div className={activeApp === 'member' ? 'block' : 'hidden'}>
+          <MemberCenterPage />
         </div>
 
         <AnimatePresence mode="wait">
