@@ -15,7 +15,7 @@ export default function TemporaFlipPreviewPage() {
 
   return (
     <main className={`w-full ${pageFrameMaxClass} mx-auto border-x border-[#1D1D1B]/10 bg-[#FFFFFF] text-[#1D1D1B] min-h-screen`}>
-      <header className="px-6 md:px-12 lg:px-20 py-7 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none">
+      <header className="px-3 md:px-5 lg:px-6 py-7 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none">
         <div className="flex items-center justify-between gap-4">
           <button
           onClick={() => navigate(`/workspace?view=${viewMode}`)}

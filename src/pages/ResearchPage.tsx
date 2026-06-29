@@ -749,7 +749,7 @@ export default function ResearchPage() {
       <div className={`w-full ${pageFrameMaxClass} mx-auto border-x border-[#1D1D1B]/10`}>
 
         {/* ── Breadcrumb ────────────────────────────────────── */}
-        <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-6 md:px-12 lg:px-16 py-0 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none min-h-[36px] md:h-[36px] overflow-hidden shrink-0">
+        <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-3 md:px-5 lg:px-6 py-0 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none min-h-[36px] md:h-[36px] overflow-hidden shrink-0">
 
           {/* Left: back button */}
           <button
