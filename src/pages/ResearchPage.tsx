@@ -175,8 +175,8 @@ function buildWeeklyMemoArticle(events: LiveMacroEvent[], asOf?: string | null):
     slug: articleId,
     title: LATEST_WEEKLY_MEMO.titleZh,
     title_en: LATEST_WEEKLY_MEMO.titleEn,
-    subtitle: `本周主事件：${focusZh}`,
-    subtitle_en: `Lead event this week: ${focusEn}`,
+    subtitle: `周度自动更新；重大事件即时更新｜本周主事件：${focusZh}`,
+    subtitle_en: `Weekly by default; immediate on major events | Lead event: ${focusEn}`,
     author: '庄屿 SGSYEN',
     author_en: 'SGSYEN Institute',
     category: WEEKLY_MEMO_CATEGORY,
@@ -192,6 +192,8 @@ function buildWeeklyMemoArticle(events: LiveMacroEvent[], asOf?: string | null):
 
 ${LATEST_WEEKLY_MEMO.thesisZh}
 
+更新机制：无重大事件时每周自动更新一次；一旦重大政策、战争、汇率、利率或市场冲击触发阈值，就立即更新。
+
 一、为什么这不是一条普通新闻
 本周的重点不是“某个价格点会不会带来单日涨跌”，而是它是否改变市场的状态描述。日元进入 160 区域、央行政策沟通、流动性压力与拥挤交易平仓，会共同影响资金的避险偏好、套息交易容量、风险预算和跨区域资产再定价。
 
@@ -205,10 +207,12 @@ ${eventLinesZh || '1. 当前宏观事件流尚未给出新的高可信样本，�
 当事件可信度升高，模型不应该简单追涨杀跌，而应提高外汇、利率、流动性和拥挤度因子的解释权重；同时对高波动资产设置更强的回撤刹车，避免把一次历史阈值误判成普通噪声。
 
 五、结论
-世界模型真正要消化的不是“新闻数量”，而是新闻对状态空间的重写能力。每周只选一件主事件，是为了让研究页面保持克制，也让量化模型知道：哪些信息只是背景，哪些信息已经足以改变风险权重。`,
+世界模型真正要消化的不是“新闻数量”，而是新闻对状态空间的重写能力。平时每周只选一件主事件，是为了让研究页面保持克制；但当重大事件改变风险权重时，周评会跳过排期即时更新。`,
     content_en: `This Week's Core Thesis
 
 ${LATEST_WEEKLY_MEMO.thesisEn}
+
+Cadence: weekly when no major event clears the threshold; immediate when policy, war, FX, rates, or market shocks trigger a regime signal.
 
 1. Why this is not ordinary news
 The key question is not whether one price point predicts a one-day move. The question is whether it changes the market-state description. JPY near 160, central-bank communication, liquidity stress, and crowded unwind can jointly reshape risk appetite, carry capacity, risk budgets, and cross-region asset repricing.
@@ -223,7 +227,7 @@ The memo does not translate news directly into a trading command. It compresses 
 When confidence rises, the model should raise the explanatory weight of FX, rates, liquidity, and crowding factors. It should also tighten drawdown brakes on high-volatility assets so that a historical threshold is not treated as ordinary noise.
 
 5. Conclusion
-The world model should digest not the number of headlines, but the ability of an event to rewrite the state space. One lead event per week keeps the research page disciplined and tells the quant model which information is background and which information deserves risk-weight adjustment.`,
+The world model should digest not the number of headlines, but the ability of an event to rewrite the state space. In ordinary weeks, one lead event keeps the research page disciplined; when a major event changes risk weights, the memo updates immediately instead of waiting for the next weekly slot.`,
   };
 }
 
@@ -369,12 +373,12 @@ function WeeklyEventFrame({ isZh }: { isZh: boolean }) {
             {isZh ? '每周评论 · WEEKLY MEMO' : 'WEEKLY MEMO'}
           </span>
           <h2 className="mt-4 text-2xl md:text-3xl font-serif font-semibold leading-tight">
-            {isZh ? '每周只写一篇核心研判' : 'One core research note per week'}
+            {isZh ? '周更为底线，大事即时更新' : 'Weekly by default, immediate on major events'}
           </h2>
           <p className="mt-4 text-xs md:text-sm font-sans leading-[1.9] text-zinc-500">
             {isZh
-              ? '页面上不堆新闻，而是每周从全球事件中筛出一个最重要的变量，写成“事件-历史镜像-传导链-模型动作”的完整评论。'
-              : 'The page should not pile up news. Each week it selects the most important global variable and turns it into an event, mirror, transmission, and model-action note.'}
+              ? '页面上不堆新闻。没有重大事件时，每周自动筛出一个最重要的变量；一旦大事触发阈值，就立即写成“事件-历史镜像-传导链-模型动作”的完整评论。'
+              : 'The page does not pile up news. In ordinary weeks it selects one important global variable; when a major event clears the threshold, it immediately becomes an event, mirror, transmission, and model-action note.'}
           </p>
 
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -410,7 +414,7 @@ function WeeklyEventFrame({ isZh }: { isZh: boolean }) {
                   ))}
                 </div>
                 <div className="mt-3 text-[10px] font-sans text-zinc-400">
-                  {LATEST_WEEKLY_MEMO.date} · {isZh ? '周度节奏：每周一篇' : 'Cadence: one note per week'}
+                  {LATEST_WEEKLY_MEMO.date} · {isZh ? '更新节奏：周更 + 重大事件即时' : 'Cadence: weekly + immediate on major events'}
                 </div>
               </div>
               <ArrowRight className="w-4 h-4 text-[#A58261] shrink-0 mt-1" />
@@ -827,7 +831,7 @@ export default function ResearchPage() {
                   : (isZh ? '— 宏观数据点' : '— macro data pts')}
               </span>
               <span>43 重大事件</span>
-              <span>{isZh ? '每周 1 篇评论' : '1 weekly memo'}</span>
+              <span>{isZh ? '周更 · 大事即时' : 'weekly + live trigger'}</span>
               <span>{artTotal > 0 ? artTotal : '—'} 篇深度报告</span>
             </div>
           </div>
