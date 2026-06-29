@@ -19,19 +19,21 @@ export default function GsyenQuantBlogPage() {
 
   return (
     <main className={`w-full ${pageFrameMaxClass} mx-auto border-x border-[#1D1D1B]/10 bg-[#FFFFFF] text-[#1D1D1B] min-h-screen`}>
-      <header className="px-3 md:px-5 lg:px-6 py-8 border-b border-[#1D1D1B]/10">
-        <div className="flex items-center justify-between gap-4">
-          <button
+      <div className="relative flex flex-wrap md:flex-nowrap items-center gap-y-3 px-3 md:px-5 lg:px-6 py-0 border-b border-[#1D1D1B]/10 bg-[#F7F8FA] select-none min-h-[36px] md:h-[36px] overflow-hidden shrink-0">
+        <button
           onClick={() => navigate(`/research?view=${viewMode}`)}
-          className="inline-flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-[0.18em] text-zinc-400 hover:text-[#1D1D1B] transition-colors"
+          className="flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-widest text-zinc-400 hover:text-[#1D1D1B] transition-colors cursor-pointer shrink-0 z-10"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           {isZh ? '返回观点与研究' : 'Back to Research'}
-          </button>
+        </button>
+        <div className="ml-auto z-10">
           <ViewModeSwitch />
         </div>
+      </div>
 
-        <div className="mt-10 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+      <header className="px-6 md:px-12 lg:px-20 py-8 border-b border-[#1D1D1B]/10">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <div>
             <span className="text-[10px] font-sans font-bold uppercase tracking-[0.26em] text-[#A58261]">
               GSYEN-Quant · MODEL BLOG

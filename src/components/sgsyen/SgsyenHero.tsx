@@ -72,20 +72,20 @@ export default function SgsyenHero() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.55, ease: 'easeOut' }}
-        className="absolute left-[13.5%] top-[44%] z-20 hidden xl:block w-[320px] select-none"
+        className="absolute left-[13.5%] top-[41.5%] z-20 hidden xl:block w-[320px] select-none"
       >
         <div className="flex items-center gap-3 text-[9px] font-sans font-bold uppercase tracking-[0.28em] text-[#C4A35A]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#C4A35A] shadow-[0_0_12px_rgba(196,163,90,0.55)]" />
           <span>REGIME ENGINE ACTIVE</span>
-          <span className="h-px w-14 bg-[#C4A35A]/25" />
+          <span className="h-px w-16 bg-gradient-to-r from-[#C4A35A]/35 to-transparent" />
         </div>
         <div className="mt-4 space-y-3">
           {signalLines.map((line) => (
             <div key={line.title}>
-              <div className="text-[12px] font-sans font-semibold tracking-[0.16em] text-[#FDFCF9]/84">
+              <div className="text-[12px] font-sans font-semibold tracking-[0.16em] text-[#FDFCF9]/88">
                 {line.title}
               </div>
-              <div className="mt-1.5 text-[10px] font-sans tracking-[0.18em] text-[#FDFCF9]/28">
+              <div className="mt-1.5 text-[10px] font-sans tracking-[0.18em] text-[#8F8A92]">
                 {line.path}
               </div>
             </div>
@@ -144,7 +144,7 @@ export default function SgsyenHero() {
           animate={{ opacity: 1, scaleX: 1 }}
           transition={{ duration: 1, delay: 0.4 }}
           className="w-full max-w-[480px] h-px mb-8 border-0 origin-right ml-auto"
-          style={{ background: 'linear-gradient(270deg, rgba(253,252,249,0.15), transparent)' }}
+          style={{ background: 'linear-gradient(270deg, rgba(196,163,90,0.30), rgba(196,163,90,0.08), transparent)' }}
         />
 
         <motion.p
@@ -152,7 +152,7 @@ export default function SgsyenHero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.8 }}
           transition={{ duration: 1, delay: 0.6 }}
-          className="leading-[1.9] text-sm md:text-base max-w-2xl ml-auto font-light tracking-wide text-[#FDFCF9]/70"
+          className="leading-[1.9] text-sm md:text-base max-w-[760px] ml-auto font-light tracking-wide text-[#B9B4BC] text-right [text-align-last:right]"
           style={{ fontFamily: '"Inter", sans-serif' }}
         >
           {t('sgsyenHeroDescription')}
