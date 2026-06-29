@@ -540,6 +540,13 @@ export default function ResearchPage() {
   const [showApi,      setShowApi]      = useState(false);
   const [copied,       setCopied]       = useState<string | null>(null);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('api') === '1') {
+      setShowApi(true);
+    }
+  }, [location.search]);
+
   // article drawer
   const [selectedArt,  setSelectedArt]  = useState<DisplayArticle | null>(null);
   const [downloading,  setDownloading]  = useState(false);
@@ -783,14 +790,6 @@ export default function ResearchPage() {
               <Cpu className="w-3 h-3" />
               <span className="hidden sm:inline">{isZh ? '算力中心' : 'Compute Lab'}</span>
               <span className="sm:hidden">{isZh ? '算力' : 'Compute'}</span>
-            </button>
-            <button
-              onClick={() => setShowApi(true)}
-              className="h-7 flex items-center gap-1.5 px-3 border border-[#A58261]/30 text-[9px] font-sans font-bold uppercase tracking-widest text-[#A58261] cursor-pointer rounded shrink-0"
-            >
-              <Terminal className="w-3 h-3" />
-              <span className="hidden sm:inline">{isZh ? '研究员 API 接入' : 'Researcher API'}</span>
-              <span className="sm:hidden">API</span>
             </button>
           </div>
         </div>
@@ -1412,4 +1411,3 @@ events = sb.table("policy_events").select("*").execute()`}</pre>
     </div>
   );
 }
-
