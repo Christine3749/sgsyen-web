@@ -26,7 +26,7 @@ export default function SgsyenHero() {
       {/* Decorative text banner on the right */}
       <div
         id="sgsyen-vertical-tagline"
-        className="absolute right-[6%] top-1/2 -translate-y-1/2 pointer-events-none select-none hidden xl:block z-10"
+        className="absolute left-[5%] top-1/2 -translate-y-1/2 pointer-events-none select-none hidden xl:block z-10"
         style={{
           writingMode: 'vertical-rl',
           textOrientation: 'upright',
