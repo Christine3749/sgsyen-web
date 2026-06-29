@@ -11,7 +11,7 @@ import ResearchPage from './pages/ResearchPage';
 import GsyenQuantBlogPage from './pages/GsyenQuantBlogPage';
 import ToolsPage from './pages/ToolsPage';
 import TemporaFlipPreviewPage from './pages/TemporaFlipPreviewPage';
-import { BookOpen, Calculator, Download, FileText, Landmark, Layers } from 'lucide-react';
+import { BookOpen, Calculator, Download, FileText, Layers } from 'lucide-react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 
 type ActiveApp = 'sgsyen' | 'research' | 'workspace' | 'gemini' | 'miaojie';
@@ -166,34 +166,6 @@ function InnerApp() {
         }
       </div>
 
-      {/* Structural Central Switcher for SGSYEN and Research */}
-      <div className="w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 grid grid-cols-2 text-center text-xs font-sans font-bold uppercase select-none border-b h-14 border-[#1D1D1B]/10 bg-white">
-        <button
-          id="toggle-sgsyen-portal-btn"
-          onClick={() => navigate('/')}
-          className={`h-14 py-0 leading-none transition-colors flex items-center justify-center gap-2 cursor-pointer outline-none ${
-            activeApp === 'sgsyen'
-              ? 'bg-[#1D1D1B] text-[#FDFCF9]'
-              : 'text-[#1D1D1B] hover:bg-stone-50'
-          }`}
-        >
-          <Landmark className="w-3.5 h-3.5 shrink-0" />
-          <span className="leading-none">{locale === 'zh' ? 'SGSYEN 智库研究中心' : 'SGSYEN Research Center (sgsyen.com)'}</span>
-        </button>
-        <button
-          id="toggle-research-hub-btn"
-          onClick={() => navigate('/research')}
-          className={`h-14 py-0 leading-none transition-colors flex items-center justify-center gap-2 cursor-pointer outline-none ${
-            activeApp === 'research' || activeApp === 'workspace'
-              ? 'bg-[#1D1D1B] text-[#FDFCF9]'
-              : 'text-[#1D1D1B] hover:bg-stone-50'
-          }`}
-        >
-          <BookOpen className="w-3.5 h-3.5 shrink-0" />
-          <span className="leading-none">{locale === 'zh' ? 'Research 观点与研究' : 'Research Hub'}</span>
-        </button>
-      </div>
-
       <div>
         <div
           className={`flex-1 w-full max-w-[1300px] mx-auto border-x border-[#1D1D1B]/10 flex-col bg-[#FFFFFF] ${
@@ -212,6 +184,15 @@ function InnerApp() {
 
               {/* Right Side: Language Switcher and Top-Right Login */}
               <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 text-[10px] uppercase font-sans tracking-widest text-[#1D1D1B]">
+                <button
+                  onClick={() => navigate('/research')}
+                  className="h-7 inline-flex items-center gap-1.5 px-2.5 border border-[#1D1D1B]/10 text-[9px] font-sans font-bold uppercase tracking-widest text-[#1D1D1B] hover:border-[#1D1D1B] hover:bg-[#1D1D1B] hover:text-[#FDFCF9] transition-colors cursor-pointer rounded shrink-0"
+                >
+                  <BookOpen className="w-3 h-3" />
+                  <span className="hidden sm:inline">{locale === 'zh' ? '观点与研究' : 'Research'}</span>
+                  <span className="sm:hidden">Research</span>
+                </button>
+
                 {/* Top-Right Unified Login */}
                 <div className="h-7 flex items-center gap-2 border-r border-[#1D1D1B]/10 pr-4">
                   {authorizedEmail ? (
