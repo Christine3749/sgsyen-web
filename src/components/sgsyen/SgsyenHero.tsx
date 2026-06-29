@@ -60,7 +60,7 @@ export default function SgsyenHero() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.55, ease: 'easeOut' }}
-        className="absolute right-[13%] top-[42%] z-20 hidden xl:block w-[230px] select-none border border-[#C4A35A]/25 bg-[#111110]/35 px-5 py-4 backdrop-blur-[2px]"
+        className="absolute left-[8%] top-[42%] z-20 hidden xl:block w-[230px] select-none border border-[#C4A35A]/25 bg-[#111110]/35 px-5 py-4 backdrop-blur-[2px]"
       >
         <div className="flex items-center gap-2 text-[9px] font-sans font-bold uppercase tracking-[0.26em] text-[#C4A35A]">
           <span className="h-1.5 w-1.5 rounded-full bg-[#C4A35A] shadow-[0_0_12px_rgba(196,163,90,0.55)]" />
@@ -69,14 +69,12 @@ export default function SgsyenHero() {
         <div className="mt-3 text-[11px] font-sans font-semibold tracking-[0.18em] text-[#FDFCF9]/82">
           {locale === 'zh' ? '周更 · 大事即时' : 'Weekly · Event Triggered'}
         </div>
-        <div className="mt-2 text-[10px] font-sans uppercase tracking-[0.18em] text-[#FDFCF9]/38">
-          {locale === 'zh' ? '事件 → 历史镜像 → 模型动作' : 'Event → Mirror → Action'}
-        </div>
+
       </motion.aside>
       {/* Hero content aligned in column */}
       <div 
         id="sgsyen-hero-content-bag" 
-        className="relative z-10 max-w-5xl"
+        className="relative z-10 ml-auto w-full max-w-[820px]"
       >
         <motion.div
           id="sgsyen-hero-meta"
