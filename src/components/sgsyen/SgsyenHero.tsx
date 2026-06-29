@@ -4,15 +4,17 @@ import { motion } from 'motion/react';
 import { useLocale } from '../../context/LocaleContext';
 import { getSgsyenViewMode } from '../../lib/layoutMode';
 
-type HeroSignalTarget = 'weeklyMemo' | 'temporaFlip';
+type HeroSignalTarget = 'weeklyMemo' | 'eventMirror' | 'temporaFlip';
 
 const heroSignalLines: Record<'zh' | 'en', Array<{ title: string; path: string; target: HeroSignalTarget }>> = {
   zh: [
     { title: '全球事件进入模型：从日元 160 到世界风险权重重估', path: '事件 → 历史镜像 → 模型动作', target: 'weeklyMemo' },
+    { title: '日元 160：不是单点价格，而是政策压力阈值', path: '历史镜像 → 政策压力 → 风险阈值', target: 'eventMirror' },
     { title: '近期项目 · Tempora Flip 预览打磨', path: '字形 → 屏保 → 下载通道', target: 'temporaFlip' },
   ],
   en: [
     { title: 'Global Events Enter the Model: From JPY 160 to Risk-Weight Repricing', path: 'Event → Mirror → Model Action', target: 'weeklyMemo' },
+    { title: 'JPY 160: not one price, but a policy-pressure threshold', path: 'Historical Mirror → Policy Pressure → Risk Threshold', target: 'eventMirror' },
     { title: 'Current Project · Tempora Flip Preview', path: 'Type → Screensaver → Download Path', target: 'temporaFlip' },
   ],
 };
@@ -27,6 +29,10 @@ export default function SgsyenHero() {
   const openSignal = (target: HeroSignalTarget) => {
     if (target === 'weeklyMemo') {
       navigate(`/research?view=${viewMode}&article=weekly-memo#weekly-event-frame`);
+      return;
+    }
+    if (target === 'eventMirror') {
+      navigate(`/research?view=${viewMode}#event-mirror-panel`);
       return;
     }
     navigate(`/workspace/tempora-flip?view=${viewMode}`);

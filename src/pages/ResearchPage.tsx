@@ -428,7 +428,7 @@ function WeeklyEventFrame({ isZh, onOpenWeeklyMemo }: { isZh: boolean; onOpenWee
           </button>
         </div>
 
-        <div className="p-6 md:p-8">
+        <div id="event-mirror-panel" className="p-6 md:p-8">
           <span className="text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-[#A58261] flex items-center gap-2">
             <GitCompare className="w-3.5 h-3.5" />
             {isZh ? '历史镜像样例 · EVENT MIRROR' : 'EVENT MIRROR'}
