@@ -55,7 +55,7 @@ const SCORE_ITEMS = [
 
 const DISTILL_STEPS = [
   { zh: '候选进入', en: 'Candidate intake', copyZh: '从新闻、项目、市场信号进入待审池。', copyEn: 'News, project updates, and market signals enter the review pool.' },
-  { zh: 'Owner 审阅', en: 'Owner review', copyZh: 'Ethan 给分、改标题、决定是否进入首页。', copyEn: 'Ethan scores, rewrites, and decides homepage placement.' },
+  { zh: 'Owner 落笔', en: 'Owner markup', copyZh: 'Ethan 给分、改题、决定是否进入首页。', copyEn: 'Ethan scores, rewrites, and decides homepage placement.' },
   { zh: '蒸馏样本', en: 'Distillation sample', copyZh: '保存“AI 初稿 → 人类改稿 → 最终发布”的差异。', copyEn: 'Save the delta from AI draft to human edit to final publish.' },
 ];
 
@@ -97,15 +97,15 @@ export default function RegimeReviewDeskPage() {
           <div>
             <div className="inline-flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-[0.26em] text-[#A58261]">
               <ShieldCheck className="w-3.5 h-3.5" />
-              SGSYEN · REVIEW DESK
+              SGSYEN · INKWELL
             </div>
             <h1 className="mt-4 text-4xl md:text-6xl font-serif font-semibold leading-tight" style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>
-              {isZh ? '雍彻审阅台' : 'Regime Review Desk'}
+              {isZh ? '雍彻砚台' : 'SGSYEN Inkwell'}
             </h1>
             <p className="mt-5 max-w-3xl text-sm md:text-base font-sans leading-relaxed text-zinc-500">
               {isZh
-                ? '给 Owner 使用的事件候选、评分、改写和模型蒸馏入口。每天看候选，留下判断痕迹，让 AI 学会你的取舍。'
-                : 'An owner-only review surface for candidate events, scoring, rewriting, and model distillation.'}
+                ? '给 Owner 使用的事件候选、评分、改写和模型蒸馏砚台。每天看候选，留下判断痕迹，让 AI 学会你的取舍。'
+                : 'An owner-only inkwell for candidate events, scoring, rewriting, and model distillation.'}
             </p>
           </div>
 
@@ -129,7 +129,7 @@ export default function RegimeReviewDeskPage() {
             <div className="flex items-end justify-between gap-4 mb-5">
               <div>
                 <div className="text-[10px] font-sans font-bold uppercase tracking-[0.22em] text-[#A58261]">
-                  {isZh ? '待审候选流' : 'Review Queue'}
+                  {isZh ? '候选稿池' : 'Draft Queue'}
                 </div>
                 <h2 className="mt-2 text-2xl md:text-3xl font-serif font-semibold">
                   {isZh ? '今天先看这三类信号' : 'Three signal lanes for today'}
@@ -174,7 +174,7 @@ export default function RegimeReviewDeskPage() {
           <aside className="border border-[#1D1D1B]/10 bg-[#111110] text-white p-6">
             <div className="inline-flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-[0.22em] text-[#C4A35A]">
               <Sparkles className="w-3.5 h-3.5" />
-              {isZh ? '蒸馏面板' : 'Distillation Panel'}
+              {isZh ? '蒸馏砚面' : 'Distillation Panel'}
             </div>
             <h2 className="mt-4 text-2xl md:text-3xl font-serif font-semibold">
               {isZh ? '把你的判断变成训练样本。' : 'Turn judgment into training signal.'}
@@ -213,7 +213,7 @@ export default function RegimeReviewDeskPage() {
 
       <section className="px-6 md:px-12 lg:px-20 pb-12 bg-white">
         <div className="grid md:grid-cols-3 gap-4">
-          <InfoTile icon={FileText} title={isZh ? '文案审阅' : 'Copy Review'} copy={isZh ? '标题、摘要、标签、首页题眼都在这里最后过一遍。' : 'Headline, summary, tags, and homepage signals get a final pass here.'} />
+          <InfoTile icon={FileText} title={isZh ? '文案落笔' : 'Copy Markup'} copy={isZh ? '标题、摘要、标签、首页题眼都在这里最后过一遍。' : 'Headline, summary, tags, and homepage signals get a final pass here.'} />
           <InfoTile icon={Terminal} title={isZh ? 'AI 蒸馏' : 'AI Distillation'} copy={isZh ? '记录你改动前后的差异，未来给自己的模型喂样本。' : 'Record before/after edits for future model distillation.'} />
           <InfoTile icon={ShieldCheck} title={isZh ? 'Owner 发布' : 'Owner Publish'} copy={isZh ? '当前先做预览，正式版再接权限、队列和数据库。' : 'Preview now; auth, queues, and database wiring come next.'} />
         </div>
