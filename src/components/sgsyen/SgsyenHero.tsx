@@ -26,7 +26,7 @@ export default function SgsyenHero() {
       {/* Decorative text banner on the right */}
       <div
         id="sgsyen-vertical-tagline"
-        className="absolute left-[5%] top-1/2 -translate-y-1/2 pointer-events-none select-none hidden xl:block z-10"
+        className="absolute right-[4.5%] top-1/2 -translate-y-1/2 pointer-events-none select-none hidden xl:block z-10"
         style={{
           writingMode: 'vertical-rl',
           textOrientation: 'upright',
@@ -43,11 +43,11 @@ export default function SgsyenHero() {
       {/* Watermark character in background */}
       <div
         id="sgsyen-bg-watermark"
-        className="absolute right-[1%] -bottom-[12%] pointer-events-none select-none hidden lg:block text-[45vw] font-serif leading-none"
+        className="absolute left-[1.5%] -bottom-[14%] pointer-events-none select-none hidden lg:block text-[45vw] font-serif leading-none"
         style={{
           fontFamily: '"Playfair Display", serif',
           fontWeight: 900,
-          color: 'rgba(253, 252, 249, 0.012)',
+          color: 'rgba(253, 252, 249, 0.014)',
           letterSpacing: '-0.05em',
         }}
       >
