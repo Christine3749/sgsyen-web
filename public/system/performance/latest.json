@@ -1,8 +1,8 @@
 {
   "schema": "sgsyen.system.performance.v1",
-  "updated_at": "2026-06-28T22:06:23+08:00",
+  "updated_at": "2026-07-01T06:25:26+08:00",
   "source": "DGWM quant_fast_run",
-  "round_id": "sgsyen-2026-06-28",
+  "round_id": "sgsyen-2026-07-01",
   "change_label": "daily-quant-run",
   "hardware": {
     "cpu_name": "Intel(R) Core(TM) i9-14900KF",
@@ -20,30 +20,30 @@
     "accelerator_family": "nvidia-cuda"
   },
   "utilization_summary": {
-    "round_id": "sgsyen-2026-06-28",
+    "round_id": "sgsyen-2026-07-01",
     "change_label": "daily-quant-run",
-    "elapsed_seconds": 35.69318619999103,
+    "elapsed_seconds": 0.12127120000150171,
     "status": "gpu_below_target",
     "target_gpu_utilization_pct": 60.0,
     "gpu": {
       "available": true,
-      "sample_count": 34,
-      "utilization_pct_mean": 25.41176470588235,
-      "utilization_pct_max": 36.0,
-      "target_gap_pct": 34.58823529411765,
-      "memory_used_gb_mean": 3.3955078125,
-      "memory_used_gb_max": 3.3955078125,
-      "power_watts_mean": 24.22735294117647,
-      "power_watts_max": 46.24
+      "sample_count": 1,
+      "utilization_pct_mean": 6.0,
+      "utilization_pct_max": 6.0,
+      "target_gap_pct": 54.0,
+      "memory_used_gb_mean": 2.3828125,
+      "memory_used_gb_max": 2.3828125,
+      "power_watts_mean": 18.78,
+      "power_watts_max": 18.78
     },
     "system": {
       "available": true,
-      "sample_count": 36,
-      "cpu_total_pct_mean": 8.835241325562459,
-      "cpu_total_pct_max": 21.19301648884578,
-      "memory_used_pct_mean": 38.77323143568315,
-      "memory_used_pct_max": 38.871826072257186,
-      "memory_available_gb_min": 58.57146072387695
+      "sample_count": 1,
+      "cpu_total_pct_mean": 0.0,
+      "cpu_total_pct_max": 0.0,
+      "memory_used_pct_mean": 28.622514931639977,
+      "memory_used_pct_max": 28.622514931639977,
+      "memory_available_gb_min": 68.39208984375
     },
     "torch_engine": {
       "backend": "cuda",
@@ -78,7 +78,7 @@
           "accelerator_hit_rate": 1.0,
           "accelerator_time_share": 1.0,
           "accelerator_input_element_share": 1.0,
-          "total_seconds": 0.1319952000048943
+          "total_seconds": 0.12917550000020128
         }
       ]
     },
